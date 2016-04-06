@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: francais
+ * Plugin Name: Le Club Francais
  * Plugin URI: https://github.com/vhhieu/francais
  * Description: Francais is private use for Le Club Francais website for course publishing purpose.
  * Version: 1.0.0
@@ -77,10 +77,25 @@ final class Francais {
 		$upload_dir = wp_upload_dir();
 	
 		$this->define( 'FC_PLUGIN_FILE', __FILE__ );
+		$this->define( 'FC_PLUGIN_PATH', plugin_dir_path( __FILE__ ));
 		$this->define( 'FC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 		$this->define( 'FC_VERSION', $this->version );
 		$this->define( 'FRANCAIS_VERSION', $this->version );
 		$this->define( 'WC_LOG_DIR', $upload_dir['basedir'] . '/fc-logs/' );
+		
+		global $CITY_LIST;
+		$CITY_LIST = array(
+			"Paris" => "Paris",
+			"Lyon" => "Lyon",
+			"Marseille" => "Marseille",
+			"Toulouse" => "Toulouse",
+			"Strasbourg" => "Strasbourg",
+			"Bordeaux" => "Bordeaux",
+			"Nantes" => "Nantes",
+			"Lille" => "Lille",
+			"Montpellier" => "Montpellier",
+			"Rennes" => "Rennes",
+		);
 	}
 	
 	/**
@@ -117,7 +132,7 @@ final class Francais {
 	 * Init Francais when WordPress Initialises.
 	 */
 	public function init() {
-		
+		ob_start();
 	}
 	
 	/**

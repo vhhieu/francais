@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin View: Main Menu - Francias
+ * Admin View: Main Menu - Francias - Lieu
  *
  * @var string $view
  */
@@ -30,7 +30,15 @@ class Room_List_Table extends WP_List_Table {
 	}
 	
 	function get_columns() {
-		return array("room_id" => "Room ID", "room_name" => "Room Name", "title" => "Title");
+		return array(
+				"cb" => "<input type=\"checkbox\" />",
+				"room_index" => "Nom concaténé",
+				"max_number" => "Nombre de pers max",
+				"area_m2" => "Nombre m2",
+				"room_manager_name" => "Nom et prénom du gestionnaire",
+				"room_manager_email" => "Mail du gestionnaire",
+				"room_manager_tel" => "Tél du gestionnaire"
+		);
 	}
 	
 	/** ************************************************************************
@@ -80,17 +88,19 @@ class Room_List_Table extends WP_List_Table {
 	 * @param array $item A singular item (one full row's worth of data)
 	 * @return string Text to be placed inside the column <td> (movie title only)
 	 **************************************************************************/
-	function column_title($item){
+	function column_room_index($item){
 	
 		//Build row actions
 		$actions = array(
-				'edit'      => sprintf('<a href="?page=%s&action=%s&movie=%s">Edit</a>',$_REQUEST['page'],'edit',$item['ID']),
-				'delete'    => sprintf('<a href="?page=%s&action=%s&movie=%s">Delete</a>',$_REQUEST['page'],'delete',$item['ID']),
+				'edit'      => sprintf('<a href="?page=francais-lieu-edit&movie=%s">Edit</a>', $item['room_id']),
+				'delete'    => sprintf('<a href="?page=%s&action=%s&movie=%s">Delete</a>',$_REQUEST['page'],'delete',$item['room_id']),
 		);
 	
+		$value = $item['country'] . " - " . $item['city'] . " - " 
+				. $item['zip_code'] . " - " . $item['room_name'];
 		//Return the title contents
 		return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s',
-				/*$1%s*/ $item['title'],
+				/*$1%s*/ $value,
 				/*$2%s*/ $item['room_id'],
 				/*$3%s*/ $this->row_actions($actions)
 				);
@@ -145,26 +155,28 @@ class Room_List_Table extends WP_List_Table {
 	function process_bulk_action() {
 	
 		//Detect when a bulk action is being triggered...
-		if( 'delete'===$this->current_action() ) {
-			wp_die('Items deleted (or they would be if we had items to delete)!');
+		if( 'delete'===$this->current_action() && isset($_REQUEST['movie'])) {
+			global $wpdb;
+			//wp_die('Items deleted (or they would be if we had items to delete)!');
+			
+			$ids = isset($_REQUEST['movie']) ? $_REQUEST['movie'] : array();
+			if (is_array($ids)) $ids = implode(',', $ids);
+			
+			$result = "";
+			if (!empty($ids)) {
+				$result = $wpdb->query("DELETE FROM " . $wpdb->prefix . "francais_room WHERE room_id IN($ids)");
+			}
+			
+			//wp_die(var_dump( $wpdb->last_query ));
+			if ($result) {
+				wp_redirect( home_url() . "/wp-admin/admin.php?page=francais-lieu", 301);
+				exit();
+			}
 		}
 	
 	}
 	
-	/**
-	 * This checks for sorting input and sorts the data in our array accordingly.
-	 *
-	 * In a real-world situation involving a database, you would probably want
-	 * to handle sorting by passing the 'orderby' and 'order' values directly
-	 * to a custom query. The returned data will be pre-sorted, and this array
-	 * sorting technique would be unnecessary.
-	 */
-	function usort_reorder($a,$b){
-		$orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'room_id'; //If no sort, default to title
-		$order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
-		$result = strcmp($a[$orderby], $b[$orderby]); //Determine sort order
-		return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
-	}
+	
 	
 	/** ************************************************************************
 	 * REQUIRED! This is where you prepare your data for display. This method will
@@ -229,9 +241,24 @@ class Room_List_Table extends WP_List_Table {
 		 * be able to use your precisely-queried data immediately.
 		 */
 		$table_name = $wpdb->prefix . 'francais_room';
-		$sql = "SELECT room_id,room_name FROM " . $table_name;
+		$sql = "SELECT * FROM " . $table_name;
 		$data = $wpdb->get_results ( $sql );
+		$data = json_decode(json_encode($data), true);
 		
+		/**
+		 * This checks for sorting input and sorts the data in our array accordingly.
+		 *
+		 * In a real-world situation involving a database, you would probably want
+		 * to handle sorting by passing the 'orderby' and 'order' values directly
+		 * to a custom query. The returned data will be pre-sorted, and this array
+		 * sorting technique would be unnecessary.
+		 */
+		function usort_reorder($a,$b){
+			$orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'room_id'; //If no sort, default to title
+			$order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
+			$result = strcmp('' . $a[$orderby], '' . $b[$orderby]); //Determine sort order
+			return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
+		}
 		usort($data, 'usort_reorder');
 		//wp_die(print_r($data));
 		/**
@@ -293,13 +320,13 @@ $testListTable->prepare_items();
 	</h1>
 
     <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:5px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
-    	<p>“Lieu” is the room in which the lesson will be given, defined by 4 criteria :</p> 
+    	<p>Lieu is the room in which the lesson will be given, defined by 4 criteria :</p> 
       	<ul>
        		<li>The country (example : France)</li>
        		<li>The city (example : Paris)</li>
        		<li>The district in the city (example : 75009)</li>
        		<li>The name of the room (example : studio moutarde 19)</li>
-       		<li>Among the different “lieu” that will have been pre-defined (in the database, see chapter 2), we want to choose with a drop-down list</li>
+       		<li>Among the different lieu that will have been pre-defined (in the database, see chapter 2), we want to choose with a drop-down list</li>
        	</ul>
     </div>
         

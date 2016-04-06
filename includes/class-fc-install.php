@@ -160,7 +160,7 @@ class FC_Install {
             room_id bigint(20) NOT NULL AUTO_INCREMENT,
             country varchar(64) NOT NULL,
 			city varchar(64) NOT NULL,
-			zip_code char(5) NOT NULL,
+			zip_code varchar(10) NOT NULL,
 			room_name varchar(128) NOT NULL,
 			address varchar(256),
 			address_detail varchar(256),
@@ -170,10 +170,56 @@ class FC_Install {
 			room_manager_name varchar(128) NOT NULL,
 			room_manager_email varchar(64) NOT NULL,
 			room_manager_tel varchar(16) NOT NULL,
-			UNIQUE KEY room_unique (country, city, zip_code),
+			UNIQUE KEY room_unique (country, city, zip_code, room_name),
             PRIMARY KEY  (room_id)
         ) ". $charset_collate .";";
  		dbDelta( $sql );
+ 		
+ 		// Discipline table
+ 		$disciplinetable = $tableprefix . 'discipline';
+ 		$sql = "CREATE TABLE " . $disciplinetable . " (
+            discipline_id bigint(20) NOT NULL AUTO_INCREMENT,
+            course_type varchar(32) NOT NULL,
+			macro_discipline varchar(32) NOT NULL,
+			micro_discipline varchar(32) NOT NULL,
+			age_group varchar(64) NOT NULL,
+			photo varchar(512),
+			discipline_description text,
+	 		lesson_target text,
+			lesson_duration int(10) NOT NULL DEFAULT 0,
+			price int(10) NOT NULL DEFAULT 0,
+			application_fee int(10) NOT NULL DEFAULT 0,
+			UNIQUE KEY discipline_unique (course_type, macro_discipline, micro_discipline, age_group),
+            PRIMARY KEY  (discipline_id)
+        ) ". $charset_collate .";";
+ 		dbDelta( $sql );
+ 		
+ 		$profstable = $tableprefix . 'profs';
+ 		$sql = "CREATE TABLE " . $profstable . " (
+            profs_id bigint(20) NOT NULL AUTO_INCREMENT,
+            first_name varchar(32) NOT NULL,
+			family_name varchar(32) NOT NULL,
+			phone varchar(20),
+			email varchar(64) NOT NULL,
+			login_name varchar(32) NOT NULL,
+			password varchar(128) NOT NULL,
+	 		admin_type varchar(32) NOT NULL,
+			description text,
+ 			micro_discipline_1 varchar(32),
+ 			micro_discipline_2 varchar(32),
+ 			micro_discipline_3 varchar(32),
+ 			city_1 varchar(64),
+ 			city_2 varchar(64),
+ 			city_3 varchar(64),
+ 			room_id_1 bigint(20),
+ 			room_id_2 bigint(20),
+ 			room_id_3 bigint(20),
+			UNIQUE KEY login_name_unique (login_name),
+ 			UNIQUE KEY profs_unique (email),
+            PRIMARY KEY  (profs_id)
+        ) ". $charset_collate .";";
+ 		dbDelta( $sql );
+ 		//wp_die(var_dump( $wpdb->last_query ));
 	}
 
 	/**
