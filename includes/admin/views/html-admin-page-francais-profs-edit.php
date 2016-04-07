@@ -30,10 +30,8 @@ function validate_input() {
 		$result[] = "Login must be more than 4 characters";
 	}
 
-	if (empty($_POST['password'])) {
-		$result[] = "Password is required!";
-	} else if (strlen($_POST['login_name']) < 6) {
-		$result[] = "Login must be more than 6 characters";
+	if (!empty($_POST['password']) && strlen($_POST['password']) < 6) {
+		$result[] = "Password must be more than 6 characters";
 	}
 
 	return $result;
@@ -55,10 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === "GET") {
 if(isset($_POST['updateprofssubmit'])) {
 	global $wpdb;
 
-	$password = $_POST['password'];
-	if ($password) {
-		$password = md5($password);
-	}
 	$errors = validate_input();
 	$result = FALSE;
 	if (count($errors) === 0) {
@@ -70,7 +64,6 @@ if(isset($_POST['updateprofssubmit'])) {
 						'phone' => $_POST['phone'],
 						'email' => $_POST['email'],
 						'login_name' => $_POST['login_name'],
-						'password' => $password,
 						'admin_type' => 'prof',
 						'description' => $_POST['description'],
 						'micro_discipline_1' => $_POST['micro_discipline_1'],
@@ -83,10 +76,23 @@ if(isset($_POST['updateprofssubmit'])) {
 				array(
 						'profs_id' => $_POST['profs_id']
 				),
-				array('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'), //data format
+				array('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'), //data format
 				array("%d")
 		);
+		
+		$password = $_POST['password'];
+		if ($password) {
+			$password = md5($password);
+			$result = $wpdb->update(
+					$wpdb->prefix . 'francais_profs', //table
+					array('password' => $password), //data
+					array('profs_id' => $_POST['profs_id']),
+					array('%s'), //data format
+					array("%d")
+					);
+		}
 	}
+	
 	//wp_die(var_dump( $wpdb->last_query ));
 	if ($result) {
 		// redirect
@@ -109,11 +115,11 @@ global $CITY_LIST;
 		<table class="form-table">
 			<tbody>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="first_name">Prénom<span class="description">(required)</span></label></th>
+					<th scope="row"><label for="first_name">Prénom <span class="description">(required)</span></label></th>
 					<td><input type="text" name="first_name" value="<?= $data['first_name'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="family_name">Nom<span class="description">(required)</span></label></th>
+					<th scope="row"><label for="family_name">Nom <span class="description">(required)</span></label></th>
 					<td><input type="text" name="family_name" value="<?= $data['family_name'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
@@ -121,15 +127,15 @@ global $CITY_LIST;
 					<td><input type="text" name="phone" value="<?= $data['phone'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="email">Email</label></th>
+					<th scope="row"><label for="email">Email <span class="description">(required)</span></label></th>
 					<td><input type="email" name="email" value="<?= $data['email'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="login_name">Login</label></th>
+					<th scope="row"><label for="login_name">Login <span class="description">(required)</span></label></th>
 					<td><input type="text" name="login_name" value="<?= $data['login_name'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="password">Password</label></th>
+					<th scope="row"><label for="password">Password <span class="description">(required)</span></label></th>
 					<td><input type="password" name="password" value=""></td>
 				</tr>
 				<tr class="form-field">

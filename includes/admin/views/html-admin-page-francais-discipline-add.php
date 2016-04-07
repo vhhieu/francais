@@ -55,7 +55,7 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 		<table class="form-table">
 			<tbody>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="course_type">Type de cours <span class="description">(required)</span></label></th>
+					<th scope="row"><label for="course_type">Type de cours</label></th>
 					<td><select name="course_type" id="course_type">
 							<option selected="selected" value="Annuel">Annuel</option>
 							<option value="Trimestriel">Trimestriel</option>
@@ -71,11 +71,11 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 					</select></td>
 				</tr>
 				<tr class="form-field">
-					<th scope="row"><label for="micro_discipline">Micro discipline </label></th>
+					<th scope="row"><label for="micro_discipline">Micro discipline <span class="description">(required)</span></label></th>
 					<td><input name="micro_discipline" type="text" id="micro_discipline" value="<?= $_POST['micro_discipline'] ?>" size="30"></td>
 				</tr>
 				<tr class="form-field">
-					<th scope="row"><label for="age_group">Macro discipline</label></th>
+					<th scope="row"><label for="age_group">Tranche age</label></th>
 					<td><select name="age_group" id="age_group">
 							<option selected="selected" value="Enfants">Enfants</option>
 							<option value="Ado">Ado</option>
@@ -96,17 +96,17 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="max_number">Durée du cours</label></th>
+					<th scope="row"><label for="max_number">Durée du cours (minutes) <span class="description">(required)</span></label></th>
 					<td><input name="lesson_duration" type="text" id="lesson_duration" value="<?= $_POST['lesson_duration'] ?>" size="30"></td>
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="area_m2">Prix</label></th>
+					<th scope="row"><label for="area_m2">Prix (€) <span class="description">(required)</span></label></th>
 					<td><input name="price" type="text" id="price" value="<?= $_POST['price'] ?>" size="30"></td>
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="application_fee">Frais de dossier</label></th>
+					<th scope="row"><label for="application_fee">Frais de dossier (€) <span class="description">(required)</span></label></th>
 					<td><input name="application_fee" type="text" id="application_fee" value="<?= $_POST['application_fee'] ?>" size="30"></td>
 				</tr>
 				

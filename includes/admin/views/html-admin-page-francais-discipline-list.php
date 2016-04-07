@@ -33,9 +33,9 @@ class Discipline_List_Table extends WP_List_Table {
 		return array(
 				"cb" => "<input type=\"checkbox\" />",
 				"discipline_index" => "Formule de cours",
-				"lesson_duration" => "Duree du cours",
-				"price" => "Prix",
-				"application_fee" => "Frais de dossier",
+				"lesson_duration" => "Duree du cours (minutes)",
+				"price" => "Prix (€)",
+				"application_fee" => "Frais de dossier (€)",
 		);
 	}
 	

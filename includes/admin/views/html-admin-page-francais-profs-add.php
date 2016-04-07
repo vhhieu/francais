@@ -33,8 +33,8 @@ function validate_input() {
 	
 	if (empty($_POST['password'])) {
 		$result[] = "Password is required!";
-	} else if (strlen($_POST['login_name']) < 6) {
-		$result[] = "Login must be more than 6 characters";
+	} else if (strlen($_POST['password']) < 6) {
+		$result[] = "Password must be more than 6 characters";
 	}
 	
 	return $result;
@@ -99,11 +99,11 @@ global $CITY_LIST;
 		<table class="form-table">
 			<tbody>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="first_name">Prénom<span class="description">(required)</span></label></th>
+					<th scope="row"><label for="first_name">Prénom <span class="description">(required)</span></label></th>
 					<td><input type="text" name="first_name" value="<?= $_POST['first_name'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="family_name">Nom<span class="description">(required)</span></label></th>
+					<th scope="row"><label for="family_name">Nom <span class="description">(required)</span></label></th>
 					<td><input type="text" name="family_name" value="<?= $_POST['family_name'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
@@ -111,15 +111,15 @@ global $CITY_LIST;
 					<td><input type="text" name="phone" value="<?= $_POST['phone'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="email">Email</label></th>
+					<th scope="row"><label for="email">Email <span class="description">(required)</span></label></th>
 					<td><input type="email" name="email" value="<?= $_POST['email'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="login_name">Login</label></th>
+					<th scope="row"><label for="login_name">Login <span class="description">(required)</span></label></th>
 					<td><input type="text" name="login_name" value="<?= $_POST['login_name'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="password">Password</label></th>
+					<th scope="row"><label for="password">Password <span class="description">(required)</span></label></th>
 					<td><input type="password" name="password" value="<?= $_POST['password'] ?>"></td>
 				</tr>
 				<tr class="form-field">

@@ -20,8 +20,8 @@ function validate_input() {
 	include_once ( FC_PLUGIN_PATH . 'lib/EmailAddressValidator.php');
 	if (empty($_POST['room_manager_email'])) {
 		$result[] = "Mail du gestionnaire is required!";
-	} else if (!(new EmailAddressValidator())->check_email_address($_POST['email'])) {
-		$result[] = "This ({$_POST['email']}) email address is considered invalid.";
+	} else if (!(new EmailAddressValidator())->check_email_address($_POST['room_manager_email'])) {
+		$result[] = "This ({$_POST['room_manager_email']}) email address is considered invalid.";
 	}
 
 	if (empty($_POST['room_manager_name'])) {
