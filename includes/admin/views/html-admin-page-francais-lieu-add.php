@@ -111,11 +111,11 @@ global $CITY_LIST;
 					</select></td>
 				</tr>
 				<tr class="form-field">
-					<th scope="row"><label for="zip_code">Code Postal </label></th>
+					<th scope="row"><label for="zip_code">Code Postal <span class="description">(required)</span></label></th>
 					<td><input name="zip_code" type="text" id="zip_code" value="<?= $_POST['zip_code'] ?>" size="30"></td>
 				</tr>
 				<tr class="form-field">
-					<th scope="row"><label for="room_name">Nom</label></th>
+					<th scope="row"><label for="room_name">Nom <span class="description">(required)</span></label></th>
 					<td><input name="room_name" type="text" id="room_name" class="code"
 						value="<?= $_POST['room_name'] ?>" size="30"></td>
 				</tr>
@@ -136,17 +136,17 @@ global $CITY_LIST;
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="max_number">Nombre de pers max</label></th>
+					<th scope="row"><label for="max_number">Nombre de pers max <span class="description">(required)</span></label></th>
 					<td><input name="max_number" type="text" id="max_number" value="<?= $_POST['max_number'] ?>" size="30"></td>
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="area_m2">Nombre m2</label></th>
+					<th scope="row"><label for="area_m2">Nombre m2 <span class="description">(required)</span></label></th>
 					<td><input name="area_m2" type="text" id="area_m2" value="<?= $_POST['area_m2'] ?>" size="30"></td>
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="room_manager_name">Nom et prénom du gestionnaire</label></th>
+					<th scope="row"><label for="room_manager_name">Nom et prénom du gestionnaire <span class="description">(required)</span></label></th>
 					<td><input name="room_manager_name" type="text" id="room_manager_name" value="<?= $_POST['room_manager_name'] ?>" size="30"></td>
 				</tr>
 				
@@ -156,7 +156,7 @@ global $CITY_LIST;
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="room_manager_email">Mail du gestionnaire</label></th>
+					<th scope="row"><label for="room_manager_email">Mail du gestionnaire <span class="description">(required)</span></label></th>
 					<td><input name="room_manager_email" type="email" id="room_manager_email" value="<?= $_POST['room_manager_email'] ?>" size="30"></td>
 				</tr>
 			</tbody>
