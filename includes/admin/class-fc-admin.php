@@ -60,9 +60,6 @@ class FC_Admin {
 				array(__CLASS__, "init_page_francais_discipline_edit"));
 		
 		add_action( 'admin_head', array( $this, 'remove_submenu' ));
-		
-// 		remove_submenu_page( 'francais', 'francais-discipline-add' );
-// 		remove_submenu_page( 'francais', 'francais-discipline-edit' );
 	}
 	
 	public function remove_submenu() {

@@ -56,7 +56,9 @@ if(isset($_POST['updatedisciplinesubmit'])){
 }
 ?>
 <div class="wrap">
-	<h1>Edit Formule de cours</h1>
+	<h1>Edit Formule de cours <a
+			href="<?php echo admin_url('admin.php?page=francais-discipline-add'); ?>"
+			class="page-title-action">Add New</a></h1>
 	<?php if (isset($message)): ?><div class="<?php echo $result ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
 	<p>Edit Formule de cours information.</p>
 	<form method="post" name="updatediscipline" id="updatediscipline" class="validate"

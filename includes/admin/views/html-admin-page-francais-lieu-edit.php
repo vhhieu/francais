@@ -101,7 +101,9 @@ if(isset($_POST['updatelieusubmit'])){
 global $CITY_LIST;
 ?>
 <div class="wrap">
-	<h1>Update Lieu</h1>
+	<h1>Update Lieu <a
+			href="<?php echo admin_url('admin.php?page=francais-lieu-add'); ?>"
+			class="page-title-action">Add New</a></h1>
 	<?php if (isset($message)): ?><div class="<?php echo $result ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
 	<p>Update lieu information.</p>
 	<form method="post" name="createlieu" id="createlieu" class="validate"
