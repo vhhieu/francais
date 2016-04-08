@@ -34,6 +34,7 @@ class Profs_List_Table extends WP_List_Table {
 				"cb" => "<input type=\"checkbox\" />",
 				"profs_index" => "Nom",
 				"login_name" => "Login",
+				"phone" => "Tel",
 				"email" => "Mail",
 				"admin_type" => "Statut Admin",
 				"city_list" => "Ville",

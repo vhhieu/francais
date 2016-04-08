@@ -107,11 +107,11 @@ global $CITY_LIST;
 					<td><input type="text" name="family_name" value="<?= $_POST['family_name'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="phone">Tel</label></th>
+					<th scope="row"><label for="phone">Tel (pas d’espace, pas de point)</label></th>
 					<td><input type="text" name="phone" value="<?= $_POST['phone'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="email">Email <span class="description">(required)</span></label></th>
+					<th scope="row"><label for="email">Email <span class="description">(required)</span> (exemple : exemple@domaine.com)</label></th>
 					<td><input type="email" name="email" value="<?= $_POST['email'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">

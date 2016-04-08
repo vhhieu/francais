@@ -90,7 +90,7 @@ if(isset($_POST['updatelieusubmit'])){
 		$message.="Lieu updated successful!";
 	} else {
 		if (count($errors) == 0) {
-			$message = "Update failure, duplicated data may be existed!";
+			$message = "Update failure, Unknown reason!";
 		} else {
 			$message = implode("<br/>", $errors);
 		}

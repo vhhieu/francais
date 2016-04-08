@@ -98,7 +98,11 @@ if(isset($_POST['updateprofssubmit'])) {
 		// redirect
 		$message = "Profs updated successful!";
 	} else {
-		$message = "Some data invalid, Please input valid data.";
+		if (count($errors) == 0) {
+			$message = "Update failure! Unknown reason.";
+		} else {
+			$message = implode("<br/>", $errors);
+		}
 	}
 	
 	$data = $_POST;
@@ -125,11 +129,11 @@ global $CITY_LIST;
 					<td><input type="text" name="family_name" value="<?= $data['family_name'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="phone">Tel</label></th>
+					<th scope="row"><label for="phone">Tel (pas d’espace, pas de point)</label></th>
 					<td><input type="text" name="phone" value="<?= $data['phone'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="email">Email <span class="description">(required)</span></label></th>
+					<th scope="row"><label for="email">Email <span class="description">(required)</span> (exemple : exemple@domaine.com)</label></th>
 					<td><input type="email" name="email" value="<?= $data['email'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
