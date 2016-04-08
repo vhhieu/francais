@@ -83,6 +83,13 @@ final class Francais {
 		$this->define( 'FRANCAIS_VERSION', $this->version );
 		$this->define( 'WC_LOG_DIR', $upload_dir['basedir'] . '/fc-logs/' );
 		
+		// Course Mode
+		global $COURSE_MODE;
+		$COURSE_MODE = array(
+			1 => "Early Bird",
+			2 => "Last Call",
+		);
+		
 		global $CITY_LIST;
 		$CITY_LIST = array(
 			"Paris" => "Paris",
@@ -103,6 +110,7 @@ final class Francais {
 	 */
 	public function includes() {
 		include_once( 'includes/class-fc-install.php' );
+		include_once( 'includes/class-fc-uninstall.php' );
 		
 		if ( $this->is_request( 'admin' ) ) {
 			include_once( 'includes/admin/class-fc-admin.php' );
@@ -125,6 +133,7 @@ final class Francais {
 	 */
 	public function init_hooks() {
 		register_activation_hook( __FILE__, array( 'FC_Install', 'install' ) );
+		register_deactivation_hook(__FILE__, array( 'FC_UnInstall', 'uninstall' ) );
 		add_action( 'init', array( $this, 'init' ), 0 );
 	}
 	

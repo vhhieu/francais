@@ -37,6 +37,10 @@ function validate_input() {
 	if (intval($_POST['area_m2']) <= 0) {
 		$result[] = "Nombre m2 must be numberic value (> 0)";
 	}
+	
+	if (!empty($_POST['room_manager_tel']) && strlen($_POST['room_manager_tel']) > 16) {
+		$result[] = "Tél du gestionnaire must be less than 16 characters";
+	}
 
 	return $result;
 }

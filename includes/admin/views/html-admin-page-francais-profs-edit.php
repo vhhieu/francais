@@ -33,12 +33,17 @@ function validate_input() {
 	if (!empty($_POST['password']) && strlen($_POST['password']) < 6) {
 		$result[] = "Password must be more than 6 characters";
 	}
+	
+	if (!empty($_POST['phone']) && strlen($_POST['phone']) > 16) {
+		$result[] = "Tel must be less than 16 characters";
+	}
 
 	return $result;
 }
 if ($_SERVER['REQUEST_METHOD'] === "GET") {
 	if (isset($_REQUEST['movie'])) {
 		global $wpdb;
+		$wpdb->show_errors();
 		$sql = "SELECT * FROM " . $wpdb->prefix . "francais_profs WHERE profs_id = %d";
 		$obj = $wpdb->get_results($wpdb->prepare($sql, intval($_REQUEST['movie'])));
 		$data = json_decode(json_encode($obj), true);
@@ -99,7 +104,7 @@ if(isset($_POST['updateprofssubmit'])) {
 		$message = "Profs updated successful!";
 	} else {
 		if (count($errors) == 0) {
-			$message = "Update failure! Unknown reason.";
+			$message = "Update failure! Error: <br/>" . $wpdb->last_query;
 		} else {
 			$message = implode("<br/>", $errors);
 		}

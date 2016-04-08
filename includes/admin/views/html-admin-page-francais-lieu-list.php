@@ -20,26 +20,12 @@ class Room_List_Table extends WP_List_Table {
 	function __construct(){
 		global $status, $page;
 	
-		add_action( 'admin_head', array( &$this, 'admin_header' ) );
-		
 		//Set parent defaults
 		parent::__construct( array(
 				'singular'  => 'movie',     //singular name of the listed records
 				'plural'    => 'movies',    //plural name of the listed records
 				'ajax'      => false        //does this table support ajax?
 		) );
-	}
-	
-	public function admin_header() {
-		$page = ( isset($_GET['page'] ) ) ? esc_attr( $_GET['page'] ) : false;
-		wp_die("PAGE: {$page}");
-		if( 'francais-lieu' != $page ) {
-			return;
-		}
-		
-		echo '<style type="text/css">';
-		echo '.wp-list-table .column-room_index { width: 40%; }';
-		echo '</style>';
 	}
 	
 	function get_columns() {

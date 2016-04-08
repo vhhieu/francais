@@ -21,54 +21,64 @@ class FC_Admin {
 	}
 	
 	public function francais_add_menu() {
-		add_menu_page( 'Menu de cours', 'Menu de cours', 'manage_options', 'francais',
+		add_menu_page( 'Menu de cours', 'Menu de cours', 'manage_options', 'francais-course',
 				array(__CLASS__, "init_menu_francais"),
 		        plugins_url('../../assests/images/dancing_logo.png', __FILE__),'2.2.9');
 		
 		// MENU 1 - COURSE
-		add_submenu_page( 'francais', 'Course List', 'Course List', 'manage_options', "francais", 
+		add_submenu_page( 'francais-course', 'Course List', 'Course List', 'manage_options', "francais-course", 
 				array(__CLASS__, "init_menu_francais_course_list"), 1);
 		
 		// MENU 2 - LIEU
-		add_submenu_page( 'francais', 'Lieu List', 'Lieu List', 'manage_options', "francais-lieu",
+		add_submenu_page( 'francais-course', 'Lieu List', 'Lieu List', 'manage_options', "francais-lieu",
 				array(__CLASS__, "init_menu_francais_lieu_list"), 2);
 		
-		add_submenu_page( "francais", 'Add Lieu', 'Add Lieu', 'manage_options', "francais-lieu-add",
+		add_submenu_page( "francais-course", 'Add Lieu', 'Add Lieu', 'manage_options', "francais-lieu-add",
 				array(__CLASS__, "init_page_francais_lieu_add"));
 		
-		add_submenu_page( "francais", 'Edit Lieu', 'Edit Lieu', 'manage_options', "francais-lieu-edit",
+		add_submenu_page( "francais-course", 'Edit Lieu', 'Edit Lieu', 'manage_options', "francais-lieu-edit",
 				array(__CLASS__, "init_page_francais_lieu_edit"));
 		
 		// MENU 3 - PROFS
-		add_submenu_page( 'francais', 'Profs List', 'Profs List', 'manage_options', "francais-profs",
+		add_submenu_page( 'francais-course', 'Profs List', 'Profs List', 'manage_options', "francais-profs",
 				array(__CLASS__, "init_menu_francais_profs_list"), 3);
 		
-		add_submenu_page( 'francais', 'Add Profs', 'Add Profs', 'manage_options', "francais-profs-add",
+		add_submenu_page( 'francais-course', 'Add Profs', 'Add Profs', 'manage_options', "francais-profs-add",
 				array(__CLASS__, "init_page_francais_profs_add"));
 		
-		add_submenu_page( 'francais', 'Edit Profs', 'Edit Profs', 'manage_options', "francais-profs-edit",
+		add_submenu_page( 'francais-course', 'Edit Profs', 'Edit Profs', 'manage_options', "francais-profs-edit",
 				array(__CLASS__, "init_page_francais_profs_edit"));
 		
 		// MENU 4 - DISCIPLINE
-		add_submenu_page( 'francais', 'Formule de cours', 'Formule de cours', 'manage_options', "francais-discipline",
+		add_submenu_page( 'francais-course', 'Formule de cours', 'Formule de cours', 'manage_options', "francais-discipline",
 				array(__CLASS__, "init_menu_francais_discipline_list"), 4);
 		
-		add_submenu_page( 'francais', 'Add Formule de cours', 'Add Formule de cours', 'manage_options', "francais-discipline-add",
+		add_submenu_page( 'francais-course', 'Add Formule de cours', 'Add Formule de cours', 'manage_options', "francais-discipline-add",
 				array(__CLASS__, "init_page_francais_discipline_add"));
 		
-		add_submenu_page( 'francais', 'Edit Formule de cours', 'Edit Formule de cours', 'manage_options', "francais-discipline-edit",
+		add_submenu_page( 'francais-course', 'Edit Formule de cours', 'Edit Formule de cours', 'manage_options', "francais-discipline-edit",
 				array(__CLASS__, "init_page_francais_discipline_edit"));
 		
 		add_action( 'admin_head', array( $this, 'remove_submenu' ));
+		add_action( 'admin_head', array( $this, 'custom_style_lieu_list' ));
 	}
 	
 	public function remove_submenu() {
-		remove_submenu_page( 'francais', 'francais-lieu-add' );
-		remove_submenu_page( 'francais', 'francais-lieu-edit' );
-		remove_submenu_page( 'francais', 'francais-profs-add' );
-		remove_submenu_page( 'francais', 'francais-profs-edit' );
-		remove_submenu_page( 'francais', 'francais-discipline-add' );
-		remove_submenu_page( 'francais', 'francais-discipline-edit' );
+		remove_submenu_page( 'francais-course', 'francais-lieu-add' );
+		remove_submenu_page( 'francais-course', 'francais-lieu-edit' );
+		remove_submenu_page( 'francais-course', 'francais-profs-add' );
+		remove_submenu_page( 'francais-course', 'francais-profs-edit' );
+		remove_submenu_page( 'francais-course', 'francais-discipline-add' );
+		remove_submenu_page( 'francais-course', 'francais-discipline-edit' );
+// 		$page = ( isset($_GET['page'] ) ) ? esc_attr( $_GET['page'] ) : false;
+		
+// 		if( 'francais-lieu' != $page ) {
+// 			return;
+// 		}
+		
+// 		echo '<style type="text/css">';
+// 		echo '.wp-list-table .column-room_index { width: 30%; }';
+// 		echo '</style>';
 	}
 	
 	/**
@@ -99,6 +109,19 @@ class FC_Admin {
 			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}
 		include_once("views/html-admin-page-francais-lieu-list.php");
+	}
+	
+	public function custom_style_lieu_list() {
+		$page = ( isset($_GET['page'] ) ) ? esc_attr( $_GET['page'] ) : false;
+	
+		if( 'francais-lieu' != $page && 'francais-course' != $page && 'francais-discipline' != $page) {
+			return;
+		}
+	
+		echo '<style type="text/css">';
+		echo '.wp-list-table .column-room_index { width: 20%; }';
+		echo '.wp-list-table .column-discipline_index { width: 20%; }';
+		echo '</style>';
 	}
 	
 	/**

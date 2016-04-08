@@ -149,8 +149,34 @@ class FC_Install {
  		$coursetable = $tableprefix . 'course';
  		$sql = "CREATE TABLE " . $coursetable . " (
             course_id bigint(20) NOT NULL AUTO_INCREMENT,
-            course_name varchar(256) NOT NULL,
+			course_name varchar(256),
+			course_description text,
+            room_id bigint(20) NOT NULL,
+			discipline_id bigint(20) NOT NULL,
+			profs_id  bigint(20) NOT NULL,
+			number_available int(10) NOT NULL,
+			start_date date NOT NULL,
+			end_date date NOT NULL,
+			start_time time NOT NULL,
+			promo_value float NOT NULL,
+			course_mode tinyint(1) NOT NULL,
+			trial_mode tinyint(1) NOT NULL,
+			delete_flg tinyint(1) NOT NULL DEFAULT 0,
             PRIMARY KEY  (course_id)
+        ) ". $charset_collate .";";
+ 		dbDelta( $sql );
+ 		
+ 		// COURSE_TRIAL table
+ 		$coursetrialtable = $tableprefix . 'course_trial';
+ 		$sql = "CREATE TABLE " . $coursetrialtable . " (
+            course_id bigint(20) NOT NULL,
+	 		trial_no int(10) NOT NULL,
+	 		start_date date NOT NULL,
+	 		start_time time NOT NULL,
+	 		number_available int(10) NOT NULL,
+	 		PRIMARY KEY  (course_id, trial_no),
+	 		KEY course_id (course_id),
+	 		KEY trial_no (trial_no)
         ) ". $charset_collate .";";
  		dbDelta( $sql );
  		

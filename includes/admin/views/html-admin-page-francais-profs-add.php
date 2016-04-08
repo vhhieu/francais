@@ -37,6 +37,10 @@ function validate_input() {
 		$result[] = "Password must be more than 6 characters";
 	}
 	
+	if (!empty($_POST['phone']) && strlen($_POST['phone']) > 16) {
+		$result[] = "Tel must be less than 16 characters";
+	}
+	
 	return $result;
 }
 //insert
