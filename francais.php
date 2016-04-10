@@ -78,6 +78,7 @@ final class Francais {
 	
 		$this->define( 'FC_PLUGIN_FILE', __FILE__ );
 		$this->define( 'FC_PLUGIN_PATH', plugin_dir_path( __FILE__ ));
+		$this->define( 'FC_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 		$this->define( 'FC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 		$this->define( 'FC_VERSION', $this->version );
 		$this->define( 'FRANCAIS_VERSION', $this->version );
@@ -88,6 +89,12 @@ final class Francais {
 		$COURSE_MODE = array(
 			1 => "Early Bird",
 			2 => "Last Call",
+		);
+		
+		global $COURSE_TRIAL;
+		$COURSE_TRIAL = array(
+				0 => "Non",
+				1 => "Qui",
 		);
 		
 		global $CITY_LIST;

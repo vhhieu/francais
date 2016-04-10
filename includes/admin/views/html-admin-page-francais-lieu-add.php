@@ -93,7 +93,7 @@ global $CITY_LIST;
 ?>
 <div class="wrap">
 	<h1>Add New Lieu</h1>
-	<?php if (isset($message)): ?><div class="<?php echo $result ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
+	<?php if (isset($message)): ?><div class="<?php echo $result !== FALSE ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
 	<p>Create a new lieu and add them to this site.</p>
 	<form method="post" name="createlieu" id="createlieu" class="validate"
 		novalidate="novalidate" action="<?php echo $_SERVER['REQUEST_URI']; ?>">

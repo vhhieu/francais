@@ -31,7 +31,7 @@ class Course_List_Table extends WP_List_Table {
 	function get_columns() {
 		return array(
 				"cb" => "<input type=\"checkbox\" />",
-				"room_index" => "Formule de cours",
+				"room_index" => "Lieu",
 				"discipline_index" => "Formule de cours",
 				"prof_name" => "Duree du cours (minutes)",
 				"number_available" => "Nombre places disponibles",
@@ -90,6 +90,34 @@ class Course_List_Table extends WP_List_Table {
 				);
 	}
 	
+	function column_room_index($item){
+	
+		//Build row actions
+		$actions = array(
+				'edit'      => sprintf('<a href="?page=francais-course-edit&movie=%s">Edit</a>', $item['course_id']),
+				'delete'    => sprintf('<a href="?page=%s&action=%s&movie=%s">Delete</a>',$_REQUEST['page'],'delete',$item['course_id']),
+		);
+	
+		$value = $item['room_index'];
+		//Return the title contents
+		return sprintf('%1$s %2$s',
+				/*$1%s*/ $value,
+				/*$3%s*/ $this->row_actions($actions)
+				);
+	}
+	
+	function column_course_mode($item) {
+		global $COURSE_MODE;
+		$key = $item['course_mode'];
+		return $COURSE_MODE[$key];
+	}
+	
+	function column_trial_mode($item) {
+		global $COURSE_TRIAL;
+		$key = $item['trial_mode'];
+		return $COURSE_TRIAL[$key];
+	}
+	
 	/** ************************************************************************
 	 * Optional. If you need to include bulk actions in your list table, this is
 	 * the place to define them. Bulk actions are an associative array in the format
@@ -136,7 +164,7 @@ class Course_List_Table extends WP_List_Table {
 			
 			//wp_die(var_dump( $wpdb->last_query ));
 			if ($result) {
-				wp_redirect( home_url() . "/wp-admin/admin.php?page=francais-discipline", 301);
+				wp_redirect( home_url() . "/wp-admin/admin.php?page=francais-course", 301);
 				exit();
 			}
 		}

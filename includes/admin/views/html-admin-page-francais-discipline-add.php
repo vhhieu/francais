@@ -47,7 +47,7 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 ?>
 <div class="wrap">
 	<h1>Add New Formule de cours</h1>
-	<?php if (isset($message)): ?><div class="<?php echo $result ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
+	<?php if (isset($message)): ?><div class="<?php echo $result !== FALSE ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
 	<p>Create a new Formule de cours and add them to this site.</p>
 	<form method="post" name="creatediscipline" id="creatediscipline" class="validate"
 		novalidate="novalidate" action="<?php echo $_SERVER['REQUEST_URI']; ?>">

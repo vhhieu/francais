@@ -95,8 +95,8 @@ global $CITY_LIST;
 ?>
 <div class="wrap">
 	<h1>Add New Profs</h1>
-	<?php if (isset($message)): ?><div class="<?php echo $result ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
-	<p>Create a new profs and add them to this site.</p>
+	<?php if (isset($message)): ?><div class="<?php echo $result !== FALSE ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
+	<p>Créez un nouveau prof et les ajouter à ce site..</p>
 	<form method="post" name="createprofs" id="createprofs" class="validate"
 		novalidate="novalidate" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 

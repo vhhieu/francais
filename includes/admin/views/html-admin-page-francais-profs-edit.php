@@ -118,7 +118,7 @@ global $CITY_LIST;
 	<h1>Edit Profs <a
 			href="<?php echo admin_url('admin.php?page=francais-profs-add'); ?>"
 			class="page-title-action">Add New</a></h1>
-	<?php if (isset($message)): ?><div class="<?php echo $result ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
+	<?php if (isset($message)): ?><div class="<?php echo $result !== FALSE ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
 	<p>Update profs information.</p>
 	<form method="post" name="updateprofs" id="updateprofs" class="validate"
 		novalidate="novalidate" action="<?php echo $_SERVER['REQUEST_URI']; ?>">

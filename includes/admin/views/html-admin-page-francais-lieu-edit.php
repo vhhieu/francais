@@ -94,7 +94,7 @@ if(isset($_POST['updatelieusubmit'])){
 		$message.="Lieu updated successful!";
 	} else {
 		if (count($errors) == 0) {
-			$message = "Update failure, Unknown reason!";
+			$message = "Update failure, Unknown reason! " . $wpdb->last_query;
 		} else {
 			$message = implode("<br/>", $errors);
 		}
@@ -108,7 +108,7 @@ global $CITY_LIST;
 	<h1>Update Lieu <a
 			href="<?php echo admin_url('admin.php?page=francais-lieu-add'); ?>"
 			class="page-title-action">Add New</a></h1>
-	<?php if (isset($message)): ?><div class="<?php echo $result ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
+	<?php if (isset($message)): ?><div class="<?php echo $result !== FALSE ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
 	<p>Update lieu information.</p>
 	<form method="post" name="createlieu" id="createlieu" class="validate"
 		novalidate="novalidate" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
