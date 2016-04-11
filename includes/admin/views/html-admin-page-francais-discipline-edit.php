@@ -98,14 +98,34 @@ if(isset($_POST['updatedisciplinesubmit'])){
 				</tr>
 				<tr class="form-field">
 					<th scope="row"><label for="discipline_description">Description du cours</label></th>
-					<td><textarea style="height: 320px; margin-top: 37px;" cols="40"
-					     name="discipline_description" id="discipline_description"><?= $data['discipline_description'] ?></textarea></td>
+					<td>
+						<?php
+						$settings =array(
+						    'wpautop' => true,
+							"textarea_name" => "discipline_description",
+						    'media_buttons' => false,
+						    'quicktags' => true
+						);
+						
+						wp_editor($data["discipline_description"], "disciplinedescription", $settings);
+						?>
+					</td>
 				</tr>
 				
 				<tr class="form-field">
 					<th scope="row"><label for="lesson_target">A qui s'adresse ce cours</label></th>
-					<td><textarea style="height: 320px; margin-top: 37px;" cols="40"
-					     name="lesson_target" id="lesson_target"><?= $data['lesson_target'] ?></textarea></td>
+					<td>
+						<?php
+						$settings =array(
+						    'wpautop' => true,
+							"textarea_name" => "lesson_target",
+						    'media_buttons' => false,
+						    'quicktags' => true
+						);
+						
+						wp_editor($data["lesson_target"], "lessontarget", $settings);
+						?>
+					</td>
 				</tr>
 				
 				<tr class="form-field">

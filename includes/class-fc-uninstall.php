@@ -1,6 +1,6 @@
 <?php
 /**
- * Installation related functions and actions
+ * UnInstallation related functions and actions
  *
  * @author   hieuvh
  * @category Admin
@@ -43,14 +43,14 @@ class FC_UnInstall {
 	 * Un_Install FC.
 	 */
 	public static function uninstall() {
-		global $wpdb;
-		$table_prefix = $wpdb->prefix . 'francais_';
-		$table_name = $table_prefix . "course";
-		$sql = "DROP TABLE " . $table_name;
-		$result = $wpdb->query($sql);
-		if ($result) {
-			add_action( 'admin_notices', array( __CLASS__, 'uninstall_notice' ) );
-		}
+// 		global $wpdb;
+// 		$table_prefix = $wpdb->prefix . 'francais_';
+// 		$table_name = $table_prefix . "course";
+// 		$sql = "DROP TABLE " . $table_name;
+// 		$result = $wpdb->query($sql);
+// 		if ($result) {
+// 			add_action( 'admin_notices', array( __CLASS__, 'uninstall_notice' ) );
+// 		}
 	}
 }
 

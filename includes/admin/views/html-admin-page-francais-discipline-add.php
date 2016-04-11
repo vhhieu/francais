@@ -85,29 +85,55 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 				</tr>
 				<tr class="form-field">
 					<th scope="row"><label for="discipline_description">Description du cours</label></th>
-					<td><textarea style="height: 320px; margin-top: 37px;" cols="40"
-					     name="discipline_description" id="discipline_description"><?= $_POST['discipline_description'] ?></textarea></td>
+					<td>
+						<?php
+						$settings =array(
+						    'wpautop' => true,
+							"textarea_name" => "discipline_description",
+						    'media_buttons' => false,
+						    'quicktags' => true
+						);
+						
+						wp_editor($_POST["discipline_description"], "disciplinedescription", $settings);
+						?>
+					</td>
 				</tr>
 				
 				<tr class="form-field">
 					<th scope="row"><label for="lesson_target">A qui s'adresse ce cours</label></th>
-					<td><textarea style="height: 320px; margin-top: 37px;" cols="40"
-					     name="lesson_target" id="lesson_target"><?= $_POST['lesson_target'] ?></textarea></td>
+					<td>
+						<?php
+						$settings =array(
+						    'wpautop' => true,
+							"textarea_name" => "lesson_target",
+						    'media_buttons' => false,
+						    'quicktags' => true
+						);
+						
+						wp_editor($_POST["lesson_target"], "lessontarget", $settings);
+						?>
+					</td>
 				</tr>
 				
 				<tr class="form-field">
 					<th scope="row"><label for="max_number">Durée du cours (minutes) <span class="description">(required)</span></label></th>
-					<td><input name="lesson_duration" type="text" id="lesson_duration" value="<?= $_POST['lesson_duration'] ?>" size="30"></td>
+					<td><input name="lesson_duration" type="number" id="lesson_duration" value="<?= $_POST['lesson_duration'] ?>" size="30"
+							onkeypress='(event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
+							placeholder="Only number" style="width: 10%"></td>
 				</tr>
 				
 				<tr class="form-field">
 					<th scope="row"><label for="area_m2">Prix (€) <span class="description">(required)</span></label></th>
-					<td><input name="price" type="text" id="price" value="<?= $_POST['price'] ?>" size="30"></td>
+					<td><input name="price" type="number" id="price" value="<?= $_POST['price'] ?>" size="30" 
+							onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
+							placeholder="Only number" style="width: 10%"></td>
 				</tr>
 				
 				<tr class="form-field">
 					<th scope="row"><label for="application_fee">Frais de dossier (€) <span class="description">(required)</span></label></th>
-					<td><input name="application_fee" type="text" id="application_fee" value="<?= $_POST['application_fee'] ?>" size="30"></td>
+					<td><input name="application_fee" type="number" id="application_fee" value="<?= $_POST['application_fee'] ?>" size="30"
+							onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
+							placeholder="Only number" style="width: 10%"></td>
 				</tr>
 				
 			</tbody>

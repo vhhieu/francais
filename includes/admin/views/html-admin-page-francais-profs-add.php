@@ -128,8 +128,16 @@ global $CITY_LIST;
 				</tr>
 				<tr class="form-field">
 					<th scope="row"><label for="description">Description</label></th>
-					<td><textarea style="height: 320px; margin-top: 37px;" cols="40"
-					     name="description" id="description"><?= $_POST['description'] ?></textarea></td>
+					<td><?php
+						$settings =array(
+						    'wpautop' => true,
+						    'media_buttons' => false,
+						    'quicktags' => true
+						);
+						
+						wp_editor($_POST["description"], "description", $settings);
+						?>
+					</td>
 				</tr>
 				
 				<tr class="form-field">

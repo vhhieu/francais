@@ -239,7 +239,7 @@ $profs_data = json_decode(json_encode($profs_data), true);
 					
 					<td><input type="number" name="number_available"
 						value="<?= $data['number_available'] ?>" 
-						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+						onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
 						placeholder="Only number"></td>
 				</tr>
 				<tr class="form-field form-required">
@@ -314,7 +314,7 @@ $profs_data = json_decode(json_encode($profs_data), true);
 							class="description">(required)</span></label></td>
 					<td><input type="number" name="promo_value"
 						value="<?= $data['promo_value'] ?>"
-						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+						onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
 						placeholder="Only number"></td>
 				</tr>
 			</tbody>
@@ -383,7 +383,7 @@ $profs_data = json_decode(json_encode($profs_data), true);
 					<td><input type="text" class="timepicker" name="essai_start_time[]"
 						readonly="readonly" placeholder="heure"></td>
 					<td><input type="number" name="essai_number_available[]"
-						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+						onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
 						placeholder="nb places"></td>
 				</tr>
 				<?php }  else {

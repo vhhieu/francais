@@ -150,8 +150,16 @@ global $CITY_LIST;
 
 				<tr class="form-field">
 					<th scope="row"><label for="room_description">Description</label></th>
-					<td><textarea style="height: 320px; margin-top: 37px;" cols="40"
-					     name="room_description" id="room_description"><?= $data['room_description'] ?></textarea></td>
+					<td><?php
+						$settings =array(
+						    'wpautop' => true,
+							"textarea_name" => "room_description",
+						    'media_buttons' => false,
+						    'quicktags' => true
+						);
+						
+						wp_editor($data["room_description"], "roomdescription", $settings);
+						?></td>
 				</tr>
 				
 				<tr class="form-field">
