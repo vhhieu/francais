@@ -149,12 +149,16 @@ global $CITY_LIST;
 				
 				<tr class="form-field">
 					<th scope="row"><label for="max_number">Nombre de pers max <span class="description">(required)</span></label></th>
-					<td><input name="max_number" type="text" id="max_number" value="<?= $_POST['max_number'] ?>" size="30"></td>
+					<td><input name="max_number" type="number" id="max_number" value="<?= $_POST['max_number'] ?>" size="30"
+							onkeypress='return is_number(event);'
+							placeholder="Only number" style="width: 10%"></td>
 				</tr>
 				
 				<tr class="form-field">
 					<th scope="row"><label for="area_m2">Nombre m2 <span class="description">(required)</span></label></th>
-					<td><input name="area_m2" type="text" id="area_m2" value="<?= $_POST['area_m2'] ?>" size="30"></td>
+					<td><input name="area_m2" type="number" id="area_m2" value="<?= $_POST['area_m2'] ?>" size="30"
+							onkeypress='return is_number(event);'
+							placeholder="Only number" style="width: 10%"></td>
 				</tr>
 				
 				<tr class="form-field">
@@ -183,3 +187,16 @@ global $CITY_LIST;
 		</p>
 	</form>
 </div>
+<script type="text/javascript">
+function is_number(event) {
+	
+    var key = window.event ? event.keyCode : event.which;
+    if (event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 46
+     || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 38 || event.keyCode == 40) {
+        return true;
+    } else if ( key < 48 || key > 57 ) {
+        return false;
+    }
+    else return true;
+}
+</script>

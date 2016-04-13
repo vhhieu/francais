@@ -63,7 +63,7 @@ function validate_input() {
 		$end_date = DateTime::createFromFormat('d-m-Y', $_POST['end_date']);
 		if ($end_date <= $start_date) {
 			$result[] = "Date fin (dernier cours) must be newer Date début (1e cours)";
-		} else if ($start_date->format('w') !== $end_date->format('w') ) {
+		} else if ($start_date->format('w') !== $end_date->format('w') && !empty($_POST['start_date_day'])) {
 			$result[] = "Date fin (dernier cours) and Date début (1e cours) must be same day of week!";
 		}
 	}
@@ -97,6 +97,16 @@ function validate_input() {
 			} else if (intval($essai_number_available[$index]) <= 0) {
 				$result[] = "Séance essai " . ($index + 1) . " -> Nombre places disponibles must be an unsigned number!";
 			}
+		}
+	}
+	
+	// validate number available with room
+	if (count($result) === 0) {
+		global $wpdb;
+		$max_number = $wpdb->get_var("SELECT max_number FROM " . $wpdb->prefix . "francais_room WHERE room_id = " . $_POST['room_id']);
+		$number_available = intval($_POST['number_available']);
+		if ($max_number < $number_available) {
+			$result[] = "Nombre places disponibles[{$number_available}] must be less than Nombre de pers max[{$max_number}] of Lieu";
 		}
 	}
 	return $result;
@@ -216,7 +226,7 @@ $profs_data = json_decode(json_encode($profs_data), true);
 						COURS</td>
 					<td width="25%"><label for="discipline_id">Formule de cours</label></td>
 					<td>
-						<select id="discipline_id" name="discipline_id">
+						<select id="discipline_id" name="discipline_id" class="selectbox-combo">
 							<?php foreach ($discipline_data as $discipline) {?>
 							<option value="<?= $discipline['discipline_id'] ?>" <?php echo ($data['discipline_id'] == $discipline['discipline_id'] ? "selected='selected'" : "") ?>><?= $discipline['discipline_index'] ?></option>
 							<?php }?>
@@ -226,7 +236,7 @@ $profs_data = json_decode(json_encode($profs_data), true);
 				<tr class="form-field form-required">
 					<td width="25%"><label for="room_id">Lieu</label></td>
 					<td>
-						<select id="room_id" name="room_id">
+						<select id="room_id" name="room_id" class="selectbox-combo">
 							<?php foreach ($room_data as $room) {?>
 							<option value="<?= $room['room_id'] ?>" <?php echo ($data['room_id'] == $room['room_id'] ? "selected='selected'" : "") ?>><?= $room['room_index'] ?></option>
 							<?php }?>
@@ -239,13 +249,13 @@ $profs_data = json_decode(json_encode($profs_data), true);
 					
 					<td><input type="number" name="number_available"
 						value="<?= $data['number_available'] ?>" 
-						onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
+						onkeypress='return is_number(event);'
 						placeholder="Only number"></td>
 				</tr>
 				<tr class="form-field form-required">
 					<td width="25%"><label for="profs_id">Prof</label></td>
 					<td>
-						<select id="profs_id" name="profs_id">
+						<select id="profs_id" name="profs_id" class="selectbox-general">
 							<?php foreach ($profs_data as $prof) {?>
 							<option value="<?= $prof['profs_id'] ?>" <?php echo ($data['profs_id'] == $prof['profs_id'] ? "selected='selected'" : "") ?>><?= $prof['prof_name'] ?></option>
 							<?php }?>
@@ -314,7 +324,7 @@ $profs_data = json_decode(json_encode($profs_data), true);
 							class="description">(required)</span></label></td>
 					<td><input type="number" name="promo_value"
 						value="<?= $data['promo_value'] ?>"
-						onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
+						onkeypress='return is_number(event);'
 						placeholder="Only number"></td>
 				</tr>
 			</tbody>
@@ -354,12 +364,12 @@ $profs_data = json_decode(json_encode($profs_data), true);
 						style="text-align: center"><label>SEANCE ESSAI</label></td>
 					<td width="25%"><label for="trial_mode">Programmer séance essai <span
 							class="description">(required)</span></label></td>
-					<td colspan="3">
+					<td>
 						<div class="cc-selector">
-							<input style="display: none" id="trial_qui" type="radio"
+							<input style="display: none" id="trial_oui" type="radio"
 								name="trial_mode" value="1"
 								<?= $data['trial_mode'] !== '0' ? "checked='checked'" : "" ?>> <label
-								class="drinkcard-cc button-primary" for="trial_qui">Qui</label> <input
+								class="drinkcard-cc button-primary" for="trial_oui">Oui</label> <input
 								style="display: none" id="trial_non" type="radio"
 								name="trial_mode" value="0"
 								<?= $data['trial_mode'] === '0' ? "checked='checked'" : "" ?>> <label
@@ -368,7 +378,7 @@ $profs_data = json_decode(json_encode($profs_data), true);
 					</td>
 				</tr>
 				<tr class="expand">
-					<td colspan="4">
+					<td colspan="2">
 						<input type="button" id="addmore" value="+"
 						onclick="insertRow()" class="button button-primary" />
 						<input type="button" id="removetrial" value="-"
@@ -378,12 +388,12 @@ $profs_data = json_decode(json_encode($profs_data), true);
 				<?php if (!isset($data['essai_start_date'])) {?>
 				<tr class="expand">
 					<td>Séance essai 1</td>
-					<td><input type="text" class="datepicker" name="essai_start_date[]"
-						readonly="readonly" placeholder="date"></td>
-					<td><input type="text" class="timepicker" name="essai_start_time[]"
-						readonly="readonly" placeholder="heure"></td>
-					<td><input type="number" name="essai_number_available[]"
-						onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
+					<td><input type="text" class="datepicker" name="essai_start_date[]" style="width: 120px"
+						readonly="readonly" placeholder="date">
+						<input type="text" class="timepicker" name="essai_start_time[]" style="width: 120px"
+						readonly="readonly" placeholder="heure">
+						<input type="number" name="essai_number_available[]" style="width: 120px"
+						onkeypress='return is_number(event);'
 						placeholder="nb places"></td>
 				</tr>
 				<?php }  else {
@@ -392,12 +402,12 @@ $profs_data = json_decode(json_encode($profs_data), true);
 				?>
 				<tr class="expand">
 					<td>Séance essai 1</td>
-					<td><input type="text" class="datepicker" name="essai_start_date[]"
-						readonly="readonly" placeholder="date" value="<?= $data['essai_start_date'][$index] ?>"></td>
-					<td><input type="text" class="timepicker" name="essai_start_time[]"
-						readonly="readonly" placeholder="heure" value="<?= $data['essai_start_time'][$index] ?>"></td>
-					<td><input type="number" name="essai_number_available[]"
-						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+					<td><input type="text" class="datepicker" name="essai_start_date[]" style="width: 120px"
+						readonly="readonly" placeholder="date" value="<?= $data['essai_start_date'][$index] ?>">
+						<input type="text" class="timepicker" name="essai_start_time[]" style="width: 120px"
+						readonly="readonly" placeholder="heure" value="<?= $data['essai_start_time'][$index] ?>">
+						<input type="number" name="essai_number_available[]" style="width: 120px" 
+						onkeypress='return is_number(event);' 
 						placeholder="nb places" value="<?= $data['essai_number_available'][$index] ?>"></td>
 				</tr>
 				<?php }}?>
@@ -432,7 +442,7 @@ discipline_price[<?= $discipline['discipline_id']?>] = <?= $discipline['price']?
 
 jQuery(document).ready(function() {
 	var duration = discipline_duration[jQuery("#discipline_id").val()];
-	var duration_text = "" + duration;
+	var duration_text = "" + duration + "h";
 	if (duration > 60) {
 		duration_text = Math.floor(duration / 60) + "h";
 		if ((duration % 60) > 0) {
@@ -443,12 +453,17 @@ jQuery(document).ready(function() {
 		}
 	}
 
-	var parts = jQuery("#start_date").val().split("-");
-	var dt = new Date(parseInt(parts[2], 10),
-	                  parseInt(parts[1], 10) - 1,
-	                  parseInt(parts[0], 10));
-	var day_value = weekday[dt.getDay()];
-	jQuery("input[name='start_date_day']").val(day_value);
+	var ds = jQuery("#discipline_id").find(":selected").text();
+	if (!ds.startsWith("Annuel") && !ds.startsWith("Trimestriel")) {
+		jQuery("input[name='start_date_day']").val("");
+	} else if (jQuery("#start_date").val() != "") {
+		var parts = jQuery("#start_date").val().split("-");
+		var dt = new Date(parseInt(parts[2], 10),
+		                  parseInt(parts[1], 10) - 1,
+		                  parseInt(parts[0], 10));
+		var day_value = weekday[dt.getDay()];
+		jQuery("input[name='start_date_day']").val(day_value);
+	}
 	
 	jQuery("input[name='lesson_duration']").val(duration_text);
 	jQuery("input[name='price']").val(discipline_price[jQuery("#discipline_id").val()]);
@@ -470,6 +485,11 @@ jQuery(document).ready(function() {
     });
 });
 jQuery("#start_date").on("change", function() {
+	var ds = jQuery("#discipline_id").find(":selected").text();
+	if (!ds.startsWith("Annuel") && !ds.startsWith("Trimestriel")) {
+		jQuery("input[name='start_date_day']").val("");
+		return;
+	}
 	var parts = this.value.split("-");
 	var dt = new Date(parseInt(parts[2], 10),
 	                  parseInt(parts[1], 10) - 1,
@@ -478,8 +498,20 @@ jQuery("#start_date").on("change", function() {
 	jQuery("input[name='start_date_day']").val(day_value);
 });
 jQuery("#discipline_id").on("change", function() {
+	var ds = jQuery("#discipline_id").find(":selected").text();
+	if (!ds.startsWith("Annuel") && !ds.startsWith("Trimestriel")) {
+		jQuery("input[name='start_date_day']").val("");
+	} else if (jQuery("#start_date").val() != "") {
+		var parts = jQuery("#start_date").val().split("-");
+		var dt = new Date(parseInt(parts[2], 10),
+		                  parseInt(parts[1], 10) - 1,
+		                  parseInt(parts[0], 10));
+		var day_value = weekday[dt.getDay()];
+		jQuery("input[name='start_date_day']").val(day_value);
+	}
+	
 	var duration = discipline_duration[this.value];
-	var duration_text = "" + duration;
+	var duration_text = "" + duration + "h";
 	if (duration > 60) {
 		duration_text = Math.floor(duration / 60) + "h";
 		if ((duration % 60) > 0) {
@@ -512,11 +544,11 @@ function insertRow() {
     inp1.value = '';
     inp1.id = "trial_date_" + (len-1);
     jQuery(inp1).removeClass('hasDatepicker')
-    var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+    var inp2 = new_row.cells[1].getElementsByTagName('input')[1];
     inp2.value = '';
     inp2.id = "trial_time_" + (len-1);
     
-    var inp3 = new_row.cells[3].getElementsByTagName('input')[0];
+    var inp3 = new_row.cells[1].getElementsByTagName('input')[2];
     inp3.value = '';
     
     x.getElementsByTagName('tbody')[0].appendChild(new_row);
@@ -532,5 +564,16 @@ function removeRow() {
     if (x.rows.length <= 3) {
     	jQuery("#removetrial").prop("disabled", true);
     }
+}
+function is_number(event) {
+	
+    var key = window.event ? event.keyCode : event.which;
+    if (event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 46
+     || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 38 || event.keyCode == 40) {
+        return true;
+    } else if ( key < 48 || key > 57 ) {
+        return false;
+    }
+    else return true;
 }
 </script>

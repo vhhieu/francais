@@ -1,3 +1,9 @@
+.selectbox-general {
+	width: 200px;
+}
+.selectbox-combo {
+	width: 400px;
+}
 .header-block {
 	background-color: #ECECEC;
 }
@@ -23,7 +29,7 @@
     display:inline-block;
     text-align: center;
     vertical-align: middle;
-    width:200px;
+    width:150px;
     -webkit-transition: all 100ms ease-in;
        -moz-transition: all 100ms ease-in;
             transition: all 100ms ease-in;

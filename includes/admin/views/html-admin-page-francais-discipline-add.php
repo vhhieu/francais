@@ -8,25 +8,51 @@ if (! defined ( 'ABSPATH' )) {
 	exit ();
 }
 
+function validate_input() {
+	$result = array();
+	if (empty($_POST['lesson_duration'])) {
+		$result[] = "Durée du cours is required!";
+	} else if (intval($_POST['lesson_duration']) <= 0) {
+		$result[] = "Durée du cours must be an unsigned number!";
+	}
+	
+	if (empty($_POST['price'])) {
+		$result[] = "Prix is required!";
+	} else if (intval($_POST['price']) <= 0) {
+		$result[] = "Prix must be an unsigned number!";
+	}
+	
+	if (empty($_POST['application_fee'])) {
+		$result[] = "Frais de dossier is required!";
+	} else if (intval($_POST['application_fee']) <= 0) {
+		$result[] = "Durée du cours must be an unsigned number!";
+	}
+	
+	return $result;
+}
 //insert
 if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandcontinue'])){
 	global $wpdb;
-
-	$result = $wpdb->insert(
+	$errors = validate_input();
+	$result = false;
+	
+	if (count($errors) === 0) {
+		$result = $wpdb->insert(
 			$wpdb->prefix . 'francais_discipline', //table
 			array(
-					'course_type' => $_POST['course_type'],
-					'macro_discipline' => $_POST['macro_discipline'],
-					'micro_discipline' => $_POST['micro_discipline'],
-					'age_group' => $_POST['age_group'],
-					'discipline_description' => $_POST['discipline_description'],
-					'lesson_target' => $_POST['lesson_target'],
-					'lesson_duration' => intval($_POST['lesson_duration']),
-					'price' => intval($_POST['price']),
-					'application_fee' => intval($_POST['application_fee']),
+				'course_type' => $_POST['course_type'],
+				'macro_discipline' => $_POST['macro_discipline'],
+				'micro_discipline' => $_POST['micro_discipline'],
+				'age_group' => $_POST['age_group'],
+				'discipline_description' => $_POST['discipline_description'],
+				'lesson_target' => $_POST['lesson_target'],
+				'lesson_duration' => intval($_POST['lesson_duration']),
+				'price' => intval($_POST['price']),
+				'application_fee' => intval($_POST['application_fee']),
 			), //data
 			array('%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d') //data format
-	);
+		);
+	}
 	
 	//wp_die(var_dump( $wpdb->last_query ));
 	if ($result !== FALSE) {
@@ -40,8 +66,11 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 			$message.="Discipline inserted";
 		}
 	} else {
-		
-		$message.="Some Data invalid, Please input valid data.";
+		if (count($errors) == 0) {
+			$message = "Insert failure, Debug sql: " . $wpdb->last_query;
+		} else {
+			$message = implode("<br/>", $errors);
+		}
 	}
 }
 ?>
@@ -56,31 +85,40 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 			<tbody>
 				<tr class="form-field form-required">
 					<th scope="row"><label for="course_type">Type de cours</label></th>
-					<td><select name="course_type" id="course_type">
-							<option selected="selected" value="Annuel">Annuel</option>
-							<option value="Trimestriel">Trimestriel</option>
-							<option value="Stage journée">Stage journée</option>
-							<option value="Stage WE">Stage WE</option>
+					<td><select name="course_type" id="course_type" class="selectbox-general">
+							<?php global $COURSE_TYPE; foreach ($COURSE_TYPE as $course_type_key => $course_type) {?>
+							<option value="<?= $course_type_key ?>" <?php echo ($_POST['course_type'] == $course_type_key ? "selected='selected'" : "") ?>><?= $course_type ?></option>
+							<?php }?>
 					</select></td>
 				</tr>
 				<tr class="form-field">
 					<th scope="row"><label for="macro_discipline">Macro discipline</label></th>
-					<td><select name="macro_discipline" id="macro_discipline">
-							<option selected="selected" value="Theatre">Theatre</option>
-							<option value="Dance">Dance</option>
+					<td><select name="macro_discipline" id="macro_discipline" class="selectbox-general">
+							<?php global $MARCO_DISCIPLINE; foreach ($MARCO_DISCIPLINE as $macro_key => $macro_value) {?>
+							<option value="<?= $macro_key ?>" <?php echo ($_POST['macro_discipline'] == $macro_key ? "selected='selected'" : "") ?>><?= $macro_value ?></option>
+							<?php }?>
 					</select></td>
 				</tr>
 				<tr class="form-field">
 					<th scope="row"><label for="micro_discipline">Micro discipline <span class="description">(required)</span></label></th>
-					<td><input name="micro_discipline" type="text" id="micro_discipline" value="<?= $_POST['micro_discipline'] ?>" size="30"></td>
+					<td><select name="micro_discipline" id="micro_discipline" class="selectbox-general">
+						<?php global $MICRO_DISCIPLINE;
+							$macro_discipline = "Dance";
+							if (isset($_POST['macro_discipline'])) {
+								$macro_discipline = $_POST['macro_discipline'];
+							}
+							$micro_discipline = $MICRO_DISCIPLINE[$macro_discipline];
+							foreach ($micro_discipline as $micro_key => $micro_value) {?>
+								<option value="<?= $micro_value ?>" <?php echo ($_POST['micro_discipline'] == $micro_value ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
+						<?php }?>
+					</select></td>
 				</tr>
 				<tr class="form-field">
 					<th scope="row"><label for="age_group">Tranche age</label></th>
-					<td><select name="age_group" id="age_group">
-							<option selected="selected" value="Enfants">Enfants</option>
-							<option value="Ado">Ado</option>
-							<option value="Adultes">Adultes</option>
-							<option value="Seniors">Seniors</option>
+					<td><select name="age_group" id="age_group" class="selectbox-general">
+							<?php global $AGE_GROUP; foreach ($AGE_GROUP as $age_key => $age_value) {?>
+							<option value="<?= $age_key ?>" <?php echo ($_POST['age_group'] == $age_key ? "selected='selected'" : "") ?>><?= $age_value ?></option>
+							<?php }?>
 					</select></td>
 				</tr>
 				<tr class="form-field">
@@ -116,23 +154,23 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="max_number">Durée du cours (minutes) <span class="description">(required)</span></label></th>
+					<th scope="row"><label for="lesson_duration">Durée du cours (minutes) <span class="description">(required)</span></label></th>
 					<td><input name="lesson_duration" type="number" id="lesson_duration" value="<?= $_POST['lesson_duration'] ?>" size="30"
-							onkeypress='(event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
+							onkeypress='return is_number(event);'
 							placeholder="Only number" style="width: 10%"></td>
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="area_m2">Prix (€) <span class="description">(required)</span></label></th>
+					<th scope="row"><label for="price">Prix (€) <span class="description">(required)</span></label></th>
 					<td><input name="price" type="number" id="price" value="<?= $_POST['price'] ?>" size="30" 
-							onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
+							onkeypress='return is_number(event);'
 							placeholder="Only number" style="width: 10%"></td>
 				</tr>
 				
 				<tr class="form-field">
 					<th scope="row"><label for="application_fee">Frais de dossier (€) <span class="description">(required)</span></label></th>
 					<td><input name="application_fee" type="number" id="application_fee" value="<?= $_POST['application_fee'] ?>" size="30"
-							onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 46'
+							onkeypress='return is_number(event);'
 							placeholder="Only number" style="width: 10%"></td>
 				</tr>
 				
@@ -148,3 +186,32 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 		</p>
 	</form>
 </div>
+<script type="text/javascript">
+var micro_discipline = {};
+<?php global $MICRO_DISCIPLINE; foreach ($MICRO_DISCIPLINE as $marco => $discipline) {?>
+micro_discipline['<?= $marco ?>'] = {};
+<?php foreach ($discipline as $key => $value) {?>
+micro_discipline['<?= $marco ?>']['<?= $key ?>'] = '<?= $value ?>';
+<?php }}?>
+
+jQuery('select[name="macro_discipline"]').change(
+    function(){
+    	var md = jQuery(this).val();
+        jQuery('select[name="micro_discipline"]').find('option').remove().end();
+        var arr = micro_discipline[md];
+ 		for (i = 0; i < Object.keys(arr).length; i++) {
+ 			jQuery('select[name="micro_discipline"]').append("<option value='" + arr[i] + "'>" + arr[i] + " </option>");
+ 		}         
+    });
+
+function is_number(event) {
+    var key = window.event ? event.keyCode : event.which;
+    if (event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 46
+     || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 38 || event.keyCode == 40) {
+        return true;
+    } else if ( key < 48 || key > 57 ) {
+        return false;
+    }
+    else return true;
+}
+</script>

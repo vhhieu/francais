@@ -94,7 +94,35 @@ final class Francais {
 		global $COURSE_TRIAL;
 		$COURSE_TRIAL = array(
 				0 => "Non",
-				1 => "Qui",
+				1 => "Oui",
+		);
+		
+		global $COURSE_TYPE;
+		$COURSE_TYPE = array(
+				"Annuel" => "Annuel",
+				"Trimestriel" => "Trimestriel",
+				"Stage journée" => "Stage journée",
+				"Stage WE" => "Stage WE",
+		);
+		
+		global $MARCO_DISCIPLINE;
+		$MARCO_DISCIPLINE = array(
+				"Dance" => "Dance",
+				"Theatre" => "Theatre",
+		);
+		
+		global $MICRO_DISCIPLINE;
+		$MICRO_DISCIPLINE = array(
+				"Dance" => array("Clip danse", "Danse classique", "Danse de couple", "Hip-Hop", "Salsa", "Swing"),
+				"Theatre" => array("Théâtre"),
+		);
+		
+		global $AGE_GROUP;
+		$AGE_GROUP = array(
+				"Enfants" => "Enfants",
+				"Ado" => "Ado",
+				"Adultes" => "Adultes",
+				"Seniors" => "Seniors",
 		);
 		
 		global $CITY_LIST;
