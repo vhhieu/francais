@@ -66,8 +66,9 @@ if(isset($_POST['createlieusubmit']) || isset($_POST['createlieuandcontinue'])){
 						'room_manager_name' => $_POST['room_manager_name'],
 						'room_manager_tel' => $_POST['room_manager_tel'],
 						'room_manager_email' => $_POST['room_manager_email'],
+						'is_erp' => $_POST['is_erp'],
 				), //data
-				array('%s','%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s') //data format
+				array('%s','%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d') //data format
 		);
 	}
 	//wp_die(var_dump( $wpdb->last_query ));
@@ -102,13 +103,13 @@ global $CITY_LIST;
 			<tbody>
 				<tr class="form-field form-required">
 					<th scope="row"><label for="country">Pays <span class="description">(required)</span></label></th>
-					<td><select name="country" id="country">
+					<td><select name="country" id="country" class="selectbox-general"> 
 							<option selected="selected" value="France">France</option>
 					</select></td>
 				</tr>
 				<tr class="form-field">
 					<th scope="row"><label for="city">Ville</label></th>
-					<td><select name="city" id="city">
+					<td><select name="city" id="city" class="selectbox-general">
 							<?php foreach ($CITY_LIST as $city) {?>
 							<option value="<?= $city ?>" <?php echo ($_POST['city'] == $city ? "selected='selected'" : "") ?>><?= $city ?></option>
 							<?php }?>
@@ -167,13 +168,24 @@ global $CITY_LIST;
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="room_manager_tel">Tél du gestionnaire</label></th>
+					<th scope="row"><label for="room_manager_tel">Tél du gestionnaire (<span style="color:red">pas d’espace, pas de point</span>)</label></th>
 					<td><input name="room_manager_tel" type="text" id="room_manager_tel" value="<?= $_POST['room_manager_tel'] ?>" size="30"></td>
 				</tr>
 				
 				<tr class="form-field">
 					<th scope="row"><label for="room_manager_email">Mail du gestionnaire <span class="description">(required)</span></label></th>
 					<td><input name="room_manager_email" type="email" id="room_manager_email" value="<?= $_POST['room_manager_email'] ?>" size="30"></td>
+				</tr>
+				<tr class="form-field">
+					<th scope="row"><label for="is_erp">Norme ERP ?</label></th>
+					<td>
+						<div class="cc-selector">
+							<input style="display: none" id="is_erp_oui" type="radio" name="is_erp" value="1" <?= $_POST['is_erp'] != 0 ? "checked='checked'" : "" ?>>
+							<label class="drinkcard-cc button-primary" for="is_erp_oui">OUI</label>
+							<input style="display: none" id="is_erp_non" type="radio" name="is_erp" value="0" <?= $_POST['is_erp'] == 0 ? "checked='checked'" : "" ?>>
+							<label class="drinkcard-cc button-primary" for="is_erp_non">NON</label>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>

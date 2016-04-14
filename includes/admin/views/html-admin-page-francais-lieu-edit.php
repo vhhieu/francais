@@ -73,28 +73,30 @@ if(isset($_POST['updatelieusubmit'])){
 						'zip_code' => $_POST['zip_code'],
 						'room_name' => $_POST['room_name'],
 						'address' => $_POST['address'],
-						'address_detail' => $_POST['address_detail'],
-						'room_description' => $_POST['room_description'],
+						'address_detail' => stripslashes_deep($_POST['address_detail']),
+						'room_description' => stripslashes_deep($_POST['room_description']),
 						'max_number' => intval($_POST['max_number']),
 						'area_m2' => intval($_POST['area_m2']),
 						'room_manager_name' => $_POST['room_manager_name'],
 						'room_manager_tel' => $_POST['room_manager_tel'],
 						'room_manager_email' => $_POST['room_manager_email'],
+						'is_erp' => $_POST['is_erp'],
 				), //data
 				array(
 						'room_id' => $_POST['room_id']
 				),
-				array('%s','%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s'), //data format
+				array('%s','%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d'), //data format
 				array("%d") // where format
 		);
 	}
-	//wp_die(var_dump( $wpdb->last_query ));
+	
 	if ($result !== FALSE) {
 		// redirect
 		$message.="Lieu updated successful!";
+		wp_die($wpdb->last_query);
 	} else {
 		if (count($errors) == 0) {
-			$message = "Update failure, Unknown reason! " . $wpdb->last_query;
+			$message = "Update failure, Unknown reason! " . $_POST['room_description'];
 		} else {
 			$message = implode("<br/>", $errors);
 		}
@@ -123,7 +125,7 @@ global $CITY_LIST;
 				</tr>
 				<tr class="form-field">
 					<th scope="row"><label for="city">Ville</label></th>
-					<td><select name="city" id="city">
+					<td><select name="city" id="city" class="selectbox-general">
 							<?php foreach ($CITY_LIST as $city) {?>
 							<option value="<?= $city ?>" <?php echo ($data['city'] == $city ? "selected='selected'" : "") ?>><?= $city ?></option>
 							<?php }?>
@@ -182,13 +184,24 @@ global $CITY_LIST;
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="room_manager_tel">Tél du gestionnaire</label></th>
+					<th scope="row"><label for="room_manager_tel">Tél du gestionnaire (<span style="color:red">pas d’espace, pas de point</span>)</label></th>
 					<td><input name="room_manager_tel" type="text" id="room_manager_tel" value="<?= $data['room_manager_tel'] ?>" size="30"></td>
 				</tr>
 				
 				<tr class="form-field">
 					<th scope="row"><label for="room_manager_email">Mail du gestionnaire <span class="description">(required)</span></label></th>
 					<td><input name="room_manager_email" type="email" id="room_manager_email" value="<?= $data['room_manager_email'] ?>" size="30"></td>
+				</tr>
+				<tr class="form-field">
+					<th scope="row"><label for="is_erp">Norme ERP ?</label></th>
+					<td>
+						<div class="cc-selector">
+							<input style="display: none" id="is_erp_oui" type="radio" name="is_erp" value="1" <?= $data['is_erp'] != 0 ? "checked='checked'" : "" ?>>
+							<label class="drinkcard-cc button-primary" for="is_erp_oui">OUI</label>
+							<input style="display: none" id="is_erp_non" type="radio" name="is_erp" value="0" <?= $data['is_erp'] == 0 ? "checked='checked'" : "" ?>>
+							<label class="drinkcard-cc button-primary" for="is_erp_non">NON</label>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>

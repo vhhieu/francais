@@ -29,7 +29,7 @@ class FC_Admin {
 		add_submenu_page( 'francais-course', 'Course List', 'Course List', 'manage_options', "francais-course", 
 				array(__CLASS__, "init_menu_francais_course_list"), 1);
 		
-		$suffix = add_submenu_page( 'francais-course', 'Créer un cours', 'Créer un cours', 'manage_options', "francais-course-add",
+		$suffix = add_submenu_page( 'francais-course', 'Crï¿½er un cours', 'Crï¿½er un cours', 'manage_options', "francais-course-add",
 				array(__CLASS__, "init_menu_francais_course_add"), 1);
 		
 		add_submenu_page( 'francais-course', 'Edit cours', 'Edit cours', 'manage_options', "francais-course-edit",
@@ -92,7 +92,7 @@ class FC_Admin {
 // 			return;
 // 		}
 		
-		wp_enqueue_style( "custom_wp_admin_css" );
+		wp_enqueue_style( 'custom_wp_admin_css' );
 		wp_enqueue_style('fc_js_time_style');
 		wp_enqueue_style('jquery_ui_spinner_css');
 		wp_enqueue_script('jquery_ui_spinner_js');
