@@ -146,6 +146,7 @@ final class Francais {
 	public function includes() {
 		include_once( 'includes/class-fc-install.php' );
 		include_once( 'includes/class-fc-uninstall.php' );
+		include_once( 'includes/class-fc-shortcode.php' );
 		
 		if ( $this->is_request( 'admin' ) ) {
 			include_once( 'includes/admin/class-fc-admin.php' );
@@ -160,7 +161,7 @@ final class Francais {
 	 * Frontend include
 	 */
 	public function frontend_includes() {
-		
+		include_once( 'includes/class-fc-frontend.php' );
 	}
 	
 	/**
