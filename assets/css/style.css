@@ -1,17 +1,16 @@
 .selectsearch {
-   margin: 50px;
    border: 1px solid #111;
    border-radius: 5px;
    background: transparent;
-   width: 150px;
+   width: 200px;
    padding: 5px 35px 5px 5px;
-   font-size: 16px;
+   font-size: 12px;
    border: 1px solid #ccc;
    height: 34px;
    -webkit-appearance: none;
    -moz-appearance: none;
    appearance: none;
-    background: url(http://www.stackoverflow.com/favicon.ico) 96% / 15% no-repeat #eee;
+   background: url("../images/down_icon.png") 99% / 15% no-repeat #eee;
 }
 /*target Internet Explorer 9 and Internet Explorer 10:*/
 @media screen and (min-width:0\0) { 
@@ -21,12 +20,12 @@
     }
 }
 
-.banner-ft { 
-    height: 80px; 
-    position: fixed; 
-    bottom: 15px;
-    width:100%; 
-    background: #ccc; 
-    opacity: 1;
-    z-index: 100;
+.fixed-bottom {
+position:fixed;
+   left:0px;
+   bottom:0px;
+   height:110px;
+   width:100%;
+   background: rgba(0, 0, 170, 0.6);
+   z-index: 100;
 }
