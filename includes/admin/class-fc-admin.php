@@ -29,7 +29,7 @@ class FC_Admin {
 		add_submenu_page( 'francais-course', 'Course List', 'Course List', 'manage_options', "francais-course", 
 				array(__CLASS__, "init_menu_francais_course_list"), 1);
 		
-		$suffix = add_submenu_page( 'francais-course', 'Cr�er un cours', 'Cr�er un cours', 'manage_options', "francais-course-add",
+		$suffix = add_submenu_page( 'francais-course', 'Créer un cours', 'Cr�er un cours', 'manage_options', "francais-course-add",
 				array(__CLASS__, "init_menu_francais_course_add"), 1);
 		
 		add_submenu_page( 'francais-course', 'Edit cours', 'Edit cours', 'manage_options', "francais-course-edit",
