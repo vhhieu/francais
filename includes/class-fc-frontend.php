@@ -77,20 +77,27 @@ class FC_Frontend {
 	public static function create_sub_menu_micro($macro_discipline, $city) {
 		global $wpdb;
 		$prefix = $wpdb->prefix . "francais";
-		$sql = "SELECT age_group, micro_discipline FROM {$prefix}_discipline WHERE macro_discipline = '{$macro_discipline}'
-				  AND EXISTS (
-				    SELECT 1 FROM {$prefix}_course WHERE room_id IN (
-				     SELECT room_id FROM {$prefix}_room WHERE city = '{$city}'
-				    )
-				  ) ORDER BY age_group;";
+		$sql = "SELECT d.age_group, d.micro_discipline FROM {$prefix}_discipline d 
+					INNER JOIN {$prefix}_course c USING(discipline_id)
+					INNER JOIN {$prefix}_room r USING (room_id)
+				WHERE d.macro_discipline = '{$macro_discipline}' AND r.city = '{$city}'
+				GROUP BY d.age_group, d.micro_discipline
+				ORDER BY d.age_group;";
+	
 		$data = $wpdb->get_results ( $sql );
 		if (empty($data)) {
 			return "";
 		}
 		
 		$sub_micro = "";
+		$current_age_group = "";
 		foreach ($data as $entity) {
 			$value = strtoupper($entity->micro_discipline);
+			$age_group = strtoupper($entity->age_group);
+			if ($age_group !== $current_age_group) {
+				$current_age_group = $age_group;
+				$sub_micro .= "<li><b>COURS DE {$age_group}:</b></li>";
+			}
 			$sub_micro .=
 				"<li class='menu-item menu-item-type-custom menu-item-object-custom'>
 			    	<a href='#'><span>COURS DE {$value}</span></a>
