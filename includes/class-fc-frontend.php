@@ -89,7 +89,10 @@ class FC_Frontend {
 			return "";
 		}
 		
-		$sub_micro = "";
+		$city = strtoupper($city);
+		$macro_discipline = strtoupper($macro_discipline);
+		
+		$sub_micro = "<li><b>COURS DE {$macro_discipline} {$city}</b></li><li></li>";
 		$current_age_group = "";
 		foreach ($data as $entity) {
 			$value = strtoupper($entity->micro_discipline);

@@ -27,9 +27,85 @@ class FC_Install {
 	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'check_version' ), 5 );
+		add_action( 'init', array( __CLASS__, 'create_taxonomies' ), 1 );
 		add_action( 'admin_init', array( __CLASS__, 'install_actions' ) );
 	}
-
+		
+	public static function create_post_type() {
+		if (post_type_exists('courses')) {
+			return;
+		}
+		
+		$labels = array(
+			"name" => "Courses",	
+			"singular_name" => "Course"
+		);
+		
+		$args = array(
+			"labels" => $labels,
+			"public" => true
+		);
+		
+		register_post_type("courses", $args);
+	}
+	
+	// create a custom taxonomy name it topics for your posts
+	public static function create_taxonomies() {
+		if (taxonomy_exists ( 'dance' ) || taxonomy_exists ( 'theatre' )) {
+			return;
+		}
+		
+		// Add new taxonomy, make it hierarchical like categories
+		// first do the translations part for GUI
+		$labels = array (
+			'name' => _x ( 'Dance', 'taxonomy general name' ) 
+		);
+		
+		// Now register the taxonomy
+		register_taxonomy ( 'dance', 'courses', array (
+				'hierarchical' => false,
+				'labels' => $labels,
+				'show_ui' => true,
+				'public' => true,
+				'show_in_menu' => false,
+				'show_in_nav_menus' => false,
+				'rewrite' => array (
+					'slug' => 'dance',
+					'with_front' => true 
+				)
+		) );
+		
+		if (!term_exists('Courses', 'dance')) {
+			wp_insert_term('Courses', 'dance', array('description' => 'Dance Course', 'slug' => 'courses'));
+		}
+		
+		// Add new taxonomy, make it hierarchical like categories
+		// first do the translations part for GUI
+		$labels = array (
+				'name' => _x ( 'Theatre', 'taxonomy general name' )
+		);
+		
+		// Now register the taxonomy
+		register_taxonomy ( 'theatre', 'courses', array (
+				'hierarchical' => false,
+				'labels' => $labels,
+				'show_ui' => true,
+				'show_in_menu' => false,
+				'show_in_nav_menus' => false,
+				'public' => true,
+				'rewrite' => array (
+						'slug' => 'theatre',
+						'with_front' => true
+				)
+		) );
+		
+		if (!term_exists('Courses', 'theatre')) {
+			wp_insert_term('Courses', 'theatre', array('description' => 'Theatre Course', 'slug' => 'courses'));
+		}
+		
+		flush_rewrite_rules ();
+	}
+	
 	/**
 	 * Check Francais version and run the updater is required.
 	 *
@@ -95,6 +171,8 @@ class FC_Install {
 		
 		FC_Install::update_fc_version();
 		FC_Install::update_db_version();
+		FC_Install::create_post_type();
+		FC_Install::create_taxonomies();
 	}
 
 	/**
@@ -224,6 +302,7 @@ class FC_Install {
 			micro_discipline varchar(32) NOT NULL,
 			age_group varchar(64) NOT NULL,
 			photo varchar(512),
+	 		short_description varchar(512),
 			discipline_description text,
 	 		lesson_target text,
 			lesson_duration int(10) NOT NULL DEFAULT 0,
