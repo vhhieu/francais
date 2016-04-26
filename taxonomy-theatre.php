@@ -1,6 +1,6 @@
 <?php
 /**
- * The Dance Taxonomy template file.
+ * The Theatre Taxonomy template file.
  *
  * @since onetake 1.0.0
  */
@@ -14,7 +14,7 @@ $prefix = $wpdb->prefix;
 $sql = "SELECT d.* FROM {$prefix}francais_discipline d
 			INNER JOIN {$prefix}francais_course c USING(discipline_id)
 			INNER JOIN {$prefix}francais_room r USING (room_id)
-		WHERE d.micro_discipline = %s AND r.city = %s AND d.age_group = %s AND d.macro_discipline='dance'";
+		WHERE d.micro_discipline = %s AND r.city = %s AND d.age_group = %s AND d.macro_discipline='theatre'";
 
 $sql = $wpdb->prepare($sql, $discipline, $city, $age_group);
 

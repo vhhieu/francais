@@ -75,6 +75,8 @@ class FC_Frontend {
 	}
 	
 	public static function create_sub_menu_micro($macro_discipline, $city) {
+		$macro_discipline = strtolower($macro_discipline);
+		$base_url = home_url() . "/{$macro_discipline}/courses?city={$city}";
 		global $wpdb;
 		$prefix = $wpdb->prefix . "francais";
 		$sql = "SELECT d.age_group, d.micro_discipline FROM {$prefix}_discipline d 
@@ -101,9 +103,11 @@ class FC_Frontend {
 				$current_age_group = $age_group;
 				$sub_micro .= "<li><b>COURS DE {$age_group}:</b></li>";
 			}
+			
+			$url = $base_url . "&age={$entity->age_group}&dis={$entity->micro_discipline}";
 			$sub_micro .=
 				"<li class='menu-item menu-item-type-custom menu-item-object-custom'>
-			    	<a href='#'><span>COURS DE {$value}</span></a>
+			    	<a href='{$url}'><span>COURS DE {$value}</span></a>
 				</li>";
 		}
 		$result = "<ul class='sub-menu'>{$sub_micro}</ul>";
