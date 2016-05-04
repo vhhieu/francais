@@ -153,7 +153,7 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 					</select></td>
 				</tr>
 				<tr class="form-field">
-					<th scope="row"><label for="short_description">Description du cours</label></th>
+					<th scope="row"><label for="short_description">Short Description</label></th>
 					<td>
 						<input id="short_description" name="short_description" type="text" value="<?= $_POST['short_description'] ?>"> 
 					</td>
