@@ -442,8 +442,8 @@ discipline_price[<?= $discipline['discipline_id']?>] = <?= $discipline['price']?
 
 jQuery(document).ready(function() {
 	var duration = discipline_duration[jQuery("#discipline_id").val()];
-	var duration_text = "" + duration + "h";
-	if (duration > 60) {
+	var duration_text = "" + duration + "m";
+	if (duration >= 60) {
 		duration_text = Math.floor(duration / 60) + "h";
 		if ((duration % 60) > 0) {
 			if ((duration % 60) < 10) {
