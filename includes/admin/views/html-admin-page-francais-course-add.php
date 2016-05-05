@@ -468,8 +468,8 @@ jQuery("#discipline_id").on("change", function() {
 		jQuery("input[name='start_date_day']").val(day_value);
 	}
 	var duration = discipline_duration[this.value];
-	var duration_text = duration + "h";
-	if (duration > 60) {
+	var duration_text = duration + "m";
+	if (duration >= 60) {
 		duration_text = Math.floor(duration / 60) + "h";
 		if ((duration % 60) > 0) {
 			if ((duration % 60) < 10) {
