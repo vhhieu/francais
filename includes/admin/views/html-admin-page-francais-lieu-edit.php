@@ -93,10 +93,9 @@ if(isset($_POST['updatelieusubmit'])){
 	if ($result !== FALSE) {
 		// redirect
 		$message.="Lieu updated successful!";
-		wp_die($wpdb->last_query);
 	} else {
 		if (count($errors) == 0) {
-			$message = "Update failure, Unknown reason! " . $_POST['room_description'];
+			$message = "Update failure, Unknown reason! " . $wpdb->last_query;
 		} else {
 			$message = implode("<br/>", $errors);
 		}
