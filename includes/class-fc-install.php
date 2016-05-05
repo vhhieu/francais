@@ -28,7 +28,70 @@ class FC_Install {
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'check_version' ), 5 );
 		add_action( 'init', array( __CLASS__, 'create_taxonomies' ), 1 );
+		add_action( 'init', array( __CLASS__, 'create_city_taxonomies' ), 2 );
+		add_action( 'init', array( __CLASS__, 'create_discipline_taxonomies' ), 2 );
+		
+		add_action( 'discipline_add_form_fields', array( __CLASS__, 'discipline_taxonomy_add_new_meta_field'), 10, 2 );
+		add_action( 'discipline_edit_form_fields', array( __CLASS__, 'discipline_taxonomy_edit_meta_field'), 10, 2 );
+		add_action( 'create_discipline', array( __CLASS__, 'save_macro_discipline'), 10, 2 );
+		add_action( 'edited_discipline', array( __CLASS__, 'save_macro_discipline'), 10, 2 );
+		
 		add_action( 'admin_init', array( __CLASS__, 'install_actions' ) );
+	}
+	
+	// Save
+	public static function save_macro_discipline($term_id) {
+		if (isset($_POST['term_meta'])) {
+			$t_id = $term_id;
+			$term_meta = get_option( "taxonomy_$t_id" );
+			$cat_keys = array_keys( $_POST['term_meta'] );
+			foreach ( $cat_keys as $key ) {
+				if ( isset ( $_POST['term_meta'][$key] ) ) {
+					$term_meta[$key] = $_POST['term_meta'][$key];
+				}
+			}
+			
+			// Save the option array.
+			update_option( "taxonomy_$t_id", $term_meta );
+		}
+	}
+	
+	// Add Meta (macro discipline)
+	public static function discipline_taxonomy_add_new_meta_field() {
+		$html = 
+		"<div class='form-field'>
+			<label for='term_meta[macro_discipline]'>Macro Discipline</label>
+			<select name='term_meta[macro_discipline]' id='macro_discipline' class='selectbox-general'>
+				<option value='Dance' selected='selected'>Dance</option>
+				<option value='Theatre'>Theatre</option>
+			</select>
+		</div>";
+		echo $html;
+	}
+	
+	// Add Meta (macro discipline)
+	public static function discipline_taxonomy_edit_meta_field($term) {
+		// put the term ID into a variable
+		$t_id = $term->term_id;
+		
+		// retrieve the existing value(s) for this meta field. This returns an array
+		$term_meta = get_option( "taxonomy_$t_id" );
+		$macro_discipline = esc_attr( $term_meta['macro_discipline'] ) ? esc_attr( $term_meta['macro_discipline'] ) : '';
+		
+		$dance_selected = $macro_discipline === "Dance" ? "selected='selected'" : "";
+		$theatre_selected = $macro_discipline === "Theatre" ? "selected='selected'" : "";
+		
+		$html =
+		"<tr class='form-field'>
+			<th scope='row' valign='top'><label for='term_meta[custom_term_meta]'>Macro Discipline</label></th>
+			<td>
+				<select name='term_meta[macro_discipline]' id='macro_discipline' class='selectbox-general'>
+				<option value='Dance' {$dance_selected}>Dance</option>
+				<option value='Theatre' {$theatre_selected}>Theatre</option>
+			</select>
+			</td>
+		</tr>";
+		echo $html;
 	}
 		
 	public static function create_post_type() {
@@ -47,6 +110,76 @@ class FC_Install {
 		);
 		
 		register_post_type("courses", $args);
+	}
+	
+	public static function create_city_taxonomies() {
+		if (taxonomy_exists ( 'city' )) {
+			return;
+		}
+		
+		$labels = array (
+			'name' => _x ( 'Cities', 'taxonomy general name' ),
+			'singular_name' => _x ( 'City', 'taxonomy singular name' ),
+			'search_items' => "Search Cities",
+			'menu_name' => __("Cities"),
+			'all_items' => __("All Cities"),
+			'edit_item' => __("Edit City"),
+			'add_new_item' => __("Add City"),
+			'new_item_name' => __("City Name"),
+			'not_found' => __("No City found.")
+		);
+		
+		register_taxonomy ( 'city', 'courses', array (
+				'hierarchical' => false,
+				'labels' => $labels,
+				'public' => false,
+				'show_ui' => true,
+				'query_var' => true,
+				'rewrite' => false,
+		) );
+		
+		global $CITY_LIST;
+		foreach ($CITY_LIST as $slug => $name) {
+			if (!term_exists($name, 'city')) {
+				wp_insert_term($name, 'city', array('description' => $name, 'slug' => $slug));
+			}
+		}
+	}
+	
+	public static function create_discipline_taxonomies() {
+		if (taxonomy_exists ( 'discipline' )) {
+			return;
+		}
+	
+		$labels = array (
+				'name' => _x ( 'Micro Disciplines', 'taxonomy general name' ),
+				'singular_name' => _x ( 'Micro Discipline', 'taxonomy singular name' ),
+				'search_items' => "Search Micro Discipline",
+				'menu_name' => __("Micro Disciplines"),
+				'all_items' => __("All Micro Disciplines"),
+				'edit_item' => __("Edit Micro Discipline"),
+				'add_new_item' => __("Add Micro Discipline"),
+				'new_item_name' => __("Micro Discipline Name"),
+				'not_found' => __("No Micro Discipline found.")
+		);
+	
+		register_taxonomy ( 'discipline', 'courses', array (
+				'hierarchical' => false,
+				'labels' => $labels,
+				'public' => false,
+				'show_ui' => true,
+				'query_var' => true,
+				'rewrite' => false,
+		) );
+		
+		global $MICRO_DISCIPLINE;
+		foreach ($MICRO_DISCIPLINE as $macro => $arr) {
+			foreach ($arr as $dis) {
+				if (!term_exists($dis, 'discipline')) {
+					wp_insert_term($dis, 'discipline', array('description' => $dis, 'slug' => $dis));
+				}
+			}
+		}
 	}
 	
 	// create a custom taxonomy name it topics for your posts

@@ -18,6 +18,35 @@ if ( ! class_exists( 'FC_Admin' ) ) :
 class FC_Admin {
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'francais_add_menu' ) );
+		add_action( 'parent_file', array( $this, 'correct_menu_position' ) );
+	}
+	
+	public function correct_menu_position() {
+		global $current_screen;
+		$taxonomy = $current_screen->taxonomy;
+		global $parent_file, $submenu_file;
+		if ($taxonomy == 'city' || $taxonomy == 'discipline') {
+			$parent_file = 'francais-course';
+		}
+		
+		if (is_admin()) {
+			$page = $_GET['page'];
+			if ($page === 'francais-course-add' || $$page === 'francais-course-edit') {
+				$parent_file = "francais-course";
+				$submenu_file = "francais-course";
+			} else if ($page === 'francais-lieu-add' || $$page === 'francais-lieu-edit') {
+				$parent_file = "francais-course";
+				$submenu_file = "francais-lieu";
+			} else if ($page === 'francais-profs-add' || $$page === 'francais-profs-edit') {
+				$parent_file = "francais-course";
+				$submenu_file = "francais-profs";
+			} else if ($page === 'francais-discipline-add' || $$page === 'francais-discipline-edit') {
+				$parent_file = "francais-course";
+				$submenu_file = "francais-discipline";
+			}
+		}
+		
+		return $parent_file;
 	}
 	
 	public function francais_add_menu() {
@@ -55,7 +84,7 @@ class FC_Admin {
 		add_submenu_page( 'francais-course', 'Edit Profs', 'Edit Profs', 'manage_options', "francais-profs-edit",
 				array(__CLASS__, "init_page_francais_profs_edit"));
 		
-		// MENU 4 - DISCIPLINE
+		// MENU 4 - Formule de cours
 		add_submenu_page( 'francais-course', 'Formule de cours', 'Formule de cours', 'manage_options', "francais-discipline",
 				array(__CLASS__, "init_menu_francais_discipline_list"), 4);
 		
@@ -64,6 +93,12 @@ class FC_Admin {
 		
 		add_submenu_page( 'francais-course', 'Edit Formule de cours', 'Edit Formule de cours', 'manage_options', "francais-discipline-edit",
 				array(__CLASS__, "init_page_francais_discipline_edit"));
+		
+		// MENU 5 - Cities
+		add_submenu_page( 'francais-course', 'Cities', 'Cities', 'manage_options', "edit-tags.php?taxonomy=city", null, 5);
+		
+		// MENU 6 - Micro Discipline
+		add_submenu_page( 'francais-course', 'Micro Discipline', 'Micro Discipline', 'manage_options', "edit-tags.php?taxonomy=discipline", null, 6);
 		
 		add_action( 'admin_head', array( $this, 'remove_submenu' ));
 		add_action( 'admin_head', array( $this, 'custom_style_lieu_list' ));

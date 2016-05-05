@@ -184,12 +184,18 @@ class FC_Shortcode {
 		// TODO: will use it.
 		$num_of_page = (int) ($total / 12) + ($total % 12 > 0 ? 1 : 0); // TODO: need 12 because option NUMBER OF TEACHER.
 		
-		$content = "";
+		$html = "<div class='row' style='padding-top: 50px;'>";
+		$count = 0;
 		foreach ($data as $obj) {
-			$content .= FC_Shortcode::teacher_content($obj);
+			$count++;
+			$html .= FC_Shortcode::teacher_content($obj);
+			if ($count % 6 == 0 && $count < $total) {
+				$html .= "</div>
+						<div class='row' style='padding-top: 50px;'>";
+			}
 		}
 		
-		$html = "";
+		$html .= "</div>";
 		for ($page = 1; $page <= $num_of_page; $page++) {
 			
 		}
@@ -200,10 +206,14 @@ class FC_Shortcode {
 	
 	public static function teacher_content($t) {
 		$img = home_url() . '/' . $t->photo;
+		if (empty($t->photo)) {
+			$img = plugins_url('../assets/images/no_image_available.png', __FILE__);
+		}
+		
 		$html = "
 		  <div class='col-md-2'>
 		    <div class='row'>
-		      <div class='col-md-11 course-block'>
+		      <div class='col-md-11 course-block text-center'>
 		          <img src='{$img}'><br/>
 		          <p>{$t->full_name}</p>
 		          <p style='color: #DEC67E;'>{$t->micro_discipline_1}</p>

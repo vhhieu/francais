@@ -127,16 +127,16 @@ final class Francais {
 		
 		global $CITY_LIST;
 		$CITY_LIST = array(
-			"Paris" => "Paris",
-			"Lyon" => "Lyon",
-			"Marseille" => "Marseille",
-			"Toulouse" => "Toulouse",
-			"Strasbourg" => "Strasbourg",
-			"Bordeaux" => "Bordeaux",
-			"Nantes" => "Nantes",
-			"Lille" => "Lille",
-			"Montpellier" => "Montpellier",
-			"Rennes" => "Rennes",
+			"paris" => "Paris",
+			"lyon" => "Lyon",
+			"marseille" => "Marseille",
+			"toulouse" => "Toulouse",
+			"strasbourg" => "Strasbourg",
+			"bordeaux" => "Bordeaux",
+			"nantes" => "Nantes",
+			"lille" => "Lille",
+			"montpellier" => "Montpellier",
+			"rennes" => "Rennes",
 		);
 	}
 	
