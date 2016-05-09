@@ -22,10 +22,8 @@ function validate_input() {
 		$result[] = "Prix must be an unsigned number!";
 	}
 	
-	if (empty($_POST['application_fee'])) {
-		$result[] = "Frais de dossier is required!";
-	} else if (intval($_POST['application_fee']) <= 0) {
-		$result[] = "Durée du cours must be an unsigned number!";
+	if (intval($_POST['application_fee']) < 0) {
+		$result[] = "Frais de dossier must be an unsigned number!";
 	}
 	
 	$uploadedfile = $_FILES['photo'];
@@ -205,7 +203,7 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 				</tr>
 				
 				<tr class="form-field">
-					<th scope="row"><label for="application_fee">Frais de dossier (€) <span class="description">(required)</span></label></th>
+					<th scope="row"><label for="application_fee">Frais de dossier (€)</label></th>
 					<td><input name="application_fee" type="number" id="application_fee" value="<?= $_POST['application_fee'] ?>" size="30"
 							onkeypress='return is_number(event);'
 							placeholder="Only number" style="width: 10%"></td>

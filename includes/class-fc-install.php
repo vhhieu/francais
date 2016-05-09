@@ -30,15 +30,28 @@ class FC_Install {
 		add_action( 'init', array( __CLASS__, 'create_taxonomies' ), 1 );
 		add_action( 'init', array( __CLASS__, 'create_city_taxonomies' ), 2 );
 		add_action( 'init', array( __CLASS__, 'create_discipline_taxonomies' ), 2 );
+		add_action( 'init', array( __CLASS__, 'custom_rewrite_rule' ), 10, 0 );
 		
 		add_action( 'discipline_add_form_fields', array( __CLASS__, 'discipline_taxonomy_add_new_meta_field'), 10, 2 );
 		add_action( 'discipline_edit_form_fields', array( __CLASS__, 'discipline_taxonomy_edit_meta_field'), 10, 2 );
 		add_action( 'create_discipline', array( __CLASS__, 'save_macro_discipline'), 10, 2 );
 		add_action( 'edited_discipline', array( __CLASS__, 'save_macro_discipline'), 10, 2 );
-		
 		add_action( 'admin_init', array( __CLASS__, 'install_actions' ) );
+		
 	}
 	
+	public static function custom_query_vars( $vars ) {
+		$vars[] = 'age';
+		return $vars;
+	}
+	
+	public static function custom_rewrite_rule() {
+		// "cours-de-danse-classique-ados"
+		add_rewrite_rule('cours-de-danse-classique([^/]*)/?', 'index.php?dance=courses&age=$matches[1]', 'top');
+		add_filter( 'query_vars', array( __CLASS__, 'custom_query_vars' ));
+		flush_rewrite_rules ();
+	}
+		
 	// Save
 	public static function save_macro_discipline($term_id) {
 		if (isset($_POST['term_meta'])) {

@@ -101,7 +101,7 @@ class FC_Frontend {
 			$age_group = strtoupper($entity->age_group);
 			if ($age_group !== $current_age_group) {
 				$current_age_group = $age_group;
-				$sub_micro .= "<li><b>COURS DE {$age_group}:</b></li>";
+				$sub_micro .= "<li><b>COURS {$age_group}:</b></li>";
 			}
 			
 			$url = $base_url . "&age={$entity->age_group}&dis={$entity->micro_discipline}";
