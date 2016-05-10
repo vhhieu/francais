@@ -37,17 +37,28 @@ class FC_Install {
 		add_action( 'create_discipline', array( __CLASS__, 'save_macro_discipline'), 10, 2 );
 		add_action( 'edited_discipline', array( __CLASS__, 'save_macro_discipline'), 10, 2 );
 		add_action( 'admin_init', array( __CLASS__, 'install_actions' ) );
-		
+		add_filter( 'template_include', array( __CLASS__, 'taxonomy_template_include' ), 99 );
+	}
+	
+	public static function taxonomy_template_include($template) {
+		if (get_query_var("age")) {
+			$_GET['age'] = get_query_var("age");
+		}
+		if (get_query_var("dis")) {
+			$_GET['dis'] = get_query_var("dis");
+		}
+		return $template;
 	}
 	
 	public static function custom_query_vars( $vars ) {
 		$vars[] = 'age';
+		$vars[] = 'dis';
 		return $vars;
 	}
 	
 	public static function custom_rewrite_rule() {
 		// "cours-de-danse-classique-ados"
-		add_rewrite_rule('cours-de-danse-classique([^/]*)/?', 'index.php?dance=courses&age=$matches[1]', 'top');
+		add_rewrite_rule('cours-de-(.*)-(.*)/?', 'index.php?dance=courses&dis=$matches[1]&age=$matches[2]', 'top');
 		add_filter( 'query_vars', array( __CLASS__, 'custom_query_vars' ));
 		flush_rewrite_rules ();
 	}
