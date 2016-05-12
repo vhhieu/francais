@@ -90,6 +90,7 @@ if(isset($_POST['createprofssubmit']) || isset($_POST['createprofsandcontinue'])
 	$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
 	
 	if (count($errors) === 0) {
+		$_POST      = array_map('stripslashes_deep', $_POST);
 		$result = $wpdb->insert(
 				$wpdb->prefix . 'francais_profs', //table
 				array(

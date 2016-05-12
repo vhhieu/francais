@@ -28,6 +28,7 @@ class FC_Install {
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'check_version' ), 5 );
 		add_action( 'init', array( __CLASS__, 'create_taxonomies' ), 1 );
+		add_action( 'init', array( __CLASS__, 'create_dance_categories' ), 1 );
 		add_action( 'init', array( __CLASS__, 'create_city_taxonomies' ), 2 );
 		add_action( 'init', array( __CLASS__, 'create_discipline_taxonomies' ), 2 );
 		add_action( 'init', array( __CLASS__, 'custom_rewrite_rule' ), 10, 0 );
@@ -41,24 +42,21 @@ class FC_Install {
 	}
 	
 	public static function taxonomy_template_include($template) {
-		if (get_query_var("age")) {
-			$_GET['age'] = get_query_var("age");
-		}
-		if (get_query_var("dis")) {
-			$_GET['dis'] = get_query_var("dis");
+		if (get_query_var("city")) {
+			$_GET['city'] = get_query_var("city");
 		}
 		return $template;
 	}
 	
 	public static function custom_query_vars( $vars ) {
-		$vars[] = 'age';
-		$vars[] = 'dis';
+		$vars[] = 'city';
 		return $vars;
 	}
 	
 	public static function custom_rewrite_rule() {
 		// "cours-de-danse-classique-ados"
-		add_rewrite_rule('cours-de-(.*)-(.*)/?', 'index.php?dance=courses&dis=$matches[1]&age=$matches[2]', 'top');
+		add_rewrite_rule('cours-de-(.*)-(.*)/?', 'index.php?course_cate=$matches[1]&city=$matches[2]', 'top');
+		add_rewrite_rule('cours-de-(.*)/?', 'index.php?course_cate=$matches[1]', 'top');
 		add_filter( 'query_vars', array( __CLASS__, 'custom_query_vars' ));
 		flush_rewrite_rules ();
 	}
@@ -204,6 +202,39 @@ class FC_Install {
 				}
 			}
 		}
+	}
+	
+	public static function create_dance_categories() {
+		if (taxonomy_exists ( 'course_cate' )) {
+			return;
+		}
+	
+		// Add new taxonomy, make it hierarchical like categories
+		// first do the translations part for GUI
+		$labels = array (
+				'name' => _x ( 'course_cate', 'taxonomy general name' )
+		);
+	
+		// Now register the taxonomy
+		register_taxonomy ( 'course_cate', 'courses', array (
+				'hierarchical' => false,
+				'labels' => $labels,
+				'show_ui' => true,
+				'public' => true,
+				'show_in_menu' => false,
+				'show_in_nav_menus' => false,
+				'query_var' => true,
+				'rewrite' => array (
+						'slug' => 'course_cate',
+						'with_front' => false,
+				)
+		) );
+		
+		if (!term_exists('Test Categories', 'course_cate')) {
+			wp_insert_term('Test Categories', 'course_cate', array('description' => 'Test Categories', 'slug' => 'test_course'));
+		}
+	
+		flush_rewrite_rules ();
 	}
 	
 	// create a custom taxonomy name it topics for your posts
@@ -494,6 +525,28 @@ class FC_Install {
 			UNIQUE KEY login_name_unique (login_name),
  			UNIQUE KEY profs_unique (email),
             PRIMARY KEY  (profs_id)
+        ) ". $charset_collate .";";
+ 		dbDelta( $sql );
+ 		
+ 		$categoriestable = $tableprefix . 'category';
+ 		$sql = "CREATE TABLE " . $categoriestable . " (
+            category_id bigint(20) NOT NULL AUTO_INCREMENT,
+            slug varchar(32) NOT NULL,
+ 			macro_discipline varchar(32) NOT NULL,
+			micro_discipline varchar(32),
+			age_group varchar(32),
+			photo varchar(256),
+			description text NOT NULL,
+			description_with_city text NOT NULL,
+			title text NOT NULL,
+			title_with_city text NOT NULL,
+			meta_description text NOT NULL,
+			meta_description_with_city text NOT NULL,
+			meta_keyword text NOT NULL,
+			meta_keyword text_with_city NOT NULL,
+			UNIQUE KEY slug (slug),
+			UNIQUE KEY discipline_age_group (macro_discipline, micro_discipline, age_group),
+            PRIMARY KEY  (category_id)
         ) ". $charset_collate .";";
  		dbDelta( $sql );
  		//wp_die(var_dump( $wpdb->last_query ));

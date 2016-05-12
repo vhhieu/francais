@@ -107,22 +107,22 @@ final class Francais {
 		
 		global $MARCO_DISCIPLINE;
 		$MARCO_DISCIPLINE = array(
-				"Dance" => "Dance",
-				"Theatre" => "Theatre",
+				"dance" => "Dance",
+				"theatre" => "Théâtre",
 		);
 		
 		global $MICRO_DISCIPLINE;
 		$MICRO_DISCIPLINE = array(
-				"Dance" => array("Clip danse", "Danse classique", "Danse de couple", "Hip-Hop", "Salsa", "Swing"),
-				"Theatre" => array("Théâtre"),
+				"dance" => array("Clip danse", "Danse classique", "Danse de couple", "Hip-Hop", "Salsa", "Swing"),
+				"theatre" => array("Théâtre"),
 		);
 		
 		global $AGE_GROUP;
 		$AGE_GROUP = array(
-				"Enfants" => "Enfants",
-				"Ado" => "Ado",
-				"Adultes" => "Adultes",
-				"Seniors" => "Seniors",
+				"enfants" => "Enfants",
+				"ado" => "Ado",
+				"adultes" => "Adultes",
+				"seniors" => "Seniors",
 		);
 		
 		global $CITY_LIST;

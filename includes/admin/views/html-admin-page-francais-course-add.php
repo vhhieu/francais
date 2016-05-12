@@ -81,6 +81,7 @@ function validate_input() {
 }
 
 if(isset($_POST['createcoursesubmit']) || isset($_POST['createcourseandcontinue'])){
+	$_POST      = array_map('stripslashes_deep', $_POST);
 	$errors = validate_input();
 	$result = FALSE;
 	if (count($errors) === 0) {

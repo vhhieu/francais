@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
 //update
 if(isset($_POST['updatelieusubmit'])){
+	$_POST      = array_map('stripslashes_deep', $_POST);
 	global $wpdb;
 
 	$errors = validate_input();

@@ -59,6 +59,7 @@ function validate_input() {
 }
 //insert
 if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandcontinue'])){
+	$_POST      = array_map('stripslashes_deep', $_POST);
 	global $wpdb;
 	$errors = validate_input();
 	$result = false;
@@ -71,9 +72,9 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 				'macro_discipline' => $_POST['macro_discipline'],
 				'micro_discipline' => $_POST['micro_discipline'],
 				'age_group' => $_POST['age_group'],
-				'short_description' => stripslashes_deep($_POST['short_description']),
-				'discipline_description' => stripslashes_deep($_POST['discipline_description']),
-				'lesson_target' => stripslashes_deep($_POST['lesson_target']),
+				'short_description' => stripslashes($_POST['short_description']),
+				'discipline_description' => stripslashes($_POST['discipline_description']),
+				'lesson_target' => stripslashes($_POST['lesson_target']),
 				'lesson_duration' => intval($_POST['lesson_duration']),
 				'price' => intval($_POST['price']),
 				'application_fee' => intval($_POST['application_fee']),
@@ -132,7 +133,7 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 					<th scope="row"><label for="micro_discipline">Micro discipline <span class="description">(required)</span></label></th>
 					<td><select name="micro_discipline" id="micro_discipline" class="selectbox-general">
 						<?php global $MICRO_DISCIPLINE;
-							$macro_discipline = "Dance";
+							$macro_discipline = "dance";
 							if (isset($_POST['macro_discipline'])) {
 								$macro_discipline = $_POST['macro_discipline'];
 							}

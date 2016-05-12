@@ -113,6 +113,7 @@ function validate_input() {
 }
 
 if(isset($_POST['updatecoursesubmit'])) {
+	$_POST      = array_map('stripslashes_deep', $_POST);
 	$errors = validate_input();
 	$result = FALSE;
 	if (count($errors) === 0) {

@@ -31,18 +31,21 @@ class FC_Admin {
 		
 		if (is_admin()) {
 			$page = $_GET['page'];
-			if ($page === 'francais-course-add' || $$page === 'francais-course-edit') {
+			if ($page === 'francais-course-add' || $page === 'francais-course-edit') {
 				$parent_file = "francais-course";
 				$submenu_file = "francais-course";
-			} else if ($page === 'francais-lieu-add' || $$page === 'francais-lieu-edit') {
+			} else if ($page === 'francais-lieu-add' || $page === 'francais-lieu-edit') {
 				$parent_file = "francais-course";
 				$submenu_file = "francais-lieu";
-			} else if ($page === 'francais-profs-add' || $$page === 'francais-profs-edit') {
+			} else if ($page === 'francais-profs-add' || $page === 'francais-profs-edit') {
 				$parent_file = "francais-course";
 				$submenu_file = "francais-profs";
-			} else if ($page === 'francais-discipline-add' || $$page === 'francais-discipline-edit') {
+			} else if ($page === 'francais-discipline-add' || $page === 'francais-discipline-edit') {
 				$parent_file = "francais-course";
 				$submenu_file = "francais-discipline";
+			} else if ($page === 'francais-category-add' || $page === 'francais-category-edit') {
+				$parent_file = "francais-course";
+				$submenu_file = "francais-category";
 			}
 		}
 		
@@ -100,6 +103,14 @@ class FC_Admin {
 		// MENU 6 - Micro Discipline
 		add_submenu_page( 'francais-course', 'Micro Discipline', 'Micro Discipline', 'manage_options', "edit-tags.php?taxonomy=discipline", null, 6);
 		
+		// MENU 7 - Categories
+		add_submenu_page( 'francais-course', 'Categories', 'Course Categories', 'manage_options', "francais-category",
+				array(__CLASS__, "init_menu_francais_category_list"), 7);
+		add_submenu_page( 'francais-course', 'Add Category', 'Add Category', 'manage_options', "francais-category-add",
+				array(__CLASS__, "init_menu_francais_category_add"));
+		add_submenu_page( 'francais-course', 'Edit Category', 'Edit Category', 'manage_options', "francais-category-edit",
+				array(__CLASS__, "init_menu_francais_category_edit"));
+		
 		add_action( 'admin_head', array( $this, 'remove_submenu' ));
 		add_action( 'admin_head', array( $this, 'custom_style_lieu_list' ));
 		add_action( 'admin_init', array ($this, 'register_bootstrap'));
@@ -146,6 +157,8 @@ class FC_Admin {
 		remove_submenu_page( 'francais-course', 'francais-profs-edit' );
 		remove_submenu_page( 'francais-course', 'francais-discipline-add' );
 		remove_submenu_page( 'francais-course', 'francais-discipline-edit' );
+		remove_submenu_page( 'francais-course', 'francais-category-add' );
+		remove_submenu_page( 'francais-course', 'francais-category-edit' );
 	}
 	
 	/**
@@ -269,9 +282,9 @@ class FC_Admin {
 	 * Init Discipline Add Menu Content
 	 */
 	public function init_page_francais_discipline_add() {
-// 		if ( !current_user_can( 'manage_options' ) )  {
-// 			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
-// 		}
+		if ( !current_user_can( 'manage_options' ) )  {
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+		}
 		include_once("views/html-admin-page-francais-discipline-add.php");
 	}
 	
@@ -283,6 +296,36 @@ class FC_Admin {
 			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}
 		include_once("views/html-admin-page-francais-discipline-edit.php");
+	}
+	
+	/**
+	 * Init Categories List Menu Content
+	 */
+	public function init_menu_francais_category_list() {
+		if ( !current_user_can( 'manage_options' ) )  {
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+		}
+		include_once("views/html-admin-page-francais-category-list.php");
+	}
+	
+	/**
+	 * Init Categories Add Menu Content
+	 */
+	public function init_menu_francais_category_add() {
+		if ( !current_user_can( 'manage_options' ) )  {
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+		}
+		include_once("views/html-admin-page-francais-category-add.php");
+	}
+	
+	/**
+	 * Init Categories Edit Menu Content
+	 */
+	public function init_menu_francais_category_edit() {
+		if ( !current_user_can( 'manage_options' ) )  {
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+		}
+		include_once("views/html-admin-page-francais-category-edit.php");
 	}
 }
 endif;

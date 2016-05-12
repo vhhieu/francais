@@ -46,6 +46,7 @@ function validate_input() {
 }
 //insert
 if(isset($_POST['createlieusubmit']) || isset($_POST['createlieuandcontinue'])){
+	$_POST      = array_map('stripslashes_deep', $_POST);
 	global $wpdb;
 
 	$errors = validate_input();
@@ -60,7 +61,7 @@ if(isset($_POST['createlieusubmit']) || isset($_POST['createlieuandcontinue'])){
 						'room_name' => $_POST['room_name'],
 						'address' => $_POST['address'],
 						'address_detail' => $_POST['address_detail'],
-						'room_description' => $_POST['room_description'],
+						'room_description' => stripslashes_deep($_POST['room_description']),
 						'max_number' => intval($_POST['max_number']),
 						'area_m2' => intval($_POST['area_m2']),
 						'room_manager_name' => $_POST['room_manager_name'],
