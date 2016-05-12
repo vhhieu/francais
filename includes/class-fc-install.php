@@ -543,7 +543,7 @@ class FC_Install {
 			meta_description text NOT NULL,
 			meta_description_with_city text NOT NULL,
 			meta_keyword text NOT NULL,
-			meta_keyword text_with_city NOT NULL,
+			meta_keyword_with_city text NOT NULL,
 			UNIQUE KEY slug (slug),
 			UNIQUE KEY discipline_age_group (macro_discipline, micro_discipline, age_group),
             PRIMARY KEY  (category_id)
