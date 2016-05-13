@@ -98,7 +98,7 @@ class FC_Admin {
 				array(__CLASS__, "init_page_francais_discipline_edit"));
 		
 		// MENU 5 - Cities
-		add_submenu_page( 'francais-course', 'Cities', 'Cities', 'manage_options', "edit-tags.php?taxonomy=city", null, 5);
+		add_submenu_page( 'francais-course', 'Villes', 'Villes', 'manage_options', "edit-tags.php?taxonomy=city", null, 5);
 		
 		// MENU 6 - Micro Discipline
 		add_submenu_page( 'francais-course', 'Micro Discipline', 'Micro Discipline', 'manage_options', "edit-tags.php?taxonomy=discipline", null, 6);

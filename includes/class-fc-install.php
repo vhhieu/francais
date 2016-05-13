@@ -140,15 +140,15 @@ class FC_Install {
 		}
 		
 		$labels = array (
-			'name' => _x ( 'Cities', 'taxonomy general name' ),
+			'name' => _x ( 'Villes', 'taxonomy general name' ),
 			'singular_name' => _x ( 'City', 'taxonomy singular name' ),
 			'search_items' => "Search Cities",
-			'menu_name' => __("Cities"),
-			'all_items' => __("All Cities"),
-			'edit_item' => __("Edit City"),
-			'add_new_item' => __("Add City"),
-			'new_item_name' => __("City Name"),
-			'not_found' => __("No City found.")
+			'menu_name' => __("Ville"),
+			'all_items' => __("All Villes"),
+			'edit_item' => __("Edit Ville"),
+			'add_new_item' => __("Add Ville"),
+			'new_item_name' => __("Ville Name"),
+			'not_found' => __("No Ville found.")
 		);
 		
 		register_taxonomy ( 'city', 'courses', array (

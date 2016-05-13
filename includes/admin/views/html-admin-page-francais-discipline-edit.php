@@ -58,6 +58,9 @@ function validate_input() {
 	if (count($result) > 0) {
 		unlink($movefile['file']);
 	} else {
+		if (empty($_POST['photo_text'])) {
+			$_POST['photo_text'] = $_POST['photo'];
+		}
 		if (!$_POST['no_image']) {
 			unlink(ABSPATH . $_POST['old_photo']);
 			$_POST['photo'] = substr($movefile['file'], strlen(ABSPATH));
