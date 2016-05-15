@@ -104,7 +104,8 @@ if(isset($_POST['updatelieusubmit'])){
 	
 	$data = $_POST;
 }
-global $CITY_LIST;
+include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+$cities = FC_Util::get_cities_list();
 ?>
 <div class="wrap">
 	<h1>Update Lieu <a
@@ -126,8 +127,8 @@ global $CITY_LIST;
 				<tr class="form-field">
 					<th scope="row"><label for="city">Ville</label></th>
 					<td><select name="city" id="city" class="selectbox-general">
-							<?php foreach ($CITY_LIST as $city) {?>
-							<option value="<?= $city ?>" <?php echo ($data['city'] == $city ? "selected='selected'" : "") ?>><?= $city ?></option>
+							<?php foreach ($cities as $slug => $city) {?>
+							<option value="<?= $slug ?>" <?php echo ($data['city'] == $slug ? "selected='selected'" : "") ?>><?= $city ?></option>
 							<?php }?>
 					</select></td>
 				</tr>

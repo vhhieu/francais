@@ -28,7 +28,7 @@ class FC_Install {
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'check_version' ), 5 );
 		add_action( 'init', array( __CLASS__, 'create_taxonomies' ), 1 );
-		add_action( 'init', array( __CLASS__, 'create_dance_categories' ), 1 );
+		add_action( 'init', array( __CLASS__, 'create_danse_categories' ), 1 );
 		add_action( 'init', array( __CLASS__, 'create_city_taxonomies' ), 2 );
 		add_action( 'init', array( __CLASS__, 'create_discipline_taxonomies' ), 2 );
 		add_action( 'init', array( __CLASS__, 'custom_rewrite_rule' ), 10, 0 );
@@ -55,7 +55,23 @@ class FC_Install {
 	
 	public static function custom_rewrite_rule() {
 		// "cours-de-danse-classique-ados"
-		add_rewrite_rule('cours-de-(.*)-(.*)/?', 'index.php?course_cate=$matches[1]&city=$matches[2]', 'top');
+		add_rewrite_rule('^cours-de-danse/?$', 'index.php?course_cate=danse', 'top');
+		add_rewrite_rule('^cours-de-theatre/?$', 'index.php?course_cate=theatre', 'top');
+		$cities = get_terms('city', array('taxonomy' => 'city', 'hide_empty' => false));
+		$city_regex = "(";
+		$count = 0;
+		foreach ($cities as $city) {
+			$count++;
+			add_rewrite_rule('cours-de-danse-' . $city->slug . '/?', 'index.php?course_cate=danse&city=' . $city->slug, 'top');
+			add_rewrite_rule('cours-de-theatre-' . $city->slug . '/?', 'index.php?course_cate=theatre&city=' . $city->slug, 'top');
+			$city_regex .= $city->slug;
+			if ($count < sizeof($cities)) {
+				$city_regex .= "|";
+			}
+		}
+		$city_regex .= ")";
+// 		wp_die($city_regex);
+		add_rewrite_rule('cours-de-(.*)-' . $city_regex . '/?', 'index.php?course_cate=$matches[1]&city=$matches[2]', 'top');
 		add_rewrite_rule('cours-de-(.*)/?', 'index.php?course_cate=$matches[1]', 'top');
 		add_filter( 'query_vars', array( __CLASS__, 'custom_query_vars' ));
 		flush_rewrite_rules ();
@@ -84,8 +100,8 @@ class FC_Install {
 		"<div class='form-field'>
 			<label for='term_meta[macro_discipline]'>Macro Discipline</label>
 			<select name='term_meta[macro_discipline]' id='macro_discipline' class='selectbox-general'>
-				<option value='Dance' selected='selected'>Dance</option>
-				<option value='Theatre'>Theatre</option>
+				<option value='danse' selected='selected'>Danse</option>
+				<option value='theatre'>Theatre</option>
 			</select>
 		</div>";
 		echo $html;
@@ -100,7 +116,7 @@ class FC_Install {
 		$term_meta = get_option( "taxonomy_$t_id" );
 		$macro_discipline = esc_attr( $term_meta['macro_discipline'] ) ? esc_attr( $term_meta['macro_discipline'] ) : '';
 		
-		$dance_selected = $macro_discipline === "Dance" ? "selected='selected'" : "";
+		$danse_selected = $macro_discipline === "Danse" ? "selected='selected'" : "";
 		$theatre_selected = $macro_discipline === "Theatre" ? "selected='selected'" : "";
 		
 		$html =
@@ -108,8 +124,8 @@ class FC_Install {
 			<th scope='row' valign='top'><label for='term_meta[custom_term_meta]'>Macro Discipline</label></th>
 			<td>
 				<select name='term_meta[macro_discipline]' id='macro_discipline' class='selectbox-general'>
-				<option value='Dance' {$dance_selected}>Dance</option>
-				<option value='Theatre' {$theatre_selected}>Theatre</option>
+				<option value='danse' {$danse_selected}>Danse</option>
+				<option value='theatre' {$theatre_selected}>Theatre</option>
 			</select>
 			</td>
 		</tr>";
@@ -204,7 +220,7 @@ class FC_Install {
 		}
 	}
 	
-	public static function create_dance_categories() {
+	public static function create_danse_categories() {
 		if (taxonomy_exists ( 'course_cate' )) {
 			return;
 		}
@@ -239,18 +255,18 @@ class FC_Install {
 	
 	// create a custom taxonomy name it topics for your posts
 	public static function create_taxonomies() {
-		if (taxonomy_exists ( 'dance' ) || taxonomy_exists ( 'theatre' )) {
+		if (taxonomy_exists ( 'danse' ) || taxonomy_exists ( 'theatre' )) {
 			return;
 		}
 		
 		// Add new taxonomy, make it hierarchical like categories
 		// first do the translations part for GUI
 		$labels = array (
-			'name' => _x ( 'Dance', 'taxonomy general name' ) 
+			'name' => _x ( 'Danse', 'taxonomy general name' ) 
 		);
 		
 		// Now register the taxonomy
-		register_taxonomy ( 'dance', 'courses', array (
+		register_taxonomy ( 'danse', 'courses', array (
 				'hierarchical' => false,
 				'labels' => $labels,
 				'show_ui' => true,
@@ -258,13 +274,13 @@ class FC_Install {
 				'show_in_menu' => false,
 				'show_in_nav_menus' => false,
 				'rewrite' => array (
-					'slug' => 'dance',
+					'slug' => 'danse',
 					'with_front' => true 
 				)
 		) );
 		
-		if (!term_exists('Courses', 'dance')) {
-			wp_insert_term('Courses', 'dance', array('description' => 'Dance Course', 'slug' => 'courses'));
+		if (!term_exists('Courses', 'danse')) {
+			wp_insert_term('Courses', 'danse', array('description' => 'Danse Course', 'slug' => 'courses'));
 		}
 		
 		// Add new taxonomy, make it hierarchical like categories

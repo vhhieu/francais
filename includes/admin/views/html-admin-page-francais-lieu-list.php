@@ -13,6 +13,7 @@ if(!class_exists('WP_List_Table')){
 }
 
 class Room_List_Table extends WP_List_Table {
+	private $cities;
 	/** ************************************************************************
 	 * REQUIRED. Set up a constructor that references the parent constructor. We
 	 * use the parent reference to set some default configs.
@@ -20,6 +21,9 @@ class Room_List_Table extends WP_List_Table {
 	function __construct(){
 		global $status, $page;
 	
+		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+		$this->cities = FC_Util::get_cities_list();
+		
 		//Set parent defaults
 		parent::__construct( array(
 				'singular'  => 'movie',     //singular name of the listed records
@@ -95,7 +99,7 @@ class Room_List_Table extends WP_List_Table {
 				'delete'    => sprintf('<a href="?page=%s&action=%s&movie=%s">Delete</a>',$_REQUEST['page'],'delete',$item['room_id']),
 		);
 	
-		$value = $item['country'] . " - " . $item['city'] . " - " 
+		$value = $item['country'] . " - " . $this->cities[$item['city']] . " - " 
 				. $item['zip_code'] . " - " . $item['room_name'];
 		//Return the title contents
 		return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s',

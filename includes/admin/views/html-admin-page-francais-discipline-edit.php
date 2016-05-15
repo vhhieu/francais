@@ -159,7 +159,7 @@ if(isset($_POST['updatedisciplinesubmit'])){
 					<th scope="row"><label for="micro_discipline">Micro discipline <span class="description">(required)</span></label></th>
 					<td><select name="micro_discipline" id="micro_discipline" class="selectbox-general">
 						<?php global $MICRO_DISCIPLINE;
-							$macro_discipline = "dance";
+							$macro_discipline = "danse";
 							if (isset($data['macro_discipline'])) {
 								$macro_discipline = $data['macro_discipline'];
 							}

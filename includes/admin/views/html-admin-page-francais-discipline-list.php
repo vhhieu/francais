@@ -13,6 +13,8 @@ if(!class_exists('WP_List_Table')){
 }
 
 class Discipline_List_Table extends WP_List_Table {
+	private $micro_list;
+	
 	/** ************************************************************************
 	 * REQUIRED. Set up a constructor that references the parent constructor. We
 	 * use the parent reference to set some default configs.
@@ -20,6 +22,9 @@ class Discipline_List_Table extends WP_List_Table {
 	function __construct(){
 		global $status, $page;
 	
+		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+		$this->micro_list = FC_Util::get_micro_discipline_list();
+		
 		//Set parent defaults
 		parent::__construct( array(
 				'singular'  => 'movie',     //singular name of the listed records
@@ -94,8 +99,15 @@ class Discipline_List_Table extends WP_List_Table {
 				'delete'    => sprintf('<a href="?page=%s&action=%s&movie=%s">Delete</a>',$_REQUEST['page'],'delete',$item['discipline_id']),
 		);
 	
-		$value = $item['course_type'] . " - " . $item['macro_discipline'] . " - " 
-				. $item['micro_discipline'] . " - " . $item['age_group'];
+		global $MARCO_DISCIPLINE;
+		global $AGE_GROUP;
+		$macro_discipline_key = $item['macro_discipline'];
+		$macro_discipline = $MARCO_DISCIPLINE[$macro_discipline_key];
+		$age_group = empty($item['age_group']) ? "Neutre" : $AGE_GROUP[$item['age_group']];
+		$micro_discipline = empty($item['micro_discipline']) ? "Neutre" : $this->micro_list[$item['micro_discipline']];
+		
+		$value = $item['course_type'] . " - " . $macro_discipline . " - " 
+				. $micro_discipline . " - " . $age_group;
 		//Return the title contents
 		return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s',
 				/*$1%s*/ $value,

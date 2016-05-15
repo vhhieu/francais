@@ -91,7 +91,8 @@ if(isset($_POST['createlieusubmit']) || isset($_POST['createlieuandcontinue'])){
 		}
 	}
 }
-global $CITY_LIST;
+include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+$cities = FC_Util::get_cities_list();
 ?>
 <div class="wrap">
 	<h1>Add New Lieu</h1>
@@ -111,8 +112,8 @@ global $CITY_LIST;
 				<tr class="form-field">
 					<th scope="row"><label for="city">Ville</label></th>
 					<td><select name="city" id="city" class="selectbox-general">
-							<?php foreach ($CITY_LIST as $city) {?>
-							<option value="<?= $city ?>" <?php echo ($_POST['city'] == $city ? "selected='selected'" : "") ?>><?= $city ?></option>
+							<?php foreach ($cities as $slug => $city) {?>
+							<option value="<?= $slug ?>" <?php echo ($_POST['city'] == $slug ? "selected='selected'" : "") ?>><?= $city ?></option>
 							<?php }?>
 					</select></td>
 				</tr>

@@ -13,12 +13,16 @@ if(!class_exists('WP_List_Table')){
 }
 
 class Profs_List_Table extends WP_List_Table {
+	private $cities, $micro_discipline;
 	/** ************************************************************************
 	 * REQUIRED. Set up a constructor that references the parent constructor. We
 	 * use the parent reference to set some default configs.
 	 ***************************************************************************/
 	function __construct(){
 		global $status, $page;
+		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+		$this->cities = FC_Util::get_cities_list();
+		$this->micro_discipline = FC_Util::get_micro_discipline_list();
 	
 		//Set parent defaults
 		parent::__construct( array(
@@ -113,12 +117,12 @@ class Profs_List_Table extends WP_List_Table {
 	 */
 	function column_micro_discipline_list($item){
 		
-		$value = $item['micro_discipline_1'] !== null ? $item['micro_discipline_1'] : "";
+		$value = $item['micro_discipline_1'] !== null ? $this->micro_discipline[$item['micro_discipline_1']] : "";
 		if ($item['micro_discipline_2']) {
-			$value .= "<br/>" . $item['micro_discipline_2'];
+			$value .= "<br/>" . $this->micro_discipline[$item['micro_discipline_2']];
 		}
 		if ($item['micro_discipline_3']) {
-			$value .= "<br/>" . $item['micro_discipline_3'];
+			$value .= "<br/>" . $this->micro_discipline[$item['micro_discipline_3']];
 		}
 		//Return the title contents
 		return $value;
@@ -126,12 +130,12 @@ class Profs_List_Table extends WP_List_Table {
 	
 	function column_city_list($item){
 	
-		$value = $item['city_1'] !== null ? $item['city_1'] : "";
+		$value = $item['city_1'] !== null ? $this->cities[$item['city_1']] : "";
 		if ($item['city_2']) {
-			$value .= "<br/>" . $item['city_2'];
+			$value .= "<br/>" . $this->cities[$item['city_2']];
 		}
 		if ($item['city_3']) {
-			$value .= "<br/>" . $item['city_3'];
+			$value .= "<br/>" . $this->cities[$item['city_3']];
 		}
 		//Return the title contents
 		return $value;

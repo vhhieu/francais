@@ -12,12 +12,16 @@ if(!class_exists('WP_List_Table')){
 }
 
 class Course_List_Table extends WP_List_Table {
+	private $cities, $micro_discipline;
 	/** ************************************************************************
 	 * REQUIRED. Set up a constructor that references the parent constructor. We
 	 * use the parent reference to set some default configs.
 	 ***************************************************************************/
 	function __construct(){
 		global $status, $page;
+		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+		$this->cities = FC_Util::get_cities_list();
+		$this->micro_discipline = FC_Util::get_micro_discipline_list();
 	
 		//Set parent defaults
 		parent::__construct( array(
@@ -98,12 +102,23 @@ class Course_List_Table extends WP_List_Table {
 				'delete'    => sprintf('<a href="?page=%s&action=%s&movie=%s">Delete</a>',$_REQUEST['page'],'delete',$item['course_id']),
 		);
 	
-		$value = $item['room_index'];
+		$value = $item['country'] . " - " . $this->cities[$item['city']] . " - " 
+				. $item['zip_code'] . " - " . $item['room_name'];
+		
 		//Return the title contents
 		return sprintf('%1$s %2$s',
 				/*$1%s*/ $value,
 				/*$3%s*/ $this->row_actions($actions)
 				);
+	}
+	
+	function column_discipline_index($item){
+		global $MACRO_DISCIPLINE;
+		global $AGE_GROUP;
+		$value = $item['course_type'] . " - " . $MACRO_DISCIPLINE[$item['macro_discipline']] . " - " 
+				. $this->micro_discipline[$item['micro_discipline']] . " - " . $AGE_GROUP[$item['age_group']];
+	
+		return $value;
 	}
 	
 	function column_course_mode($item) {
@@ -235,8 +250,8 @@ class Course_List_Table extends WP_List_Table {
 		 */
 		$table_prefix = $wpdb->prefix . 'francais_';
 		$sql = "SELECT 
-				   CONCAT(r.country, ' - ', r.city, ' - ', r.zip_code, ' - ', r.room_name) AS room_index, 
-				   CONCAT(d.course_type, ' - ', d.macro_discipline, ' - ', d.micro_discipline, ' - ', d.age_group) AS discipline_index, 
+				   r.country, r.city, r.zip_code, r.room_name, 
+				   d.course_type, d.macro_discipline, d.micro_discipline, d.age_group, 
 				   CONCAT(p.first_name, ' ', p.family_name) AS prof_name,
 				   c.course_id,
 				   c.number_available,

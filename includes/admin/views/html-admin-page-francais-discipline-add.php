@@ -103,6 +103,8 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 		}
 	}
 }
+include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+$micro_arr = FC_Util::get_micro_discipline_array();
 ?>
 <div class="wrap">
 	<h1>Add New Formule de cours</h1>
@@ -133,13 +135,13 @@ if(isset($_POST['createdisciplinesubmit']) || isset($_POST['createdisciplineandc
 					<th scope="row"><label for="micro_discipline">Micro discipline <span class="description">(required)</span></label></th>
 					<td><select name="micro_discipline" id="micro_discipline" class="selectbox-general">
 						<?php global $MICRO_DISCIPLINE;
-							$macro_discipline = "dance";
+							$macro_discipline = "danse";
 							if (isset($_POST['macro_discipline'])) {
 								$macro_discipline = $_POST['macro_discipline'];
 							}
-							$micro_discipline = $MICRO_DISCIPLINE[$macro_discipline];
+							$micro_discipline = $micro_arr[$macro_discipline];
 							foreach ($micro_discipline as $micro_key => $micro_value) {?>
-								<option value="<?= $micro_value ?>" <?php echo ($_POST['micro_discipline'] == $micro_value ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
+								<option value="<?= $micro_key ?>" <?php echo ($_POST['micro_discipline'] == $micro_key ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
 						<?php }?>
 					</select></td>
 				</tr>
@@ -240,7 +242,7 @@ jQuery('select[name="macro_discipline"]').change(
         jQuery('select[name="micro_discipline"]').find('option').remove().end();
         var arr = micro_discipline[md];
  		for (i = 0; i < Object.keys(arr).length; i++) {
- 			jQuery('select[name="micro_discipline"]').append("<option value='" + arr[i] + "'>" + arr[i] + " </option>");
+ 			jQuery('select[name="micro_discipline"]').append("<option value='" + Object.keys(arr)[i] + "'>" + arr[Object.keys(arr)[i]] + " </option>");
  		}         
     });
 

@@ -107,13 +107,13 @@ final class Francais {
 		
 		global $MARCO_DISCIPLINE;
 		$MARCO_DISCIPLINE = array(
-				"dance" => "Dance",
+				"danse" => "Danse",
 				"theatre" => "Théâtre",
 		);
 		
 		global $MICRO_DISCIPLINE;
 		$MICRO_DISCIPLINE = array(
-				"dance" => array("Clip danse", "Danse classique", "Danse de couple", "Hip-Hop", "Salsa", "Swing"),
+				"danse" => array("Clip danse", "Danse classique", "Danse de couple", "Hip-Hop", "Salsa", "Swing"),
 				"theatre" => array("Théâtre"),
 		);
 		

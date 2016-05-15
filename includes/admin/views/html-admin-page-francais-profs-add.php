@@ -132,7 +132,9 @@ if(isset($_POST['createprofssubmit']) || isset($_POST['createprofsandcontinue'])
 		}
 	}
 }
-global $CITY_LIST;
+include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+$cities = FC_Util::get_cities_list();
+$micro_discipline = FC_Util::get_micro_discipline_list();
 ?>
 <div class="wrap">
 	<h1>Add New Profs</h1>
@@ -189,8 +191,8 @@ global $CITY_LIST;
 					<th scope="row"><label for="city_1">Ville 1</label></th>
 					<td><select name="city_1" id="city_1" class="selectbox-general">
 							<option selected="<?php echo $_POST['city_1'] == "" ? "selected" : ""?>" value="">Selected a Ville</option>
-							<?php foreach ($CITY_LIST as $city) {?>
-							<option value="<?= $city ?>" <?php echo ($_POST['city_1'] == $city ? "selected='selected'" : "") ?>><?= $city ?></option>
+							<?php foreach ($cities as $slug => $city) {?>
+							<option value="<?= $slug ?>" <?php echo ($_POST['city_1'] == $slug ? "selected='selected'" : "") ?>><?= $city ?></option>
 							<?php }?>
 					</select></td>
 				</tr>
@@ -198,8 +200,8 @@ global $CITY_LIST;
 					<th scope="row"><label for="city_2">Ville 2</label></th>
 					<td><select name="city_2" id="city_2" class="selectbox-general">
 							<option selected="<?php echo $_POST['city_2'] == "" ? "selected" : ""?>" value="">Selected a Ville</option>
-							<?php foreach ($CITY_LIST as $city) {?>
-							<option value="<?= $city ?>" <?php echo ($_POST['city_2'] == $city ? "selected='selected'" : "") ?>><?= $city ?></option>
+							<?php foreach ($cities as $slug => $city) {?>
+							<option value="<?= $slug ?>" <?php echo ($_POST['city_2'] == $slug ? "selected='selected'" : "") ?>><?= $city ?></option>
 							<?php }?>
 					</select></td>
 				</tr>
@@ -207,8 +209,8 @@ global $CITY_LIST;
 					<th scope="row"><label for="city_3">Ville 3</label></th>
 					<td><select name="city_3" id="city_3" class="selectbox-general">
 							<option selected="<?php echo $_POST['city_3'] == "" ? "selected" : ""?>" value="">Selected a Ville</option>
-							<?php foreach ($CITY_LIST as $city) {?>
-							<option value="<?= $city ?>" <?php echo ($_POST['city_3'] == $city ? "selected='selected'" : "") ?>><?= $city ?></option>
+							<?php foreach ($cities as $slug => $city) {?>
+							<option value="<?= $slug ?>" <?php echo ($_POST['city_3'] == $slug ? "selected='selected'" : "") ?>><?= $city ?></option>
 							<?php }?>
 					</select></td>
 				</tr>
@@ -217,10 +219,9 @@ global $CITY_LIST;
 					<th scope="row"><label for="micro_discipline_1">Micro discipline 1</label></th>
 					<td><select name="micro_discipline_1" id="micro_discipline_1" class="selectbox-general">
 						<option selected="<?php echo $_POST['micro_discipline_1'] == "" ? "selected" : ""?>" value="">Selected a Micro Discipline</option>
-						<?php global $MICRO_DISCIPLINE;
-							$micro_discipline = array_merge($MICRO_DISCIPLINE["Dance"], $MICRO_DISCIPLINE["Theatre"]);
+						<?php 
 							foreach ($micro_discipline as $micro_key => $micro_value) {?>
-								<option value="<?= $micro_value ?>" <?php echo ($_POST['micro_discipline_1'] == $micro_value ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
+								<option value="<?= $micro_key ?>" <?php echo ($_POST['micro_discipline_1'] == $micro_key ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
 						<?php }?>
 					</select></td>
 				</tr>
@@ -229,10 +230,9 @@ global $CITY_LIST;
 					<th scope="row"><label for="micro_discipline_2">Micro discipline 2</label></th>
 					<td><select name="micro_discipline_2" id="micro_discipline_2" class="selectbox-general">
 					<option selected="<?php echo $_POST['micro_discipline_2'] == "" ? "selected" : ""?>" value="">Selected a Micro Discipline</option>
-						<?php global $MICRO_DISCIPLINE;
-							$micro_discipline = array_merge($MICRO_DISCIPLINE["Dance"], $MICRO_DISCIPLINE["Theatre"]);
+						<?php 
 							foreach ($micro_discipline as $micro_key => $micro_value) {?>
-								<option value="<?= $micro_value ?>" <?php echo ($_POST['micro_discipline_2'] == $micro_value ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
+								<option value="<?= $micro_key ?>" <?php echo ($_POST['micro_discipline_2'] == $micro_key ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
 						<?php }?>
 					</select></td>
 				</tr>
@@ -241,10 +241,9 @@ global $CITY_LIST;
 					<th scope="row"><label for="micro_discipline_3">Micro discipline 3</label></th>
 					<td><select name="micro_discipline_3" id="micro_discipline_3" class="selectbox-general">
 					<option selected="<?php echo $_POST['micro_discipline_3'] == "" ? "selected" : ""?>" value="">Selected a Micro Discipline</option>
-						<?php global $MICRO_DISCIPLINE;
-							$micro_discipline = array_merge($MICRO_DISCIPLINE["Dance"], $MICRO_DISCIPLINE["Theatre"]);
+						<?php 
 							foreach ($micro_discipline as $micro_key => $micro_value) {?>
-								<option value="<?= $micro_value ?>" <?php echo ($_POST['micro_discipline_3'] == $micro_value ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
+								<option value="<?= $micro_key ?>" <?php echo ($_POST['micro_discipline_3'] == $micro_key ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
 						<?php }?>
 					</select></td>
 				</tr>

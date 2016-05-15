@@ -155,9 +155,14 @@ if(isset($_POST['updatecategorysubmit'])){
 	
 	$data = $_POST;
 }
+
+include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+$micro_arr = FC_Util::get_micro_discipline_array();
 ?>
 <div class="wrap">
-	<h1>Edit Category</h1>
+	<h1>Edit Category <a
+			href="<?php echo admin_url('admin.php?page=francais-category-add'); ?>"
+			class="page-title-action">Add New</a></h1>
 	<?php if (isset($message)): ?><div class="<?php echo $result !== FALSE ? "updated": "error" ?>"><p><?php echo $message;?></p></div><?php endif;?>
 	<p>Create a new Category and add them to this site.</p>
 	<form method="post" name="updatecategory" id="updatecategory" class="validate" enctype="multipart/form-data"
@@ -178,14 +183,14 @@ if(isset($_POST['updatecategorysubmit'])){
 					<th scope="row"><label for="micro_discipline">Micro discipline</label></th>
 					<td><select name="micro_discipline" id="micro_discipline" class="selectbox-general">
 						<option <?php echo $data['micro_discipline'] == "" ? "selected='selected'" : ""?> value="">Neutre</option>
-						<?php global $MICRO_DISCIPLINE;
-							$macro_discipline = "dance";
+						<?php 
+							$macro_discipline = "danse";
 							if (isset($data['macro_discipline'])) {
 								$macro_discipline = $data['macro_discipline'];
 							}
-							$micro_discipline = $MICRO_DISCIPLINE[$macro_discipline];
+							$micro_discipline = $micro_arr[$macro_discipline];
 							foreach ($micro_discipline as $micro_key => $micro_value) {?>
-								<option value="<?= $micro_value ?>" <?php echo ($data['micro_discipline'] == $micro_value ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
+								<option value="<?= $micro_key ?>" <?php echo ($data['micro_discipline'] == $micro_key ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
 						<?php }?>
 					</select></td>
 				</tr>
@@ -201,7 +206,7 @@ if(isset($_POST['updatecategorysubmit'])){
 				<tr class="form-field form-required">
 					<th scope="row"><label for="slug">Slug <span class="description">(required)</span></label></th>
 					<td>
-						<span>cours-de-</span><input id="slug" name="slug" type="text" value="<?= $data['slug'] ?>"> 
+						<span>cours-de-</span><input id="slug" name="slug" type="text" value="<?= $data['slug'] ?>" style="width: 80%"> 
 					</td>
 				</tr>
 				<tr class="form-field form-required">
@@ -291,7 +296,7 @@ if(isset($_POST['updatecategorysubmit'])){
 </div>
 <script type="text/javascript">
 var micro_discipline = {};
-<?php global $MICRO_DISCIPLINE; foreach ($MICRO_DISCIPLINE as $marco => $discipline) {?>
+<?php foreach ($micro_arr as $marco => $discipline) {?>
 micro_discipline['<?= $marco ?>'] = {};
 <?php foreach ($discipline as $key => $value) {?>
 micro_discipline['<?= $marco ?>']['<?= $key ?>'] = '<?= $value ?>';
@@ -304,7 +309,7 @@ jQuery('select[name="macro_discipline"]').change(
         var arr = micro_discipline[md];
         jQuery('select[name="micro_discipline"]').append("<option value=''>Neutre</option>");
  		for (i = 0; i < Object.keys(arr).length; i++) {
- 			jQuery('select[name="micro_discipline"]').append("<option value='" + arr[i] + "'>" + arr[i] + " </option>");
+ 			jQuery('select[name="micro_discipline"]').append("<option value='" + Object.keys(arr)[i] + "'>" + arr[Object.keys(arr)[i]] + " </option>");
  		}         
     });
 
