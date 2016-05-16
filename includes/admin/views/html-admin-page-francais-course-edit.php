@@ -8,6 +8,59 @@ if (! defined ( 'ABSPATH' )) {
 	exit ();
 }
 
+include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+
+function update_course_post($course_id) {
+	global $wpdb;
+	$prefix = $wpdb->prefix;
+	$sql = "SELECT c.course_id, c.post_id, c.start_date, c.start_time, c.end_date, c.number_available, c.course_mode, c.trial_mode,
+	CONCAT(p.first_name, ' ', p.family_name) profs_name,
+	CONCAT(r.room_name, ', ', r.address, ', ', r.zip_code, ', ', r.city) room_info, r.city,
+	d.course_type, d.macro_discipline, d.age_group, d.micro_discipline, d.short_description, d.lesson_duration, d.photo
+	FROM {$prefix}francais_course c
+	LEFT JOIN {$prefix}francais_discipline d USING(discipline_id)
+	LEFT JOIN {$prefix}francais_room r USING(room_id)
+	LEFT JOIN {$prefix}francais_profs p USING(profs_id)
+	WHERE c.course_id = %d\n";
+
+	$sql = $wpdb->prepare($sql, $course_id);
+	$course = $wpdb->get_row($sql);
+
+	setlocale(LC_TIME, get_locale());
+
+	$from_time = DateTime::createFromFormat('H:i:s', $course->start_time)->getTimestamp();
+	$to_time = $from_time + $course->lesson_duration * 60;
+	$start_date = DateTime::createFromFormat('Y-m-d', $course->start_date)->getTimestamp();
+
+	$from_time_str = date("H", $from_time) . "h" . date("i", $from_time);
+	$to_time_str = date("H", $to_time) . "h" . date("i", $to_time);
+	$start_date_str = strftime("%d %b. %Y", $start_date);
+	$day_of_week = strftime("%A", $start_date);
+
+	$micro_arr = FC_Util::get_micro_discipline_list();
+	$micro_discipline = $micro_arr[$course->micro_discipline];
+
+	$title = strtoupper("COURS DE {$micro_discipline} {$course->age_group} A {$course->city} LE {$day_of_week} DE {$from_time_str} À {$to_time_str}");
+	$post_id = $course->post_id;
+	
+	$post = get_post($post_id);
+
+	// Update the post into the database.
+	if ($post) {
+		$new_slug = sanitize_title( $title );
+		if ( $post->post_name != $new_slug ) {
+			wp_update_post(
+				array (
+					'ID'        => $post_id,
+					'post_title'   => $title,
+					'post_content' => $title,
+					'post_name' => $new_slug,
+				)
+			);
+		}
+	}
+}
+
 if ($_SERVER['REQUEST_METHOD'] === "GET") {
 	if (isset($_REQUEST['movie'])) {
 		global $wpdb;
@@ -160,9 +213,11 @@ if(isset($_POST['updatecoursesubmit'])) {
 					), //data
 					array('%d','%d', '%s', '%s', '%d') //data format
 				);
-// 				wp_die($wpdb->last_query);
 			}
 		}
+		
+		// Update Post
+		update_course_post($course_id);
 		
 		$message = "Cours updated successful!";
 	} else {

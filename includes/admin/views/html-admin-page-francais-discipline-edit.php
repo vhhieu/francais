@@ -126,6 +126,8 @@ if(isset($_POST['updatedisciplinesubmit'])){
 	
 	$data = $_POST;
 }
+include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+$micro_arr = FC_Util::get_micro_discipline_array();
 ?>
 <div class="wrap">
 	<h1>Edit Formule de cours <a
@@ -163,9 +165,9 @@ if(isset($_POST['updatedisciplinesubmit'])){
 							if (isset($data['macro_discipline'])) {
 								$macro_discipline = $data['macro_discipline'];
 							}
-							$micro_discipline = $MICRO_DISCIPLINE[$macro_discipline];
+							$micro_discipline = $micro_arr[$macro_discipline];
 							foreach ($micro_discipline as $micro_key => $micro_value) {?>
-								<option value="<?= $micro_value ?>" <?php echo ($data['micro_discipline'] == $micro_value ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
+								<option value="<?= $micro_key ?>" <?php echo ($data['micro_discipline'] == $micro_key ? "selected='selected'" : "") ?>><?= $micro_value ?></option>
 						<?php }?>
 					</select></td>
 				</tr>
@@ -255,7 +257,7 @@ if(isset($_POST['updatedisciplinesubmit'])){
 </div>
 <script type="text/javascript">
 var micro_discipline = {};
-<?php global $MICRO_DISCIPLINE; foreach ($MICRO_DISCIPLINE as $marco => $discipline) {?>
+<?php foreach ($micro_arr as $marco => $discipline) {?>
 micro_discipline['<?= $marco ?>'] = {};
 <?php foreach ($discipline as $key => $value) {?>
 micro_discipline['<?= $marco ?>']['<?= $key ?>'] = '<?= $value ?>';
@@ -267,7 +269,7 @@ jQuery('select[name="macro_discipline"]').change(
         jQuery('select[name="micro_discipline"]').find('option').remove().end();
         var arr = micro_discipline[md];
  		for (i = 0; i < Object.keys(arr).length; i++) {
- 			jQuery('select[name="micro_discipline"]').append("<option value='" + arr[i] + "'>" + arr[i] + " </option>");
+ 			jQuery('select[name="micro_discipline"]').append("<option value='" + Object.keys(arr)[i] + "'>" + arr[Object.keys(arr)[i]] + " </option>");
  		}         
     });
 function is_number(event) {

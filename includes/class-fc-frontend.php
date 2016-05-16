@@ -31,13 +31,13 @@ class FC_Frontend {
 			return $items;
 		}
 		
-		$sub_citys = FC_Frontend::create_sub_menu("Dance");
+		$sub_citys = FC_Frontend::create_sub_menu("danse");
 		
 		$items .= "<li class='menu-item menu-item-type-custom menu-item-object-custom'>
 				      <a href='#'><span>COURS DE DANSE</span></a>
 				      {$sub_citys}
 				   </li>";
-		$sub_citys = FC_Frontend::create_sub_menu("Theatre");
+		$sub_citys = FC_Frontend::create_sub_menu("theatre");
 		$items .= "<li class='menu-item menu-item-type-custom menu-item-object-custom'>
 					<a href='#'><span>COURS DE THEATRE</span></a>
 					{$sub_citys}
@@ -75,9 +75,9 @@ class FC_Frontend {
 	}
 	
 	public static function create_sub_menu_micro($macro_discipline, $city) {
-		$macro_discipline = strtolower($macro_discipline);
-		$base_url = home_url() . "/{$macro_discipline}/courses?city={$city}";
 		global $wpdb;
+		$macro_discipline = strtolower($macro_discipline);
+		
 		$prefix = $wpdb->prefix . "francais";
 		$sql = "SELECT d.age_group, d.micro_discipline FROM {$prefix}_discipline d 
 					INNER JOIN {$prefix}_course c USING(discipline_id)
@@ -91,10 +91,13 @@ class FC_Frontend {
 			return "";
 		}
 		
-		$city = strtoupper($city);
-		$macro_discipline = strtoupper($macro_discipline);
+		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+		$micro_list = FC_Util::get_micro_discipline_list();
 		
-		$sub_micro = "<li><b>COURS DE {$macro_discipline} {$city}</b></li><li></li>";
+		$city_val = strtoupper($city);
+		$macro_discipline_val = strtoupper($macro_discipline);
+		
+		$sub_micro = "<li><b>COURS DE {$macro_discipline_val} {$city_val}</b></li><li></li>";
 		$current_age_group = "";
 		foreach ($data as $entity) {
 			$value = strtoupper($entity->micro_discipline);
@@ -104,7 +107,7 @@ class FC_Frontend {
 				$sub_micro .= "<li><b>COURS {$age_group}:</b></li>";
 			}
 			
-			$url = $base_url . "&age={$entity->age_group}&dis={$entity->micro_discipline}";
+			$url = FC_Frontend::build_category_url($macro_discipline, $entity->age_group, $entity->micro_discipline, $city);
 			$sub_micro .=
 				"<li class='menu-item menu-item-type-custom menu-item-object-custom'>
 			    	<a href='{$url}'><span>COURS DE {$value}</span></a>
@@ -113,6 +116,39 @@ class FC_Frontend {
 		$result = "<ul class='sub-menu'>{$sub_micro}</ul>";
 		return $result;
 	}
+	
+	public static function build_category_url($macro_discipline, $age_group, $micro_discipline, $city) {
+		global $wpdb;
+		$prefix = $wpdb->prefix;
+		$sql = "SELECT c.slug
+				FROM {$prefix}francais_category c 
+				WHERE c.macro_discipline = %s\n";
+		$sql = $wpdb->prepare($sql, $macro_discipline);
+		if (!empty($micro_discipline)) {
+			$sql .= "AND c.micro_discipline = %s\n";
+			$sql = $wpdb->prepare($sql, $micro_discipline);
+		} else {
+			$sql .= "AND c.micro_discipline = ''\n";
+		}
+		
+		if (!empty($age_group)) {
+			$sql .= "AND c.age_group = %s";
+			$sql = $wpdb->prepare($sql, $age_group);
+		} else {
+			$sql .= "AND c.age_group = ''\n";
+		}
+		
+		$result = $wpdb->get_col( $sql );
+		if (!empty($result)) {
+			$result = $result[0] . "-" . $city;
+		} else {
+			return "#";
+		}
+		
+		$result = home_url() . "/cours-de-" . $result;
+		return $result;
+	}
+	
 	public static function register_style() {
 		wp_register_style( "custom_wp_css", FC_PLUGIN_URL . "assets/css/style.css");
 	}

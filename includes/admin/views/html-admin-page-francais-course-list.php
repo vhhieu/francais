@@ -98,6 +98,7 @@ class Course_List_Table extends WP_List_Table {
 	
 		//Build row actions
 		$actions = array(
+				'view'      => sprintf('<a href="%s">View Course</a>', $item['course_url']),
 				'edit'      => sprintf('<a href="?page=francais-course-edit&movie=%s">Edit</a>', $item['course_id']),
 				'delete'    => sprintf('<a href="?page=%s&action=%s&movie=%s">Delete</a>',$_REQUEST['page'],'delete',$item['course_id']),
 		);
@@ -113,9 +114,12 @@ class Course_List_Table extends WP_List_Table {
 	}
 	
 	function column_discipline_index($item){
-		global $MACRO_DISCIPLINE;
+		global $MARCO_DISCIPLINE;
 		global $AGE_GROUP;
-		$value = $item['course_type'] . " - " . $MACRO_DISCIPLINE[$item['macro_discipline']] . " - " 
+		$macro_discipline_key = $item['macro_discipline'];
+		$macro_discipline = $MARCO_DISCIPLINE[$macro_discipline_key];
+		
+		$value = $item['course_type'] . " - " . $macro_discipline . " - " 
 				. $this->micro_discipline[$item['micro_discipline']] . " - " . $AGE_GROUP[$item['age_group']];
 	
 		return $value;
@@ -170,11 +174,13 @@ class Course_List_Table extends WP_List_Table {
 			
 			$ids = isset($_REQUEST['movie']) ? $_REQUEST['movie'] : array();
 			if (is_array($ids)) $ids = implode(',', $ids);
-			
+
 			$result = "";
 			if (!empty($ids)) {
-				$result = $wpdb->query("DELETE FROM " . $wpdb->prefix . "francais_course_trial WHERE course_id IN($ids)");
-				$result = $wpdb->query("DELETE FROM " . $wpdb->prefix . "francais_course WHERE course_id IN($ids)");
+				$result = $wpdb->query("DELETE FROM " . $wpdb->prefix . "francais_course_trial WHERE course_id IN ($ids)");
+				$result = $wpdb->query("DELETE FROM " . $wpdb->prefix . "postmeta WHERE post_id IN (SELECT post_id FROM " . $wpdb->prefix . "francais_course WHERE course_id IN ($ids))");
+				$result = $wpdb->query("DELETE FROM " . $wpdb->prefix . "posts WHERE ID IN (SELECT post_id FROM " . $wpdb->prefix . "francais_course WHERE course_id IN ($ids))");
+				$result = $wpdb->query("DELETE FROM " . $wpdb->prefix . "francais_course WHERE course_id IN ($ids)");
 			}
 			
 			//wp_die(var_dump( $wpdb->last_query ));
@@ -258,11 +264,13 @@ class Course_List_Table extends WP_List_Table {
 				   c.promo_value,
 				   c.course_mode,
 				   c.trial_mode,
-				   d.price
+				   d.price,
+				   po.guid AS course_url
 				FROM {$table_prefix}course c
 				LEFT JOIN {$table_prefix}discipline d USING (discipline_id)
 				LEFT JOIN {$table_prefix}room r USING (room_id)
-				LEFT JOIN {$table_prefix}profs p USING (profs_id)";
+				LEFT JOIN {$table_prefix}profs p USING (profs_id)
+				LEFT JOIN {$wpdb->prefix}posts po ON c.post_id = po.ID";
 		
 		$data = $wpdb->get_results ( $sql );
 		$data = json_decode(json_encode($data), true);

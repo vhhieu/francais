@@ -27,6 +27,7 @@ class FC_Install {
 	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'check_version' ), 5 );
+		add_action( 'init', array( __CLASS__, 'create_post_type' ), 1 );
 		add_action( 'init', array( __CLASS__, 'create_taxonomies' ), 1 );
 		add_action( 'init', array( __CLASS__, 'create_danse_categories' ), 1 );
 		add_action( 'init', array( __CLASS__, 'create_city_taxonomies' ), 2 );
@@ -144,10 +145,12 @@ class FC_Install {
 		
 		$args = array(
 			"labels" => $labels,
-			"public" => true
+			"public" => true,
+			'rewrite' => array('slug' => 'courses','with_front' => false),
 		);
 		
 		register_post_type("courses", $args);
+		flush_rewrite_rules(true);
 	}
 	
 	public static function create_city_taxonomies() {
@@ -431,6 +434,7 @@ class FC_Install {
  		$coursetable = $tableprefix . 'course';
  		$sql = "CREATE TABLE " . $coursetable . " (
             course_id bigint(20) NOT NULL AUTO_INCREMENT,
+			post_id bigint(20),
 			course_name varchar(256),
 			course_description text,
             room_id bigint(20) NOT NULL,

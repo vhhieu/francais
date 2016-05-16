@@ -8,10 +8,71 @@
 if (! defined ( 'ABSPATH' )) {
 	exit ();
 }
+include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+
+function insert_course_post($course_id) {
+	global $wpdb;
+	$prefix = $wpdb->prefix;
+	$sql = "SELECT c.course_id, c.start_date, c.start_time, c.end_date, c.number_available, c.course_mode, c.trial_mode,
+				CONCAT(p.first_name, ' ', p.family_name) profs_name,
+				CONCAT(r.room_name, ', ', r.address, ', ', r.zip_code, ', ', r.city) room_info, r.city,
+				d.course_type, d.macro_discipline, d.age_group, d.micro_discipline, d.short_description, d.lesson_duration, d.photo
+			FROM {$prefix}francais_course c
+				LEFT JOIN {$prefix}francais_discipline d USING(discipline_id)
+				LEFT JOIN {$prefix}francais_room r USING(room_id)
+				LEFT JOIN {$prefix}francais_profs p USING(profs_id)
+			WHERE c.course_id = %d\n";
+	
+	$sql = $wpdb->prepare($sql, $course_id);
+	$course = $wpdb->get_row($sql);
+	
+	setlocale(LC_TIME, get_locale());
+
+	$from_time = DateTime::createFromFormat('H:i:s', $course->start_time)->getTimestamp();
+	$to_time = $from_time + $course->lesson_duration * 60;
+	$start_date = DateTime::createFromFormat('Y-m-d', $course->start_date)->getTimestamp();
+
+	$from_time_str = date("H", $from_time) . "h" . date("i", $from_time);
+	$to_time_str = date("H", $to_time) . "h" . date("i", $to_time);
+	$start_date_str = strftime("%d %b. %Y", $start_date);
+	$day_of_week = strftime("%A", $start_date);
+	
+	$micro_arr = FC_Util::get_micro_discipline_list();
+	$micro_discipline = $micro_arr[$course->micro_discipline];
+
+	$title = strtoupper("COURS DE {$micro_discipline} {$course->age_group} A {$course->city} LE {$day_of_week} DE {$from_time_str} À {$to_time_str}");
+	
+	$my_post = array(
+			'post_title'    => $title,
+			'post_content'  => $title,
+			'post_status'   => 'publish',
+			'post_author'   => 1,
+			'post_type'     => 'courses',
+	);
+	
+	// Insert the post into the database.
+	try {
+		$post_id = wp_insert_post( $my_post );
+		if ($post_id) {
+			$result = $wpdb->update(
+				$wpdb->prefix . 'francais_course', //table
+				array('post_id' => $post_id), //data
+				array("course_id" => $course_id),
+				array('%d'), //data format
+				array("%d")
+			);
+		}
+	} catch (Exception $ex) {
+		// Do nothing
+	}
+	
+}
+
 global $wpdb;
 function validate_input() {
 
 	$result = array();
+	
 	if (empty($_POST['number_available'])) {
 		$result[] = "Nombre places disponibles is required!";
 	} else if (intval($_POST['number_available']) <= 0) {
@@ -106,6 +167,7 @@ if(isset($_POST['createcoursesubmit']) || isset($_POST['createcourseandcontinue'
 	}
 	//wp_die(var_dump( $wpdb->last_query ));
 	if ($result !== FALSE) {
+		
 		// INSERT COURSE TRIAL
 		$course_id = $wpdb->insert_id;
 		if ($_POST['trial_mode'] === "1") {
@@ -125,9 +187,9 @@ if(isset($_POST['createcoursesubmit']) || isset($_POST['createcourseandcontinue'
 					), //data
 					array('%d','%d', '%s', '%s', '%d') //data format
 				);
-// 				wp_die($wpdb->last_query);
 			}
 		}
+		insert_course_post($course_id);
 		
 		if ($_POST['createcoursesubmit']) {
 			// redirect

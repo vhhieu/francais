@@ -230,7 +230,7 @@ $micro_arr = FC_Util::get_micro_discipline_array();
 </div>
 <script type="text/javascript">
 var micro_discipline = {};
-<?php global $MICRO_DISCIPLINE; foreach ($MICRO_DISCIPLINE as $marco => $discipline) {?>
+<?php foreach ($micro_arr as $marco => $discipline) {?>
 micro_discipline['<?= $marco ?>'] = {};
 <?php foreach ($discipline as $key => $value) {?>
 micro_discipline['<?= $marco ?>']['<?= $key ?>'] = '<?= $value ?>';

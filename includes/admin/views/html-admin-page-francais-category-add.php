@@ -279,7 +279,7 @@ jQuery('select[name="macro_discipline"]').change(
         jQuery('select[name="micro_discipline"]').append("<option value=''>Neutre</option>");
  		for (i = 0; i < Object.keys(arr).length; i++) {
  			jQuery('select[name="micro_discipline"]').append("<option value='" + Object.keys(arr)[i] + "'>" + arr[Object.keys(arr)[i]] + " </option>");
- 		}         
+ 		}
     });
 
 function is_number(event) {
