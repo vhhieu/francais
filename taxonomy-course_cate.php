@@ -4,8 +4,14 @@
  *
  * @since onetake 1.0.0
  */
+
 global $wpdb;
 $slug = get_query_var ( 'course_cate' );
+
+include_once(WP_PLUGIN_DIR . "/francais/includes/admin/class-fc-util.php");
+$cities = FC_Util::get_cities_list();
+$micro_list = FC_Util::get_micro_discipline_list();
+//$micro_arr = FC_Util::get_micro_discipline_array();
 
 $prefix = $wpdb->prefix . "francais_";
 $category_table = $prefix . "category";
@@ -33,14 +39,15 @@ $meta_keyword = $result->meta_keyword;
 $meta_description = $result->meta_description;
 
 if (!empty($city)) {
+	$city_val = $cities[$city];
 	$description = $result->description_with_city;
-	$description= str_replace("{{CITY}}", $city, $description);
+	$description = str_replace("{{CITY}}", $city_val, $description);
 	$title = $result->title_with_city;
-	$title  = str_replace("{{CITY}}", $city, $title);
+	$title  = str_replace("{{CITY}}", $city_val, $title);
 	$meta_keyword = $result->meta_keyword_with_city;
-	$meta_keyword = str_replace("{{CITY}}", $city, $meta_keyword);
+	$meta_keyword = str_replace("{{CITY}}", $city_val, $meta_keyword);
 	$meta_description = $result->meta_description_with_city;
-	$meta_description = str_replace("{{CITY}}", $city, $meta_description);
+	$meta_description = str_replace("{{CITY}}", $city_val, $meta_description);
 }
 
 $age_group = $result->age_group;
@@ -107,11 +114,13 @@ function find_courses($macro_discipline, $micro_discipline, $age_group, $city) {
 	$sql = "SELECT c.course_id, c.start_date, c.start_time, c.end_date, c.number_available, c.course_mode, c.trial_mode,
 				CONCAT(p.first_name, ' ', p.family_name) profs_name,
 				CONCAT(r.room_name, ', ', r.address, ', ', r.zip_code, ', ', r.city) room_info, r.city,
-				d.course_type, d.macro_discipline, d.age_group, d.micro_discipline, d.short_description, d.lesson_duration, d.photo
+				d.course_type, d.macro_discipline, d.age_group, d.micro_discipline, d.short_description, d.lesson_duration, d.photo,
+				po.guid AS course_url
 			FROM {$prefix}francais_course c
 			LEFT JOIN {$prefix}francais_discipline d USING(discipline_id)
 			LEFT JOIN {$prefix}francais_room r USING(room_id)
 			LEFT JOIN {$prefix}francais_profs p USING(profs_id)
+			LEFT JOIN {$wpdb->prefix}posts po ON c.post_id = po.ID
 	WHERE d.macro_discipline = %s\n";
 	$sql = $wpdb->prepare($sql, $macro_discipline);
 	if (!empty($micro_discipline)) {
@@ -128,6 +137,7 @@ function find_courses($macro_discipline, $micro_discipline, $age_group, $city) {
 		$sql .= "AND d.age_group = %s";
 		$sql = $wpdb->prepare($sql, $age_group);
 	}
+	
 	$result = $wpdb->get_results( $sql );
 	return $result;
 }
@@ -147,9 +157,9 @@ function render_course($course) {
 	$title = strtoupper("COURS DE {$course->micro_discipline} {$course->age_group} A {$course->city} LE {$day_of_week} DE {$from_time_str} À {$to_time_str}");
 	$html ="
  		<div class='row' style='margin-top: 15px;'>
- 		    <div class='col-md-3'><a href='#'><img src='{$img_url}' /></a></div>
+ 		    <div class='col-md-3'><a href='{$course->course_url}'><img src='{$img_url}' /></a></div>
  		    <div class='col-md-9'>
- 				<p><b><u><a href='#'>{$title}</a></u></b></p>
+ 				<p><b><u><a href='{$course->course_url}'>{$title}</a></u></b></p>
  				<br/>
  				<p>Jour et horaire du cours: Tous les {$day_of_week} de {$from_time_str} à {$to_time_str} à partir du {$start_date_str} (hors vacances scolaires)</p>
  				<br/>
@@ -160,7 +170,7 @@ function render_course($course) {
  				<p>Description: {$course->short_description}</p>
  		        <br/>
  				<p>Séance d'essai: satisfait ou remboursé !</p>
- 				<p><a class='btn btn-info' href='#'>Je decouvre ! <span class='glyphicon glyphicon-chevron-right'></span></a></p>
+ 				<p><a class='btn btn-info' href='{$course->course_url}'>Je decouvre ! <span class='glyphicon glyphicon-chevron-right'></span></a></p>
  			</div>
  		</div>
  	";
