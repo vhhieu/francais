@@ -435,6 +435,7 @@ class FC_Install {
  		$sql = "CREATE TABLE " . $coursetable . " (
             course_id bigint(20) NOT NULL AUTO_INCREMENT,
 			post_id bigint(20),
+			product_id bigint(20),
 			course_name varchar(256),
 			course_description text,
             room_id bigint(20) NOT NULL,

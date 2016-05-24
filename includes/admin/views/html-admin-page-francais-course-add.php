@@ -62,6 +62,18 @@ function insert_course_post($course_id) {
 				array("%d")
 			);
 		}
+		include_once ( FC_PLUGIN_PATH  . 'includes/class-fc-woocommerce-api.php' );
+		$client = new FC_Product_Api();
+		$product_id = $client->add_or_update_product($course_id);
+		if ($product_id) {
+			$result = $wpdb->update(
+					$wpdb->prefix . 'francais_course', //table
+					array('product_id' => $product_id), //data
+					array("course_id" => $course_id),
+					array('%d'), //data format
+					array("%d")
+					);
+		}
 	} catch (Exception $ex) {
 		// Do nothing
 	}

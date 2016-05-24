@@ -28,8 +28,17 @@ class FC_Product_Api {
 	public function __construct() {
 		require_once( FC_PLUGIN_PATH  . 'lib/woocommerce-api.php' );
 		$options = array(
-				'ssl_verify'      => false,
+			'debug'           => true,
+			'return_as_array' => false,
+			'validate_url'    => false,
+			'timeout'         => 30,
+			'ssl_verify'      => false,
 		);
+		
+		// local
+		$consumer_key = 'ck_970edc23e76c2a83cd0c359ecea0f203ba8fe8f9';
+		$consumer_secret = 'cs_62eed9eacb484623edecf17bfcf754d9c523b9e1';
+		// product
 		
 		try {
 			$this->wc_client = new WC_API_Client( home_url(), $consumer_key, $consumer_secret, $options );
@@ -46,14 +55,47 @@ class FC_Product_Api {
 		}
 	}
 	
-	public function add_product($course_id) {
+	public function add_or_update_product($course_id) {
+		global $wpdb;
+		$prefix = $wpdb->prefix;
+		$sql = "SELECT c.course_id, c.number_available, c.product_id,
+					d.short_description, d.discipline_description, d.price, d.application_fee,
+					po.post_title AS title
+				FROM {$prefix}francais_course c
+				LEFT JOIN {$prefix}francais_discipline d USING(discipline_id)
+				LEFT JOIN {$wpdb->prefix}posts po ON c.post_id = po.ID
+		WHERE c.course_id = %d\n";
+		$sql = $wpdb->prepare($sql, $course_id);
+		
+		$course = $wpdb->get_row( $sql );
+		//wp_die(print_r($course));
+		if (!$course) {
+			return;
+		}
+		
+		$price = $course->price + $course->application_fee;
 		$params = array(
 			'title' => $course->title,
 			'type' => 'simple',
 			'regular_price' => $course->price,
-			'description' => $course->description
+			'short_description' => $course->short_description,
+			'description' => $course->discipline_description,
+			'regular_price' => $price,
+			'managing_stock' => true,
+			'stock_quantity' => $course->number_available
 		);
-		$wc_client->products->create($params);
+		$product_id = $course->product_id;
+		
+		$result = '';
+		if ($product_id) {
+			$result = $this->wc_client->products->update( $product_id, $params );
+		}
+		
+		if (empty($result)) {
+			$result = $this->wc_client->products->create($params);
+			$product_id = $result->product->id;
+		}
+		return $product_id;
 	}
 }
 endif;

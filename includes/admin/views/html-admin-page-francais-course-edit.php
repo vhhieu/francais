@@ -45,7 +45,7 @@ function update_course_post($course_id) {
 	
 	$post = get_post($post_id);
 
-	// Update the post into the database.
+	// Update the post into the database. woocommerce_checkout_page_id
 	if ($post) {
 		$new_slug = sanitize_title( $title );
 		if ( $post->post_name != $new_slug ) {
@@ -56,6 +56,19 @@ function update_course_post($course_id) {
 					'post_content' => $title,
 					'post_name' => $new_slug,
 				)
+			);
+		}
+		
+		include_once ( FC_PLUGIN_PATH  . 'includes/class-fc-woocommerce-api.php' );
+		$client = new FC_Product_Api();
+		$product_id = $client->add_or_update_product($course_id);
+		if ($product_id) {
+			$result = $wpdb->update(
+				$wpdb->prefix . 'francais_course', //table
+				array('product_id' => $product_id), //data
+				array("course_id" => $course_id),
+				array('%d'), //data format
+				array("%d")
 			);
 		}
 	}
