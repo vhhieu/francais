@@ -13,7 +13,7 @@ include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
 function update_course_post($course_id) {
 	global $wpdb;
 	$prefix = $wpdb->prefix;
-	$sql = "SELECT c.course_id, c.post_id, c.start_date, c.start_time, c.end_date, c.number_available, c.course_mode, c.trial_mode,
+	$sql = "SELECT c.course_id, c.post_id, c.start_date, c.start_time, c.end_date, c.number_available, c.course_mode, c.trial_mode, c.number_available,
 	CONCAT(p.first_name, ' ', p.family_name) profs_name,
 	CONCAT(r.room_name, ', ', r.address, ', ', r.zip_code, ', ', r.city) room_info, r.city,
 	d.course_type, d.macro_discipline, d.age_group, d.micro_discipline, d.short_description, d.lesson_duration, d.photo
@@ -63,13 +63,17 @@ function update_course_post($course_id) {
 		$client = new FC_Product_Api();
 		$product_id = $client->add_or_update_product($course_id);
 		if ($product_id) {
-			$result = $wpdb->update(
+			$wpdb->update(
 				$wpdb->prefix . 'francais_course', //table
 				array('product_id' => $product_id), //data
 				array("course_id" => $course_id),
 				array('%d'), //data format
 				array("%d")
 			);
+			$product = $client->wc_client->products->get( $product_id )->product;
+			$sales = $product->total_sales;
+			$stock_quantity = max($course->number_available - $sales, 0); 
+			$client->wc_client->products->update_stock($product_id, $stock_quantity); 
 		}
 	}
 }

@@ -30,7 +30,12 @@ $from_time_str = date("H", $from_time) . "h" . date("i", $from_time);
 $to_time_str = date("H", $to_time) . "h" . date("i", $to_time);
 $start_date_str = strftime("%d %b. %Y", $start_date);
 $day_of_week = strftime("%A", $start_date);
-
+$product_id = $course->product_id;
+include_once(WP_PLUGIN_DIR . "/francais/includes/class-fc-woocommerce-api.php");
+$client = new FC_Product_Api();
+$product = $client->wc_client->products->get( $product_id )->product;
+$quantity = $product->stock_quantity;
+$checkout_page_id = get_option("woocommerce_checkout_page_id");
 get_header(); 
 ?>
 <div <?php post_class("clear"); ?> style="padding-top: 20px;">
@@ -44,7 +49,17 @@ get_header();
 							<div class="entry-content">
 								<p><strong>Prix:</strong> <?= $course->price ?>€<?php if ($course->application_fee > 0) { echo " / an + {$course->application_fee}€ de frais de dossier"; }?></p>
 								<p><small><i>Paiement par carte bancaire, par chèque ou par prélèment bancaire (paiement possible en 3 fois sans frais)</i></small></p>
-								<p style="text-align: center;"><strong><?= $course->number_available ?> place encore disponnibles</strong></p><?php // TODO: need database ?>
+								<p style="text-align: center;"><strong><?= $quantity ?> place encore disponnibles</strong></p>
+								
+								<form method="post" enctype="multipart/form-data">
+										<input type="hidden" name="add-to-cart" value="<?= $product_id ?>">
+										<div>
+											<input type="number" step="1" min="1" max="10" name="quantity"
+													value="1" title="Qty" size="4">
+										    <button type="submit"
+														class="btn btn-success" style="display: inline-block;">Ajouter au panier</button>
+										</div>
+								</form>
 								<p><strong>&gt;&gt; Pourquoi nous faire confiance?</strong></p>
 								<ul style="list-style: none;">
 									<li><i class="fa fa-check">&nbsp;</i>Nos clients sont satisfaits et nous attribuent la note moyenne de 17/20</li>
@@ -96,10 +111,15 @@ get_header();
 				                    </div>
 				                </div>
 				                <div style="padding-top: 20px; clear: both;">
-                                	<strong>Séance D'essai offerte:</strong> A L'issue de votre première séance d'essai,
                                 	vous pourrez confirmer votre inscription ou bien demander penant 7 jours le remboursement intégral de votre inscription si vous ne souhaitez pass porsuivre.
                                 </div>
-                            </div>
+                                <div style="padding-top: 20px; clear: both; text-align: center;">
+                                	<form class="cart" method="post" action="<?php echo esc_url( get_permalink( intval($checkout_page_id )) ); ?>" enctype="multipart/form-data">
+										<input type="hidden" name="add-to-cart" value="<?= $product_id ?>">
+										<button type="submit" class="btn btn-primary">Commande</button>
+									</form>
+                                </div>
+							</div>
 						</div>
 					</article>
 				</section>
