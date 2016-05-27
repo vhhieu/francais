@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * FC_Shortcode Class.
  */
+if ( ! class_exists( 'FC_Shortcode' ) ) :
 class FC_Shortcode {
 	
 	/**
@@ -61,25 +62,30 @@ class FC_Shortcode {
 		return $result;
 	}
 	
-	public static function build_options($arr = array()) {
+	public static function build_options($arr = array(), $map) {
 		$result = "";
 		foreach ($arr as $value) {
-			$result .= "<option value='{$value}'>{$value}</option>\n";
+			$result .= "<option value='{$value}'>{$map[$value]}</option>\n";
 		}
 		return $result;
 	}
 	
 	public static function shortcode_banner_research( $atts, $content = "" ) {
+		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+		$cities = FC_Util::get_cities_list();
+		$disciplines = FC_Util::get_micro_discipline_list();
+		global $AGE_GROUP;
+		
 		$options = FC_Shortcode::build_data_options();
-		$city_options = FC_Shortcode::build_options($options[1]);
-		$age_group_options = FC_Shortcode::build_options($options[2]);
-		$discipline_options = FC_Shortcode::build_options($options[3]);
-		$script = FC_Shortcode::build_script($options[0], $options[1], $options[2], $options[3]);
+		$city_options = FC_Shortcode::build_options($options[1], $cities);
+		$age_group_options = FC_Shortcode::build_options($options[2], $AGE_GROUP);
+		$discipline_options = FC_Shortcode::build_options($options[3], $disciplines);
+		//$script = FC_Shortcode::build_script($options[0], $options[1], $options[2], $options[3]);
 		
 		$html = "<div class='fixed-bottom'>
 				  <div class='row'>
 				   <div class='col-md-10'>
-				    <form id='researchform'>
+				    <form id='researchform' method='post'>
 					<div class='row text-left' style='padding-top: 5px; padding-bottom: 5px;'>
 						<div class='col-md-3'></div>
 						<div class='col-md-9'>
@@ -110,18 +116,17 @@ class FC_Shortcode {
 					</div>
 				   </div>
 				   <div class='col-md-2' style='margin-top: 40px'>
-		             <a href='#' onclick='click_research()'>
-		              <button class='btn-danger btn-lg' style='width: 90%'>Rechercher <span class='glyphicon glyphicon-chevron-right' style='text-align: right;'></span></button>
-		             </a>
+		               <button type='submit' name='event' value='course_category' class='btn-danger btn-lg' style='width: 90%'>Rechercher <span class='glyphicon glyphicon-chevron-right' style='text-align: right;'></span></button>
 				   </div>
 				   </form>
 				  </div>
-				</div>
-				{$script}";
+				</div>";
+				//{$script}";
 		return $html;
 	}
 	
 	public static function build_script($data, $city_data, $age_group_data, $discipline_data) {
+		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-frontend.php");
 		$json = json_encode($data);
 		$json_city = json_encode($city_data);
 		$json_age_group = json_encode($age_group_data);
@@ -225,5 +230,5 @@ class FC_Shortcode {
 		return $html;
 	}
 }
-
+endif;
 FC_Shortcode::init();

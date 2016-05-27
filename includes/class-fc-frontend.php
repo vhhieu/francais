@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * FC_Frontend Class.
  */
+if ( ! class_exists( 'FC_Frontend' ) ) :
 class FC_Frontend {
 	
 	/**
@@ -23,7 +24,18 @@ class FC_Frontend {
 		add_action( 'init', array ("FC_Frontend", "register_style"));
 		add_action( 'wp_enqueue_scripts', array ("FC_Frontend", "using_style"));
 		add_filter( 'wp_nav_menu_items', array("FC_Frontend", "your_custom_menu_item"), 10, 2 );
+		add_action('template_redirect', array ("FC_Frontend", "check_for_event_submissions"));
 		
+	}
+	
+	public static function check_for_event_submissions ( $items, $args ) {
+		if (isset($_POST['event']) && $_POST['event']==='course_category') {
+			$city = $_POST['city'];
+			$discipline = $_POST['dis'];
+			$age_group = $_POST['age'];
+			wp_redirect(home_url());
+			die();
+		}
 	}
 	
 	public static function your_custom_menu_item ( $items, $args ) {
@@ -165,5 +177,5 @@ class FC_Frontend {
 		wp_enqueue_style( 'custom_wp_css' );
 	}
 }
-
+endif;
 FC_Frontend::init();
