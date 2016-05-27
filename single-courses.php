@@ -49,7 +49,7 @@ get_header();
 							<div class="entry-content">
 								<p><strong>Prix:</strong> <?= $course->price ?>€<?php if ($course->application_fee > 0) { echo " / an + {$course->application_fee}€ de frais de dossier"; }?></p>
 								<p><small><i>Paiement par carte bancaire, par chèque ou par prélèment bancaire (paiement possible en 3 fois sans frais)</i></small></p>
-								<p style="text-align: center;"><strong><?= $quantity ?> place encore disponnibles</strong></p>
+								<p style="text-align: center;"><strong><?= $quantity ?> places encore disponibles</strong></p>
 								
 								<form method="post" enctype="multipart/form-data">
 										<input type="hidden" name="add-to-cart" value="<?= $product_id ?>">
@@ -63,7 +63,7 @@ get_header();
 								<p><strong>&gt;&gt; Pourquoi nous faire confiance?</strong></p>
 								<ul style="list-style: none;">
 									<li><i class="fa fa-check">&nbsp;</i>Nos clients sont satisfaits et nous attribuent la note moyenne de 17/20</li>
-									<li><i class="fa fa-check">&nbsp;</i>Nos professeurs sont tous diplômésd'état et recrutés parmi les meilleurs</li>
+									<li><i class="fa fa-check">&nbsp;</i>Nos professeurs sont tous diplômés d'état et recrutés parmi les meilleurs</li>
 									<li><i class="fa fa-check">&nbsp;</i>Nos cours se déroulent dans une ambiance conviviale et sympathique</li>
 									<li><i class="fa fa-check">&nbsp;</i>Séance d'essai: satisfait ou emboursé à l'issue de la première séance!</li>
 								</ul>

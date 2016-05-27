@@ -142,11 +142,9 @@ function validate_input() {
 		$result[] = "Heure de début is required!";
 	}
 	
-	if (empty($_POST['promo_value'])) {
-		$result[] = "Nombre places disponibles is required!";
-	} else if (intval($_POST['promo_value']) <= 0) {
+	if (!empty($_POST['promo_value']) && intval($_POST['promo_value']) <= 0) {
 		$result[] = "Nombre places disponibles must be an unsigned number!";
-	} else if (intval($_POST['promo_value']) >= intval($_POST['price'])) {
+		} else if (!empty($_POST['promo_value']) && intval($_POST['promo_value']) >= intval($_POST['price'])) {
 		$result[] = "Nombre places disponibles must be less than '<i>Prix initial'</i>!";
 	}
 	
@@ -393,8 +391,7 @@ $profs_data = json_decode(json_encode($profs_data), true);
 						value="<?= $data['price'] ?>" readonly="readonly" ></td>
 				</tr>
 				<tr class="form-field form-required">
-					<td width="25%"><label for="promo_value">Promo (€) <span
-							class="description">(required)</span></label></td>
+					<td width="25%"><label for="promo_value">Promo (€)</label></td>
 					<td><input type="number" name="promo_value"
 						value="<?= $data['promo_value'] ?>"
 						onkeypress='return is_number(event);'

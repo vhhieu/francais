@@ -31,22 +31,25 @@ class FC_Frontend {
 			return $items;
 		}
 		
-		$sub_citys = FC_Frontend::create_sub_menu("danse");
+		$url = FC_Frontend::build_category_url("danse", "", "", "");
+		$sub_citys = FC_Frontend::create_sub_menu($url, "danse");
 		
 		$items .= "<li class='menu-item menu-item-type-custom menu-item-object-custom'>
-				      <a href='#'><span>COURS DE DANSE</span></a>
+				      <a href='{$url}'><span>COURS DE DANSE</span></a>
 				      {$sub_citys}
 				   </li>";
-		$sub_citys = FC_Frontend::create_sub_menu("theatre");
+				      
+		$url = FC_Frontend::build_category_url("theatre", "", "", "");
+		$sub_citys = FC_Frontend::create_sub_menu($url, "theatre");
 		$items .= "<li class='menu-item menu-item-type-custom menu-item-object-custom'>
-					<a href='#'><span>COURS DE THEATRE</span></a>
+					<a href='{$url}'><span>COURS DE THEATRE</span></a>
 					{$sub_citys}
 					</li>";
 		
 		return $items;
 	}
 	
-	public static function create_sub_menu($macro_discipline) {
+	public static function create_sub_menu($url, $macro_discipline) {
 		global $wpdb;
 		$prefix = $wpdb->prefix . "francais";
 		$sql = "SELECT DISTINCT (city) FROM {$prefix}_room WHERE room_id IN (
@@ -61,12 +64,13 @@ class FC_Frontend {
 		
 		$subcity = "";
 		foreach ($data as $city) {
+			$url_sub = $url . "-" . strtolower($city);
 			$sub_micro = FC_Frontend::create_sub_menu_micro($macro_discipline, $city);
 			$value = strtoupper($city);
 			$macro_discipline = strtoupper($macro_discipline);
 			$subcity .= 
 			   "<li class='menu-item menu-item-type-custom menu-item-object-custom'>
-					<a href='#'><span>COURS DE {$macro_discipline} {$value}</span></a>
+					<a href='{$url_sub}'><span>COURS DE {$macro_discipline} {$value}</span></a>
 					{$sub_micro}
 			    </li>";
 		}
@@ -103,14 +107,15 @@ class FC_Frontend {
 			$value = strtoupper($entity->micro_discipline);
 			$age_group = strtoupper($entity->age_group);
 			if ($age_group !== $current_age_group) {
+				$url = FC_Frontend::build_category_url($macro_discipline, $entity->age_group, "", $city);
 				$current_age_group = $age_group;
-				$sub_micro .= "<li><b>COURS {$age_group}:</b></li>";
+				$sub_micro .= "<li><a href='{$url}'><b>COURS {$age_group}:</b></a></li>";
 			}
 			
 			$url = FC_Frontend::build_category_url($macro_discipline, $entity->age_group, $entity->micro_discipline, $city);
 			$sub_micro .=
 				"<li class='menu-item menu-item-type-custom menu-item-object-custom'>
-			    	<a href='{$url}'><span>COURS DE {$value}</span></a>
+			    	<a href='{$url}'><span style='padding-left: 10px;'>COURS DE {$value}</span></a>
 				</li>";
 		}
 		$result = "<ul class='sub-menu'>{$sub_micro}</ul>";
@@ -140,7 +145,10 @@ class FC_Frontend {
 		
 		$result = $wpdb->get_col( $sql );
 		if (!empty($result)) {
-			$result = $result[0] . "-" . $city;
+			$result = $result[0];
+			if (!empty($city)) {
+				$result .= "-" . $city;
+			}
 		} else {
 			return "#";
 		}

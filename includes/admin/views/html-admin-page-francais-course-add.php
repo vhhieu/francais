@@ -113,11 +113,9 @@ function validate_input() {
 		$result[] = "Heure de début is required!";
 	}
 	
-	if (empty($_POST['promo_value'])) {
-		$result[] = "Promo is required!";
-	} else if (intval($_POST['promo_value']) <= 0) {
+	if (!empty($_POST['promo_value']) && intval($_POST['promo_value']) <= 0) {
 		$result[] = "Promo must be an unsigned number!";
-	} else if (intval($_POST['promo_value']) >= intval($_POST['price'])) {
+	} else if (!empty($_POST['promo_value']) && intval($_POST['promo_value']) >= intval($_POST['price'])) {
 		$result[] = "Promo must be less than '<i>Prix initial'</i>!";
 	}
 	
@@ -170,7 +168,7 @@ if(isset($_POST['createcoursesubmit']) || isset($_POST['createcourseandcontinue'
 					'start_date' => date_format($start_date, "Y-m-d"),
 					'start_time' =>  $_POST['start_time'],
 					'end_date' => date_format($end_date,"Y-m-d"),
-					'promo_value' => $_POST['promo_value'],
+					'promo_value' => intval($_POST['promo_value']),
 					'course_mode' => $_POST['course_mode'],
 					'trial_mode' => $_POST['trial_mode']
 				), //data
@@ -363,8 +361,7 @@ $profs_data = json_decode(json_encode($profs_data), true);
 						value="<?= $_POST['price'] ?>" readonly="readonly" ></td>
 				</tr>
 				<tr class="form-field form-required">
-					<td width="25%"><label for="promo_value">Promo (€) <span
-							class="description">(required)</span></label></td>
+					<td width="25%"><label for="promo_value">Promo (€)</label></td>
 					<td><input type="number" name="promo_value"
 						value="<?= $_POST['promo_value'] ?>"
 						onkeypress='return is_number(event);'

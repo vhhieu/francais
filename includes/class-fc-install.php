@@ -145,7 +145,7 @@ class FC_Install {
 		
 		$args = array(
 			"labels" => $labels,
-			"public" => false,
+			"public" => true,
 			'rewrite' => array('slug' => 'courses','with_front' => false),
 		);
 		
