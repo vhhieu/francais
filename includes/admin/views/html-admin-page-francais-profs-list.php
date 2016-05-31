@@ -356,7 +356,7 @@ $testListTable->prepare_items();
 
     <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:5px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
     	<p>Prof is the person that will give the lesson, defined by its first name and family name.</p> 
-      	<p>Among the different 'prof' that will have been pre-defined (in the database, see chapter 2), we want to choose with a drop-down list</p> 
+      	<p>Among the different 'prof' that will have been pre-defined (in the database, see chapter 2), we want to choose with a drop-down list</p>
     </div>
         
     <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->

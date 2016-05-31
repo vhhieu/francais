@@ -25,15 +25,39 @@ class FC_Frontend {
 		add_action( 'wp_enqueue_scripts', array ("FC_Frontend", "using_style"));
 		add_filter( 'wp_nav_menu_items', array("FC_Frontend", "your_custom_menu_item"), 10, 2 );
 		add_action('template_redirect', array ("FC_Frontend", "check_for_event_submissions"));
-		
+// 		add_action('woocommerce_payment_complete', array ("FC_Frontend", 'custom_process_order'), 10, 1);
 	}
 	
-	public static function check_for_event_submissions ( $items, $args ) {
+// 	public static function custom_process_order($order_id) {
+// 		$order = wc_get_order( $order_id );
+// 		$myuser_id = (int) $order->user_id;
+// 		$user_info = get_userdata($myuser_id);
+// 		$items = $order->get_items();
+// 		foreach ($items as $item) {
+// 			$product_id = $item['product_id'];
+// 			FC_Frontend::send_complete_email($product_id);
+// 		}
+// 	}
+	
+// 	public static function send_complete_email($product_id) {
+// 		// do nothing
+// 	}
+	
+	public static function check_for_event_submissions () {
 		if (isset($_POST['event']) && $_POST['event']==='course_category') {
+			include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+			//$cities = FC_Util::get_cities_list();
 			$city = $_POST['city'];
 			$discipline = $_POST['dis'];
+			$macro_discipline = "danse";
+			if (!empty($discipline)) {
+				$macro_discipline = FC_Util::get_macro_discipline($discipline);
+			}
 			$age_group = $_POST['age'];
-			wp_redirect(home_url());
+			
+			$url = FC_Frontend::build_category_url($macro_discipline, $age_group, $discipline, $city);
+			
+			wp_redirect($url);
 			die();
 		}
 	}

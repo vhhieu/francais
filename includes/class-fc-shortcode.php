@@ -78,9 +78,9 @@ class FC_Shortcode {
 		
 		$options = FC_Shortcode::build_data_options();
 		$city_options = FC_Shortcode::build_options($options[1], $cities);
-		$age_group_options = FC_Shortcode::build_options($options[2], $AGE_GROUP);
-		$discipline_options = FC_Shortcode::build_options($options[3], $disciplines);
-		//$script = FC_Shortcode::build_script($options[0], $options[1], $options[2], $options[3]);
+		//$age_group_options = FC_Shortcode::build_options($options[2], $AGE_GROUP);
+		//$discipline_options = FC_Shortcode::build_options($options[3], $disciplines);
+		$script = FC_Shortcode::build_script($options[0], $options[1], $AGE_GROUP, $disciplines);
 		
 		$html = "<div class='fixed-bottom'>
 				  <div class='row'>
@@ -107,11 +107,9 @@ class FC_Shortcode {
 					   </select></div>
 					   <div class='col-md-3'><select id = 'age' name='age' class='selectsearch'>
 					      <option value='' selected='selected'>Choisissez votre tranche d'age</option>
-					      {$age_group_options}
 					   </select></div>
 					   <div class='col-md-3'><select id = 'dis' name='dis' class='selectsearch'>
 					      <option value='' selected='selected'>Choisissez votre discipline</option>
-					      {$discipline_options}
 					   </select></div>
 					</div>
 				   </div>
@@ -120,57 +118,68 @@ class FC_Shortcode {
 				   </div>
 				   </form>
 				  </div>
-				</div>";
-				//{$script}";
+				</div>
+				{$script}";
 		return $html;
 	}
 	
+	public static function build_city_tree($data) {
+		$result = array();
+		$current_city = "";
+		$current_age_group = "";
+		foreach ($data as $row) {
+			if ($row->city !== $current_city) {
+				$current_city = $row->city;
+				$current_age_group = $row->age_group;
+				$result[$current_city] = array();
+				$result[$current_city][$current_age_group] = array();
+			} else if ($current_age_group !== $row->age_group) {
+				$current_age_group = $row->age_group;
+				$result[$current_city][$current_age_group] = array();
+			}
+			
+			$result[$current_city][$current_age_group][] = $row->micro_discipline;
+		}
+		return $result;
+	}
 	public static function build_script($data, $city_data, $age_group_data, $discipline_data) {
-		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-frontend.php");
+		include_once(FC_PLUGIN_PATH . "includes/class-fc-frontend.php");
+		$data = FC_Shortcode::build_city_tree($data);
 		$json = json_encode($data);
-		$json_city = json_encode($city_data);
+// 		$json_city = json_encode($city_data);
 		$json_age_group = json_encode($age_group_data);
 		$json_discipline = json_encode($discipline_data);
-		$dance_url = home_url() . "/dance/courses?city={0}&age={1}&dis={2}";
-		$theatre_url = home_url() . "/theatre/courses?city={0}&age={1}&dis={2}";
 		$html .= "
 			<script type='text/javascript'>
 				var data = {$json};
-				function click_research() {
+				var age_groups = {$json_age_group};
+				var disciplines = {$json_discipline};
+				jQuery('#city').on('change', function() {
+					var city = jQuery('#city').val();
+					
+					jQuery('#age').find('option').remove().end();
+					jQuery('#dis').find('option').remove().end();
+					jQuery('#age').append(\"<option selected='selected' value=''>Choisissez votre tranche d'age</option>\");
+					jQuery('#dis').append(\"<option selected='selected' value=''>Choisissez votre discipline</option>\");
+					var values = data[city];
+					if (Object.keys(values).length > 0) {
+						for (i = 0; i < Object.keys(values).length; i++) {
+				 			jQuery('#age').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + age_groups[Object.keys(values)[i]] + \" </option>\");
+				 		}
+					}
+				});
+				jQuery('#age').on('change', function() {
 					var city = jQuery('#city').val();
 					var age_group = jQuery('#age').val();
-					var dis = jQuery('#dis').val();
-					
-					if (city && age_group && dis) {
-						var rs = data.filter(function (el) {
-							return el.city == city && el.age_group == age_group && el.micro_discipline == dis;
-						});
-						if (rs && rs.length > 0) {
-							var url = '{$dance_url}';
-							if (dis == 'Théâtre') {
-								url = '{$theatre_url}';
-							}
-							
-							if (!String.prototype.format) {
-							  String.prototype.format = function() {
-							    var args = arguments;
-							    return this.replace(/{(\d+)}/g, function(match, number) { 
-							      return typeof args[number] != 'undefined'
-							        ? args[number]
-							        : match
-							      ;
-							    });
-							  };
-							}
-							url = url.format(city, age_group, dis);
-							document.location=url;
-						} else {
-							alert('No course match your condition!');
-						}
-					} else {
-						alert('Please select more condition!');
-					}
-				}
+					jQuery('#dis').find('option').remove().end();
+					jQuery('#dis').append(\"<option selected='selected' value=''>Choisissez votre discipline</option>\");
+					var values = data[city][age_group];
+					if (Object.keys(values).length > 0) {
+						for (i = 0; i < Object.keys(values).length; i++) {
+				 			jQuery('#dis').append(\"<option value='\" + values[Object.keys(values)[i]] + \"'>\" + disciplines[values[Object.keys(values)[i]]] + \" </option>\");
+				 		}
+			 		}
+				});
 			</script>";
 		return $html;
 	}
