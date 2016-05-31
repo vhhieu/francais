@@ -66,15 +66,69 @@ class WC_Payment_Complete_Email extends WC_Email {
 	
 		// setup order object
 		$order = new WC_Order( intval($order_id) );
-		//$this->object = $order; 
-		
+		 
 // 		// woohoo, send the email!
-//  		$to_email = $this->object["billing_email"];
-//  		$first_name = $this->object["billing_first_name"];
-		$this->send( 'vhhieu@gmail.com' , $this->get_subject(), "TEST CONTENT " . $order->status . " XX " . $order->billing_email, $this->get_headers(), $this->get_attachments() );
+  		$to_email = $order->billing_email;
+  		
+  		$first_name = $order->billing_first_name;
+  		
+  		$items = $order->get_items();
+  		include_once(FC_PLUGIN_PATH . "/includes/admin/class-fc-util.php");
+  		$cities = FC_Util::get_cities_list();
+  		$micro_list = FC_Util::get_micro_discipline_list();
+  		global $AGE_GROUP;
+  		
+  		foreach ($items as $item) {
+  			 $product_id = $item['product_id'];
+  			
+  			$course = $this->find_product($product_id);// find course
+			
+  			if ($course !== NULL) {
+  				setlocale(LC_TIME, get_locale());
+  				$from_time = DateTime::createFromFormat('H:i:s', $course->start_time)->getTimestamp();
+  				$to_time = $from_time + $course->lesson_duration * 60;
+  				$start_date = DateTime::createFromFormat('Y-m-d', $course->start_date)->getTimestamp();
+  				
+  				$from_time_str = date("H", $from_time) . "h" . date("i", $from_time);
+  				$to_time_str = date("H", $to_time) . "h" . date("i", $to_time);
+  				$start_date_str = strftime("%d %b. %Y", $start_date);
+  				$day_of_week = strftime("%A", $start_date);
+  				
+  				$content = $this->get_content_html();
+  				$content = str_replace("{FIRST_NAME}", $first_name, $content);
+  				$content = str_replace("{ROOM_INFO}", $course->room_info . ", " . $cities[$course->room_city], $content);
+  				$content = str_replace("{PROF_NAME}", $course->prof_name, $content);
+  				$content = str_replace("{MICRO_DISCIPLINE}", $micro_list[$course->micro_discipline], $content);
+  				$content = str_replace("{AGE_GROUP}", $AGE_GROUP[$course->age_group], $content);
+  				$content = str_replace("{DAY_OF_WEEK}", $day_of_week, $content);
+  				$content = str_replace("{START_TIME}", $from_time_str, $content);
+  				$content = str_replace("{END_TIME}", $to_time_str, $content);
+  				
+  				$this->send( $to_email , $this->get_subject(), $content , $this->get_headers(), $this->get_attachments() );
+  			}
+  		}
 	}
 	
-
+	public function find_product( $product_id ) {
+		global $wpdb;
+		$table_prefix = $wpdb->prefix . "francais_";
+		$sql = "SELECT
+					c.course_id, c.start_date, c.start_time, c.end_date, c.number_available, c.course_mode, c.trial_mode,
+					CONCAT(p.first_name, ' ', p.family_name) prof_name,
+					CONCAT(r.room_name, ', ', r.address, ', ', r.zip_code) room_info, r.city room_city,
+					d.course_type, d.macro_discipline, d.age_group, d.micro_discipline, d.short_description, d.lesson_duration
+				FROM {$table_prefix}course c
+					LEFT JOIN {$table_prefix}discipline d USING (discipline_id)
+					LEFT JOIN {$table_prefix}room r USING (room_id)
+					LEFT JOIN {$table_prefix}profs p USING (profs_id)
+				WHERE c.product_id = %d";
+		
+		$sql = $wpdb->prepare($sql, $product_id);
+		$result = $wpdb->get_row($sql);
+		return $result;
+		//return $sql;
+	}
+	
 	/**
 	 * get_content_html function.
 	 *
@@ -82,13 +136,7 @@ class WC_Payment_Complete_Email extends WC_Email {
 	 * @return string
 	 */
 	public function get_content_html() {
-		ob_start();
-		woocommerce_get_template( $this->template_html, array(
-				'order'         => $this->object,
-				'email_heading' => $this->get_heading()
-		) );
-		$text = ob_get_clean();
-		
+		$text = file_get_contents($this->template_html);
 		return $text;
 	}
 	
@@ -101,7 +149,7 @@ class WC_Payment_Complete_Email extends WC_Email {
 	 */
 	public function get_content_plain() {
 		ob_start();
-		woocommerce_get_template( $this->template_plain, array(
+		wc_get_template( $this->template_plain, array(
 				'order'         => $this->object,
 				'email_heading' => $this->get_heading()
 		) );

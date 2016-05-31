@@ -113,14 +113,14 @@ final class Francais {
 		
 		global $MICRO_DISCIPLINE;
 		$MICRO_DISCIPLINE = array(
-				"danse" => array("Clip danse", "Danse classique", "Danse de couple", "Hip-Hop", "Salsa", "Swing"),
+				"danse" => array("Clip dance", "Danse classique", "Danse de couple", "Hip-Hop", "Salsa", "Swing"),
 				"theatre" => array("Théâtre"),
 		);
 		
 		global $AGE_GROUP;
 		$AGE_GROUP = array(
 				"enfants" => "Enfants",
-				"ado" => "Ado",
+				"ado" => "Ados",
 				"adultes" => "Adultes",
 				"seniors" => "Seniors",
 		);
@@ -171,6 +171,16 @@ final class Francais {
 		register_activation_hook( __FILE__, array( 'FC_Install', 'install' ) );
 		register_deactivation_hook(__FILE__, array( 'FC_UnInstall', 'uninstall' ) );
 		add_action( 'init', array( $this, 'init' ), 0 );
+		add_filter( 'woocommerce_email_classes', array($this, "add_payment_complete_email") );
+	}
+	
+	public function add_payment_complete_email($email_classes) {
+		// include our custom email class
+		require_once (FC_PLUGIN_PATH . "includes/class-wc-payment-complete-email.php");
+	
+		$email_classes['WC_Payment_Complete_Email'] = new WC_Payment_Complete_Email();
+	
+		return $email_classes;
 	}
 	
 	/**
