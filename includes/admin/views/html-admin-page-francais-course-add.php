@@ -572,10 +572,11 @@ function insertRow() {
     var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
     inp1.value = '';
     inp1.id = "trial_date_" + (len-1);
-    jQuery(inp1).removeClass('hasDatepicker')
+    jQuery(inp1).removeClass('hasDatepicker');
     var inp2 = new_row.cells[1].getElementsByTagName('input')[1];
     inp2.value = '';
     inp2.id = "trial_time_" + (len-1);
+    jQuery(inp2).removeClass('hasDatepicker');
     
     var inp3 = new_row.cells[1].getElementsByTagName('input')[2];
     inp3.value = '';
