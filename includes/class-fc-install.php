@@ -467,6 +467,29 @@ class FC_Install {
         ) ". $charset_collate .";";
  		dbDelta( $sql );
  		
+ 		// COURSE_TRIAL table
+ 		$coursetrialregistertable = $tableprefix . 'course_trial_registration';
+ 		$sql = "CREATE TABLE " . $coursetrialregistertable . " (
+            course_id bigint(20) NOT NULL,
+	 		trial_no int(10) NOT NULL,
+	 		register_no int(10) NOT NULL,
+			first_name varchar(255) NOT NULL,
+			last_name varchar(255) NOT NULL,
+			company_name varchar(255),
+			email varchar(64) NOT NULL,
+			phone varchar(20) NOT NULL,
+			country varchar(128) NOT NULL DEFAULT 'France',
+			address text NOT NULL,
+			address2 text,
+			zipcode varchar(8),
+			city varchar(128),
+	 		PRIMARY KEY  (course_id, trial_no, register_no),
+	 		KEY course_id (course_id),
+	 		KEY trial_no (trial_no),
+			KEY register_no (register_no)
+        ) ". $charset_collate .";";
+ 		dbDelta( $sql );
+ 		
  		// ROOM table
  		$roomtable = $tableprefix . 'room';
  		$sql = "CREATE TABLE " . $roomtable . " (

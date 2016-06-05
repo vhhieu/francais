@@ -171,17 +171,17 @@ final class Francais {
 		register_activation_hook( __FILE__, array( 'FC_Install', 'install' ) );
 		register_deactivation_hook(__FILE__, array( 'FC_UnInstall', 'uninstall' ) );
 		add_action( 'init', array( $this, 'init' ), 0 );
-		add_filter( 'woocommerce_email_classes', array($this, "add_payment_complete_email") );
+// 		add_filter( 'woocommerce_email_classes', array($this, "add_payment_complete_email") );
 	}
 	
-	public function add_payment_complete_email($email_classes) {
-		// include our custom email class
-		require_once (FC_PLUGIN_PATH . "includes/class-wc-payment-complete-email.php");
+// 	public function add_payment_complete_email($email_classes) {
+// 		// include our custom email class
+// 		require_once (FC_PLUGIN_PATH . "includes/class-wc-payment-complete-email.php");
 	
-		$email_classes['WC_Payment_Complete_Email'] = new WC_Payment_Complete_Email();
+// 		$email_classes['WC_Payment_Complete_Email'] = new WC_Payment_Complete_Email();
 	
-		return $email_classes;
-	}
+// 		return $email_classes;
+// 	}
 	
 	/**
 	 * Init Francais when WordPress Initialises.

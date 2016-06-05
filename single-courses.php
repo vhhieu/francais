@@ -36,13 +36,14 @@ $client = new FC_Product_Api();
 $product = $client->wc_client->products->get( $product_id )->product;
 $quantity = $product->stock_quantity;
 $checkout_page_id = get_option("woocommerce_checkout_page_id");
+
 get_header(); 
 ?>
 <div <?php post_class("clear"); ?> style="padding-top: 20px;">
 	<div id="main" class="clearfix container">
 		<div class="row">
 			<div class="col-md-4">
-				<div><img src="<?= $img_url ?>"></div>
+				<div><img src="<?= $img_url ?>" ></div>
 				<section class="blog-main text-center" role="main">
 					<article class="post-entry text-left">
 						<div class="entry-main no-img">
@@ -114,10 +115,49 @@ get_header();
                                 	vous pourrez confirmer votre inscription ou bien demander penant 7 jours le remboursement int√©gral de votre inscription si vous ne souhaitez pass porsuivre.
                                 </div>
                                 <div style="padding-top: 20px; clear: both; text-align: center;">
+                                	<div style="float: left; width: 50%">
                                 	<form class="cart" method="post" action="<?php echo esc_url( get_permalink( intval($checkout_page_id )) ); ?>" enctype="multipart/form-data">
 										<input type="hidden" name="add-to-cart" value="<?= $product_id ?>">
 										<button type="submit" class="btn btn-primary">Commande</button>
 									</form>
+									</div>
+								<?php
+								// get sÈance d'essai
+								if ($course->trial_mode !== 0) {
+									$sql = "SELECT * FROM {$table_prefix}course_trial WHERE course_id = %d ORDER BY TRIAL_NO";
+									$sql = $wpdb->prepare($sql, $course->course_id);
+									$trials = $wpdb->get_results($sql);
+									if ($trials) {
+										$links = "";
+										foreach ($trials as $trial) {
+											$sql = "SELECT count(*) FROM {$table_prefix}course_trial_registration WHERE course_id = %d AND trial_no = %d";
+											$sql = $wpdb->prepare($sql, $trial->course_id, $trial->trial_no);
+											$count = $wpdb->get_var($sql);
+											if ($count >= $trial->number_available) {
+												continue;
+											}
+											setlocale(LC_TIME, get_locale());
+											$from_time = DateTime::createFromFormat('H:i:s', $trial->start_time)->getTimestamp();
+											$to_time = $from_time + 1 * 60; // 1 hour
+											$start_date = DateTime::createFromFormat('Y-m-d', $trial->start_date)->getTimestamp();
+											
+											$from_time_str = date("H", $from_time) . "h" . date("i", $from_time);
+											$to_time_str = date("H", $to_time) . "h" . date("i", $to_time);
+											$start_date_str = strftime("%d %b. %Y", $start_date);
+											$day_of_week = strftime("%A", $start_date);
+											$links .= "<li><a href='#'>{$day_of_week} {$start_date_str} {$from_time_str}-{$to_time_str}</a></li>";
+										}
+										if (!empty($links)) {
+											echo "
+											<div style='padding-left: 50%'>
+												<p><b>Seance d'essai</b></p>
+												<ul>
+													{$links}
+												</ul>
+											</div>";
+										}
+									}
+								}?>
                                 </div>
 							</div>
 						</div>
