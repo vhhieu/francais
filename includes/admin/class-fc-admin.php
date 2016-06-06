@@ -60,8 +60,8 @@ class FC_Admin {
 		// MENU 1 - COURSE
 		add_submenu_page( 'francais-course', 'Course List', 'Course List', 'manage_options', "francais-course", 
 				array(__CLASS__, "init_menu_francais_course_list"), 1);
-		
-		$suffix = add_submenu_page( 'francais-course', 'Créer un cours', 'Cr�er un cours', 'manage_options', "francais-course-add",
+
+		$suffix = add_submenu_page( 'francais-course', 'Créer un cours', 'Créer un cours', 'manage_options', "francais-course-add",
 				array(__CLASS__, "init_menu_francais_course_add"), 1);
 		
 		add_submenu_page( 'francais-course', 'Edit cours', 'Edit cours', 'manage_options', "francais-course-edit",
@@ -110,6 +110,10 @@ class FC_Admin {
 				array(__CLASS__, "init_menu_francais_category_add"));
 		add_submenu_page( 'francais-course', 'Edit Category', 'Edit Category', 'manage_options', "francais-category-edit",
 				array(__CLASS__, "init_menu_francais_category_edit"));
+		
+		// MENU 8 - Trial
+		add_submenu_page( 'francais-course', "Séance d'essai", "Séance d'essai", 'manage_options', "seance-essai",
+				array(__CLASS__, "init_menu_francais_seance_essai"), 8);
 		
 		add_action( 'admin_head', array( $this, 'remove_submenu' ));
 		add_action( 'admin_head', array( $this, 'custom_style_lieu_list' ));
@@ -326,6 +330,13 @@ class FC_Admin {
 			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}
 		include_once("views/html-admin-page-francais-category-edit.php");
+	}
+	
+	public function init_menu_francais_seance_essai() {
+		if ( !current_user_can( 'manage_options' ) )  {
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+		}
+		include_once("views/html-admin-page-seance-essai-list.php");
 	}
 }
 endif;

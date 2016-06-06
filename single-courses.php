@@ -124,7 +124,10 @@ get_header();
 								<?php
 								// get séance d'essai
 								if ($course->trial_mode !== 0) {
-									$sql = "SELECT * FROM {$table_prefix}course_trial WHERE course_id = %d ORDER BY TRIAL_NO";
+									$sql = "SELECT d.lesson_duration, ct.* FROM {$table_prefix}course_trial ct
+												LEFT JOIN {$table_prefix}course c USING (course_id)
+												LEFT JOIN {$table_prefix}discipline d USING(discipline_id)
+											WHERE course_id = %d ORDER BY TRIAL_NO";
 									$sql = $wpdb->prepare($sql, $course->course_id);
 									$trials = $wpdb->get_results($sql);
 									if ($trials) {
@@ -138,7 +141,7 @@ get_header();
 											}
 											setlocale(LC_TIME, get_locale());
 											$from_time = DateTime::createFromFormat('H:i:s', $trial->start_time)->getTimestamp();
-											$to_time = $from_time + 1 * 60 * 60; // 1 hour
+											$to_time = $from_time + $trial->lesson_duration * 60; // 1 hour
 											$start_date = DateTime::createFromFormat('Y-m-d', $trial->start_date)->getTimestamp();
 											
 											$from_time_str = date("H", $from_time) . "h" . date("i", $from_time);

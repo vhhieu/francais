@@ -146,7 +146,8 @@ class FC_Frontend {
 			if ($age_group !== $current_age_group) {
 				$url = FC_Frontend::build_category_url($macro_discipline, $entity->age_group, "", $city);
 				$current_age_group = $age_group;
-				$sub_micro .= "<li><a href='{$url}'><b>COURS {$AGE_GROUP[$age_group]}:</b></a></li>";
+				$temp_age = strtoupper($AGE_GROUP[$entity->age_group]);
+				$sub_micro .= "<li><a href='{$url}'><b>COURS {$temp_age}:</b></a></li>";
 			}
 			
 			$url = FC_Frontend::build_category_url($macro_discipline, $entity->age_group, $entity->micro_discipline, $city);
