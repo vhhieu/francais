@@ -28,7 +28,7 @@ $start_date = DateTime::createFromFormat('Y-m-d', $course->start_date)->getTimes
 
 $from_time_str = date("H", $from_time) . "h" . date("i", $from_time);
 $to_time_str = date("H", $to_time) . "h" . date("i", $to_time);
-$start_date_str = strftime("%d %b. %Y", $start_date);
+$start_date_str = strftime("%d %b %Y", $start_date);
 $day_of_week = strftime("%A", $start_date);
 $product_id = $course->product_id;
 include_once(WP_PLUGIN_DIR . "/francais/includes/class-fc-woocommerce-api.php");

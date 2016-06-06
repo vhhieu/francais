@@ -269,7 +269,7 @@ class FC_Shortcode {
 					        <div class='entry-content'>
 					          <div class='woocommerce'>
 					            <p class='woocommerce-thankyou-order-received'>Merci. Votre réservation est confirmée.</p>
-					            <h2>Détails de la</h2>
+					            <h2>Détails de la réservation</h2>
 					            <table class='shop_table order_details'>
 					              <thead>
 					                <tr>
@@ -389,7 +389,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 				            <tr>
 				              <td style='padding:36px 48px;display:block'>
 				                <h1 style='color:#ffffff;font-family:&quot;Helvetica Neue&quot;,Helvetica,Roboto,Arial,sans-serif;font-size:30px;font-weight:300;line-height:150%;margin:0;text-align:left'>
-									Merci four réservation séance d’essai
+									Votre séance d’essai est confirmée.
 				                </h1>
 				              </td>
 				            </tr>
@@ -413,41 +413,25 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 				                      <td valign='top' style='padding:48px'>
 				                        <div style='color:#737373;font-family:&quot;Helvetica Neue&quot;,Helvetica,Roboto,Arial,sans-serif;font-size:14px;line-height:150%;text-align:left'>
 				                          {$content}
-				                          <table cellspacing='0' cellpadding='6' style='width:100%;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;color:#737373;border:1px solid #e4e4e4' border='1'>
-				                            <thead>
-				                              <tr>
-				                                <th scope='col' style='text-align:left;color:#737373;border:1px solid #e4e4e4;padding:12px'>Produit</th>
-				                              </tr>
-				                            </thead>
-				                            <tbody>
-				                              <tr>
-				                                <td style='text-align:left;vertical-align:middle;border:1px solid #eee;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;word-wrap:break-word;color:#737373;padding:12px'>
-				                          			{$course_title}
-				                                </td>
-				                              </tr>
-				                            </tbody>
-				                          </table>
-				                          <h2 style='color:#557da1;display:block;font-family:&quot;Helvetica Neue&quot;,Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:16px 0 8px;text-align:left'>Détails du client</h2>
-				                          <ul>
-				                            <li>
-				                              <strong>E-mail&nbsp;:</strong> <span style='color:#505050;font-family:&quot;Helvetica Neue&quot;,Helvetica,Roboto,Arial,sans-serif'><a href='mailto:{$_POST['billing_email']}' target='_blank'>{$_POST['billing_email']}</a></span>
-				                            </li>
-				                            <li>
-				                              <strong>Tél.:</strong> <span style='color:#505050;font-family:&quot;Helvetica Neue&quot;,Helvetica,Roboto,Arial,sans-serif'>{$_POST['billing_phone']}</span>
-				                            </li>
-				                          </ul>
 				                          <span class='HOEnZb'><font color='#888888'>
 				                          </font></span>
 				                          <table cellspacing='0' cellpadding='0' style='width:100%;vertical-align:top' border='0'>
 				                            <tbody>
 				                              <tr>
 				                                <td valign='top' width='50%'>
-				                                  <h3 style='color:#557da1;display:block;font-family:&quot;Helvetica Neue&quot;,Helvetica,Roboto,Arial,sans-serif;font-size:16px;font-weight:bold;line-height:130%;margin:16px 0 8px;text-align:left'>Adresse de facturation</h3>
+				                                  <h3 style='color:#557da1;display:block;font-family:&quot;Helvetica Neue&quot;,Helvetica,Roboto,Arial,sans-serif;font-size:16px;font-weight:bold;line-height:130%;margin:16px 0 8px;text-align:left'>Détails des coordonnées</h3>
 				                                  <p style='color:#505050;font-family:&quot;Helvetica Neue&quot;,Helvetica,Roboto,Arial,sans-serif;margin:0 0 16px'>
 													{$_POST['billing_first_name']} {$_POST['billing_last_name']}<br> {$_POST['billing_address_1']} <br>{$_POST['billing_postcode']} {$_POST['billing_city']}
 				                                  </p>
-				                                  <span class='HOEnZb'><font color='#888888'>
-				                                  </font></span>
+				                                  <span class='HOEnZb'><font color='#888888'></font></span>
+				                                  <ul>
+						                            <li>
+						                              <strong>E-mail&nbsp;:</strong> <span style='color:#505050;font-family:&quot;Helvetica Neue&quot;,Helvetica,Roboto,Arial,sans-serif'><a href='mailto:{$_POST['billing_email']}' target='_blank'>{$_POST['billing_email']}</a></span>
+						                            </li>
+						                            <li>
+						                              <strong>Tél.:</strong> <span style='color:#505050;font-family:&quot;Helvetica Neue&quot;,Helvetica,Roboto,Arial,sans-serif'>{$_POST['billing_phone']}</span>
+						                            </li>
+						                          </ul>
 				                                </td>
 				                              </tr>
 				                            </tbody>
@@ -481,8 +465,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 				                  <tbody>
 				                    <tr>
 				                      <td colspan='2' valign='middle' style='padding:0 48px 48px 48px;border:0;color:#99b1c7;font-family:Arial;font-size:12px;line-height:125%;text-align:center'>
-				                        <p>Le Club
-				                          Français de la Danse et du Théâtre
+				                        <p>Le Club Français de la Danse et du Théâtre
 				                        </p>
 				                      </td>
 				                    </tr>
