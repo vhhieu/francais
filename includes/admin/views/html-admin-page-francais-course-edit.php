@@ -39,8 +39,11 @@ function update_course_post($course_id) {
 
 	$micro_arr = FC_Util::get_micro_discipline_list();
 	$micro_discipline = $micro_arr[$course->micro_discipline];
+	
+	$age_group = $course->age_group;
+	global $AGE_GROUP;
 
-	$title = strtoupper("COURS DE {$micro_discipline} {$course->age_group} A {$course->city} LE {$day_of_week} DE {$from_time_str} À {$to_time_str}");
+	$title = strtoupper("COURS DE {$micro_discipline} {$AGE_GROUP[$age_group]} A {$course->city} LE {$day_of_week} DE {$from_time_str} À {$to_time_str}");
 	$post_id = $course->post_id;
 	
 	$post = get_post($post_id);
@@ -471,7 +474,7 @@ $profs_data = json_decode(json_encode($profs_data), true);
 					  
 				?>
 				<tr class="expand">
-					<td>Séance essai 1</td>
+					<td>Séance essai <?= $index + 1 ?></td>
 					<td><input type="text" class="datepicker" name="essai_start_date[]" style="width: 120px"
 						readonly="readonly" placeholder="date" value="<?= $data['essai_start_date'][$index] ?>">
 						<input type="text" class="timepicker" name="essai_start_time[]" style="width: 120px"

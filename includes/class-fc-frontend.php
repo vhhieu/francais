@@ -141,11 +141,12 @@ class FC_Frontend {
 		$current_age_group = "";
 		foreach ($data as $entity) {
 			$value = strtoupper($entity->micro_discipline);
+			global $AGE_GROUP;
 			$age_group = strtoupper($entity->age_group);
 			if ($age_group !== $current_age_group) {
 				$url = FC_Frontend::build_category_url($macro_discipline, $entity->age_group, "", $city);
 				$current_age_group = $age_group;
-				$sub_micro .= "<li><a href='{$url}'><b>COURS {$age_group}:</b></a></li>";
+				$sub_micro .= "<li><a href='{$url}'><b>COURS {$AGE_GROUP[$age_group]}:</b></a></li>";
 			}
 			
 			$url = FC_Frontend::build_category_url($macro_discipline, $entity->age_group, $entity->micro_discipline, $city);
@@ -195,10 +196,14 @@ class FC_Frontend {
 	
 	public static function register_style() {
 		wp_register_style( "custom_wp_css", FC_PLUGIN_URL . "assets/css/style.css");
+		wp_register_style( "custom1_wp_css", plugins_url() . "/woocommerce/assets/css/woocommerce.css?ver=2.5.5");
+		wp_register_style( "custom2_wp_css", plugins_url() . "/woocommerce/assets/css/woocommerce-layout.css?ver=2.5.5");
 	}
 	
 	public static function using_style() {
 		wp_enqueue_style( 'custom_wp_css' );
+		wp_enqueue_style( 'custom1_wp_css' );
+		wp_enqueue_style( 'custom2_wp_css' );
 	}
 }
 endif;

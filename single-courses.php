@@ -122,7 +122,7 @@ get_header();
 									</form>
 									</div>
 								<?php
-								// get s�ance d'essai
+								// get séance d'essai
 								if ($course->trial_mode !== 0) {
 									$sql = "SELECT * FROM {$table_prefix}course_trial WHERE course_id = %d ORDER BY TRIAL_NO";
 									$sql = $wpdb->prepare($sql, $course->course_id);
@@ -138,14 +138,15 @@ get_header();
 											}
 											setlocale(LC_TIME, get_locale());
 											$from_time = DateTime::createFromFormat('H:i:s', $trial->start_time)->getTimestamp();
-											$to_time = $from_time + 1 * 60; // 1 hour
+											$to_time = $from_time + 1 * 60 * 60; // 1 hour
 											$start_date = DateTime::createFromFormat('Y-m-d', $trial->start_date)->getTimestamp();
 											
 											$from_time_str = date("H", $from_time) . "h" . date("i", $from_time);
 											$to_time_str = date("H", $to_time) . "h" . date("i", $to_time);
-											$start_date_str = strftime("%d %b. %Y", $start_date);
+											$start_date_str = strftime("%d %b %Y", $start_date);
 											$day_of_week = strftime("%A", $start_date);
-											$links .= "<li><a href='#'>{$day_of_week} {$start_date_str} {$from_time_str}-{$to_time_str}</a></li>";
+											$url = home_url() . "/seance-dessai-registration?c={$trial->course_id}&t={$trial->trial_no}";
+											$links .= "<li><a href='{$url}'>{$day_of_week} {$start_date_str} de {$from_time_str} à {$to_time_str}</a></li>";
 										}
 										if (!empty($links)) {
 											echo "

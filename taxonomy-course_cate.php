@@ -98,7 +98,8 @@ function build_title_text($macro_discipline, $micro_discipline, $age_group, $cit
 	}
 	
 	if (!empty($age_group)) {
-		$result .= " POUR {$age_group}";
+		global $AGE_GROUP;
+		$result .= " POUR {$AGE_GROUP[$age_group]}";
 	}
 	
 	if (!empty($city)) {
@@ -151,10 +152,11 @@ function render_course($course) {
 
 	$from_time_str = date("H", $from_time) . "h" . date("i", $from_time);
 	$to_time_str = date("H", $to_time) . "h" . date("i", $to_time);
-	$start_date_str = strftime("%d %b. %Y", $start_date);
+	$start_date_str = strftime("%d %b %Y", $start_date);
 	$day_of_week = strftime("%A", $start_date);
+	global $AGE_GROUP;
 
-	$title = strtoupper("COURS DE {$course->micro_discipline} {$course->age_group} A {$course->city} LE {$day_of_week} DE {$from_time_str} À {$to_time_str}");
+	$title = strtoupper("COURS DE {$course->micro_discipline} {$AGE_GROUP[$course->age_group]} A {$course->city} LE {$day_of_week} DE {$from_time_str} À {$to_time_str}");
 	$html ="
  		<div class='row' style='margin-top: 15px;'>
  		    <div class='col-md-3'><a href='{$course->course_url}'><img src='{$img_url}' /></a></div>

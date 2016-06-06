@@ -39,8 +39,10 @@ function insert_course_post($course_id) {
 	
 	$micro_arr = FC_Util::get_micro_discipline_list();
 	$micro_discipline = $micro_arr[$course->micro_discipline];
+	$age_group = $course->age_group;
+	global $AGE_GROUP;
 
-	$title = strtoupper("COURS DE {$micro_discipline} {$course->age_group} A {$course->city} LE {$day_of_week} DE {$from_time_str} À {$to_time_str}");
+	$title = strtoupper("COURS DE {$micro_discipline} {$AGE_GROUP[$age_group]} A {$course->city} LE {$day_of_week} DE {$from_time_str} À {$to_time_str}");
 	
 	$my_post = array(
 			'post_title'    => $title,
