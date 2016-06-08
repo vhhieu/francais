@@ -67,7 +67,7 @@ class FC_Product_Api {
 	public function add_or_update_product($course_id) {
 		global $wpdb;
 		$prefix = $wpdb->prefix;
-		$sql = "SELECT c.course_id, c.number_available, c.product_id,
+		$sql = "SELECT c.course_id, c.number_available, c.product_id, c.course_mode, c.promo_value,
 					d.short_description, d.discipline_description, d.price, d.application_fee,
 					po.post_title AS title
 				FROM {$prefix}francais_course c
@@ -83,6 +83,9 @@ class FC_Product_Api {
 		}
 		
 		$price = $course->price + $course->application_fee;
+		if ($course->course_mode == 1) {
+			$price = $price - $course->promo_value;
+		}
 		$params = array(
 			'title' => $course->title,
 			'type' => 'simple',
@@ -91,6 +94,7 @@ class FC_Product_Api {
 			'description' => $course->discipline_description,
 			'regular_price' => $price,
 			'managing_stock' => true,
+			'backorders' => 'notify',
 			'stock_quantity' => $course->number_available
 		);
 		$product_id = $course->product_id;

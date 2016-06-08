@@ -9,7 +9,7 @@ $table_prefix = $wpdb->prefix . "francais_";
 $sql = "SELECT
 			r.country, r.city, r.zip_code, r.room_name, r.photo_1 AS room_photo, r.address as room_address, r.room_description,
 			d.course_type, d.macro_discipline, d.micro_discipline, d.age_group, d.discipline_description, d.lesson_target, d.photo,
-			d.application_fee, d.price,
+			d.application_fee, d.price, d.lesson_duration,
 			p.photo AS prof_photo, p.description AS prof_description, CONCAT(p.first_name, ' ', p.family_name) AS prof_name, 
 			c.*
 		FROM {$table_prefix}course c
@@ -51,16 +51,6 @@ get_header();
 								<p><strong>Prix:</strong> <?= $course->price ?>€<?php if ($course->application_fee > 0) { echo " / an + {$course->application_fee}€ de frais de dossier"; }?></p>
 								<p><small><i>Paiement par carte bancaire, par chèque ou par prélèment bancaire (paiement possible en 3 fois sans frais)</i></small></p>
 								<p style="text-align: center;"><strong><?= $quantity ?> places encore disponibles</strong></p>
-								
-								<form method="post" enctype="multipart/form-data">
-										<input type="hidden" name="add-to-cart" value="<?= $product_id ?>">
-										<div>
-											<input type="number" step="1" min="1" max="10" name="quantity"
-													value="1" title="Qty" size="4">
-										    <button type="submit"
-														class="btn btn-success" style="display: inline-block;">Ajouter au panier</button>
-										</div>
-								</form>
 								<p><strong>&gt;&gt; Pourquoi nous faire confiance?</strong></p>
 								<ul style="list-style: none;">
 									<li><i class="fa fa-check">&nbsp;</i>Nos clients sont satisfaits et nous attribuent la note moyenne de 17/20</li>
@@ -115,11 +105,47 @@ get_header();
                                 	vous pourrez confirmer votre inscription ou bien demander penant 7 jours le remboursement intégral de votre inscription si vous ne souhaitez pass porsuivre.
                                 </div>
                                 <div style="padding-top: 20px; clear: both; text-align: center;">
-                                	<div style="float: left; width: 50%">
-                                	<form class="cart" method="post" action="<?php echo esc_url( get_permalink( intval($checkout_page_id )) ); ?>" enctype="multipart/form-data">
-										<input type="hidden" name="add-to-cart" value="<?= $product_id ?>">
-										<button type="submit" class="btn btn-primary">Commande</button>
-									</form>
+                                	<div style="float: left; width: 54%; background: RGB(65,113,156);">
+                                		<div style="height: 60px; background: RGB(237,125,49); padding-top: 10px; padding-bottom: 10px; color: white; padding-left: 5px; padding-right: 5px; text-align: left;">
+                                			<?php if ($quantity <= 0) {?>
+                                				Le cours est complet. Inscrivez vous sur liste d’attente en cas de désistement de dernière minute.
+                                			<?php } else if ($course->course_mode == 1) {?>
+                                				Inscrivez-vous dès aujourd’hui et bénéficiez de 10% de remise grâce au code PREMIERSARRIVES
+                                			<?php } else {?>
+                                				Plus que quelques places disponibles - Inscrivez-vous dès aujourd’hui
+                                			<?php }?>
+ 										</div>
+                                		<div>
+                                			<div style="padding-top: 10px; padding-bottom: 10px; color: white; padding-left: 5px; padding-right: 5px;">
+                                				<?php if ($quantity <= 0) {?>
+	                                				Si un élève se désiste, nous vous contacterons !
+	                                			<?php } else if ($course->course_mode == 1) {?>
+	                                				OFFRE LIMITEE : <?= $course->promo_value ?> € d’économies, c’est CHOUETTE : )
+	                                			<?php } else {?>
+	                                				Dernières places disponibles : Rejoignez nous vite : )
+	                                			<?php }?>
+                                			</div>
+                                			<div style="color: white; padding-top: 5px; padding-bottom: 5px;">
+			                                	<form class="cart" method="post" action="<?php echo esc_url( get_permalink( intval($checkout_page_id )) ); ?>" enctype="multipart/form-data">
+													<input type="hidden" name="add-to-cart" value="<?= $product_id ?>">
+													<button type="submit" class="btn btn-primary" >
+													<?php if ($quantity <= 0) {?>
+		                                				&gt;&gt; JE M’INSCRIS !
+		                                			<?php } else if ($course->course_mode == 1) {?>
+		                                				&gt;&gt; JE M’INSCRIS VITE !
+		                                			<?php } else {?>
+		                                				&gt;&gt; JE M’INSCRIS VITE ! 
+		                                			<?php }?>
+														
+													</button>
+												</form>
+											</div>
+											<div style="text-align: left; font-size: 11.5px; padding-top: 10px; padding-bottom: 10px; color: white; padding-left: 5px; padding-right: 5px;">Satisfait ou remboursé : A l’issue de votre 1ère séance
+												d’essai, vous pourrez confirmer votre inscription ou bien
+												demander pendant 7 jours le remboursement intégral de votre
+												inscription si vous ne souhaitez pas poursuivre vos cours !
+											</div>
+										</div>
 									</div>
 								<?php
 								// get séance d'essai
@@ -149,15 +175,20 @@ get_header();
 											$start_date_str = strftime("%d %b %Y", $start_date);
 											$day_of_week = strftime("%A", $start_date);
 											$url = home_url() . "/seance-dessai-registration?c={$trial->course_id}&t={$trial->trial_no}";
-											$links .= "<li><a href='{$url}'>{$day_of_week} {$start_date_str} de {$from_time_str} à {$to_time_str}</a></li>";
+											$links .= "<div style='color: white; padding-top: 5px; padding-bottom: 5px;'><a href='{$url}'><button class='btn btn-primary'>&gt;&gt; {$day_of_week} {$start_date_str} de {$from_time_str} à {$to_time_str}</button></a></div>";
 										}
 										if (!empty($links)) {
 											echo "
-											<div style='padding-left: 50%'>
-												<p><b>Seance d'essai</b></p>
-												<ul>
+											<div style='margin-left: 56%; background: RGB(65,113,156);'>
+												<div style='height: 60px; background: RGB(237,125,49); padding-top: 10px; padding-bottom: 10px; color: white; padding-left: 5px; padding-right: 5px; text-align: left;'>
+													Ou bien faites une séance d’essai offerte !
+												</div>
+												<div style='padding-top: 10px; padding-bottom: 10px; color: white; padding-left: 5px; padding-right: 5px;'>
 													{$links}
-												</ul>
+												</div>
+												<div style='text-align: left; font-size: 11.5px; padding-top: 10px; padding-bottom: 10px; color: white; padding-left: 5px; padding-right: 5px;'>
+													Vous pourrez vous inscrire et régler votre inscription annuelle à l’issue de la séance d’essai si vous êtes satisfaits !
+												</div>
 											</div>";
 										}
 									}
