@@ -72,38 +72,38 @@ class FC_Course_List extends WP_List_Table {
 				$current_discipline = $c->micro_discipline;
 			}
 	
+			if ($c->age_group != $current_age_group) {
+				$discipline_arr[$c->micro_discipline][$c->age_group] = array();
+				$current_age_group = $c->age_group;
+			}
+			
 			if ($c->city !== $current_city) {
-				$discipline_arr[$c->micro_discipline][$c->city] = array();
+				$discipline_arr[$c->micro_discipline][$c->age_group][$c->city] = array();
 				$current_city = $c->city;
 			}
 	
-			if ($c->age_group != $current_age_group) {
-				$discipline_arr[$c->micro_discipline][$c->city][$c->age_group] = array();
-				$current_age_group = $c->age_group;
-			}
-	
-			$discipline_arr[$c->micro_discipline][$c->city][$c->age_group][] = $c;
+			$discipline_arr[$c->micro_discipline][$c->age_group][$c->city][] = $c;
 		}
 		return $discipline_arr;
 	}
 	
-	function build_micro_discipline_row($micro_dis, $city_arr) {
+	function build_micro_discipline_row($micro_dis, $age_group_arr) {
 		$result = "<tr><td bgcolor='#CCCCCC' colspan='8'>{$this->micro_discipline[$micro_dis]}</td></tr>";
-		foreach ($city_arr as $city => $age_group_arr) {
-			$result .= "<tr><td bgcolor='#999999' colspan='8'>&nbsp;&nbsp;&nbsp;&nbsp;{$this->cities[$city]}</td></tr>";
-			$content = $this->build_age_group_row($age_group_arr);
+		global $AGE_GROUP;
+		foreach ($age_group_arr as $age_group => $city_arr) {
+			$result .= "<tr><td bgcolor='#999999' colspan='8'>&nbsp;&nbsp;&nbsp;&nbsp;{$AGE_GROUP[$age_group]}</td></tr>";
+			$content = $this->build_age_group_row($city_arr);
 			$result .= "<tr><td colspan='8'>{$content}</td></tr>";
 		}
 		return $result;
 	}
 	
-	function build_age_group_row($age_group_arr) {
+	function build_age_group_row($city_arr) {
 		$content = "";
-		global $AGE_GROUP;
 		global $COURSE_TRIAL;
 		global $COURSE_MODE;
-		foreach ($age_group_arr as $age_group => $arr) {
-			$content .= "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<font color='#CC33FF'><b>{$AGE_GROUP[$age_group]}</b></font></td></tr>";
+		foreach ($city_arr as $city => $arr) {
+			$content .= "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<font color='#CC33FF'><b>{$this->cities[$city]}</b></font></td></tr>";
 			foreach ($arr as $item) {
 				$room_index = $this->column_room_index($item);
 				$discipline_index = $this->column_discipline_index($item);
@@ -186,7 +186,7 @@ class FC_Course_List extends WP_List_Table {
 					LEFT JOIN {$table_prefix}room r USING (room_id)
 					LEFT JOIN {$table_prefix}profs p USING (profs_id)
 					LEFT JOIN {$wpdb->prefix}posts po ON c.post_id = po.ID
-				ORDER BY d.micro_discipline, r.city, d.age_group;";
+				ORDER BY d.micro_discipline, d.age_group, r.city;";
 		
 		$result = $wpdb->get_results($sql);
 		
@@ -197,8 +197,8 @@ class FC_Course_List extends WP_List_Table {
 		
 		$discipline_arr = $this->buildTree($result);
 		$content = "";
-		foreach ($discipline_arr as $micro_dis => $city_arr) {
-			$content .= $this->build_micro_discipline_row($micro_dis, $city_arr);
+		foreach ($discipline_arr as $micro_dis => $age_group_arr) {
+			$content .= $this->build_micro_discipline_row($micro_dis, $age_group_arr);
 		}
 		
 		$data = "<table class='wp-list-table widefat fixed striped movies' width='100%' border='0' cellpadding='2' cellspacing='2'>
