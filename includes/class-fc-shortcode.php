@@ -601,7 +601,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 	public static function shortcode_prof_list( $atts, $content = "" ) {
 		global $wpdb;
 		$prefix = $wpdb->prefix . "francais_";
-		$sql = "SELECT CONCAT(first_name, ' ', family_name) as full_name, photo, micro_discipline_1 FROM {$prefix}profs";
+		$sql = "SELECT CONCAT(first_name, ' ', family_name) as full_name, photo, micro_discipline_1, city_1, description FROM {$prefix}profs LIMIT 0,4";
 		$data = $wpdb->get_results($sql);
 		
 		$total = count($data);
@@ -612,44 +612,54 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		// TODO: will use it.
 		$num_of_page = (int) ($total / 12) + ($total % 12 > 0 ? 1 : 0); // TODO: need 12 because option NUMBER OF TEACHER.
 		
-		$html = "<div class='row' style='padding-top: 50px;'>";
+		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
+		$cities = FC_Util::get_cities_list();
+		$micro_list = FC_Util::get_micro_discipline_list();
+		
+		$html = "<div class='row margin-left-right-20'>";
 		$count = 0;
 		foreach ($data as $obj) {
 			$count++;
-			$html .= FC_Shortcode::teacher_content($obj);
-			if ($count % 6 == 0 && $count < $total) {
-				$html .= "</div>
-						<div class='row' style='padding-top: 50px;'>";
-			}
+			$html .= FC_Shortcode::teacher_content($obj, $cities, $micro_list);
 		}
 		
-		$html .= "</div>";
-		for ($page = 1; $page <= $num_of_page; $page++) {
+		$html .= "</div><script type='text/javascript'>
+					function showHideTeacher() {
+						alert('SHOW');
+					}
+				</script>";
 			
-		}
-		
-	
 		return $html;
 	}
 	
-	public static function teacher_content($t) {
+	public static function teacher_content($t, $cities, $micro_list) {
 		$img = home_url() . '/' . $t->photo;
 		if (empty($t->photo)) {
 			$img = plugins_url('../assets/images/no_image_available.png', __FILE__);
 		}
 		
-		$html = "
-		  <div class='col-md-2'>
-		    <div class='row'>
-		      <div class='col-md-11 course-block text-center'>
-		          <img src='{$img}'><br/>
-		          <p>{$t->full_name}</p>
-		          <p style='color: #DEC67E;'>{$t->micro_discipline_1}</p>
-		      </div>
-		      <div class='col-md-1'>
-		      </div>
-		    </div>
-		  </div>";
+		$micro_discipline = strtoupper($micro_list[$t->micro_discipline_1]);
+		$city = strtoupper($cities[$t->city_1]);
+		$full_name = strtoupper($t->full_name);
+		
+		$html = "<div class='col-lg-3 col-md-3 col-sm-6 col-xs-12 teacher-item'>
+					<div class='teacher-image'>
+						<div class='teacher-image-avatar'>
+							<a href='#' onclick='showHideTeacher();'><img src='{$img}' alt='AMÉLIE' class='img-circle' width='100%'  /></a>
+						</div>
+						<div class='teacher-image-text'>
+							<h4>{$full_name}</h4>
+							<h3 class='bottom-border'>{$micro_discipline}</h3>
+							<h3>{$city}</h3>
+						</div>
+					</div>
+					<div class='teacher-description text-center hidden'>
+						<p class='color-blue'>
+							{$t->description}
+						</p>
+						<p><a href='#' class='teacher-back'>RETOUR</a></p>
+					</div>
+				</div>";
 		return $html;
 	}
 }
