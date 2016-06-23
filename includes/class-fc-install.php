@@ -593,6 +593,18 @@ class FC_Install {
             PRIMARY KEY  (category_id)
         ) ". $charset_collate .";";
  		dbDelta( $sql );
+ 		
+ 		$clientreviewtable = $tableprefix . 'client_review';
+ 		$sql = "CREATE TABLE " . $clientreviewtable . " (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            client_name varchar(64) NOT NULL,
+ 			client_email varchar(64) NOT NULL,
+			client_address text NOT NULL,
+			content text NOT NULL,
+			rate float NOT NULL,
+            PRIMARY KEY  (id)
+        ) ". $charset_collate .";";
+ 		dbDelta( $sql );
  		//wp_die(var_dump( $wpdb->last_query ));
 	}
 

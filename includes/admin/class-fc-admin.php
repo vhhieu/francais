@@ -46,6 +46,9 @@ class FC_Admin {
 			} else if ($page === 'francais-category-add' || $page === 'francais-category-edit') {
 				$parent_file = "francais-course";
 				$submenu_file = "francais-category";
+			} else if ($page === 'francais-client-review-add' || $page === 'francais-client-review-edit') {
+				$parent_file = "francais-course";
+				$submenu_file = "francais-client-review";
 			}
 		}
 		
@@ -115,6 +118,15 @@ class FC_Admin {
 		add_submenu_page( 'francais-course', "Séance d'essai", "Séance d'essai", 'manage_options', "seance-essai",
 				array(__CLASS__, "init_menu_francais_seance_essai"), 8);
 		
+		// MENU 9 - Client Review
+		add_submenu_page( 'francais-course', "Client Review", "Client Review", 'manage_options', "francais-client-review",
+				array(__CLASS__, "init_menu_francais_client_review_list"), 8);
+		add_submenu_page( 'francais-course', "Add Client Review", "Add Client Review", 'manage_options', "francais-client-review-add",
+				array(__CLASS__, "init_menu_francais_client_review_add"), 8);
+		
+		add_submenu_page( 'francais-course', "Edit Client Review", "Edit Client Review", 'manage_options', "francais-client-review-edit",
+				array(__CLASS__, "init_menu_francais_client_review_edit"), 8);
+		
 		add_action( 'admin_head', array( $this, 'remove_submenu' ));
 		add_action( 'admin_head', array( $this, 'custom_style_lieu_list' ));
 		add_action( 'admin_init', array ($this, 'register_bootstrap'));
@@ -163,6 +175,8 @@ class FC_Admin {
 		remove_submenu_page( 'francais-course', 'francais-discipline-edit' );
 		remove_submenu_page( 'francais-course', 'francais-category-add' );
 		remove_submenu_page( 'francais-course', 'francais-category-edit' );
+		remove_submenu_page( 'francais-course', 'francais-client-review-add' );
+		remove_submenu_page( 'francais-course', 'francais-client-review-edit' );
 	}
 	
 	/**
@@ -337,6 +351,36 @@ class FC_Admin {
 			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}
 		include_once("views/html-admin-page-seance-essai-list.php");
+	}
+	
+	/**
+	 * Init Client Review List Menu Content
+	 */
+	public function init_menu_francais_client_review_list() {
+		if ( !current_user_can( 'manage_options' ) )  {
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+		}
+		include_once("views/html-admin-page-francais-client-review-list.php");
+	}
+	
+	/**
+	 * Init Client Review Add Menu Content
+	 */
+	public function init_menu_francais_client_review_add() {
+		if ( !current_user_can( 'manage_options' ) )  {
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+		}
+		include_once("views/html-admin-page-francais-client-review-add.php");
+	}
+	
+	/**
+	 * Init Client Review Edit Menu Content
+	 */
+	public function init_menu_francais_client_review_edit() {
+		if ( !current_user_can( 'manage_options' ) )  {
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+		}
+		include_once("views/html-admin-page-francais-client-review-edit.php");
 	}
 }
 endif;

@@ -24,6 +24,7 @@ class FC_Shortcode {
 		add_shortcode( 'banner-research', array('FC_Shortcode', 'shortcode_banner_research') );
 		add_shortcode( 'prof-list', array('FC_Shortcode', 'shortcode_prof_list') );
 		add_shortcode( 'essai-registration', array('FC_Shortcode', 'shortcode_essai_registration') );
+		add_shortcode( 'client-review', array('FC_Shortcode', 'shortcode_client_review') );
 	}
 	
 	public static function build_data_options() {
@@ -623,11 +624,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 			$html .= FC_Shortcode::teacher_content($obj, $cities, $micro_list);
 		}
 		
-		$html .= "</div><script type='text/javascript'>
-					function showHideTeacher() {
-						alert('SHOW');
-					}
-				</script>";
+		$html .= "</div>";
 			
 		return $html;
 	}
@@ -645,7 +642,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		$html = "<div class='col-lg-3 col-md-3 col-sm-6 col-xs-12 teacher-item'>
 					<div class='teacher-image'>
 						<div class='teacher-image-avatar'>
-							<a href='#' onclick='showHideTeacher();'><img src='{$img}' alt='AMÉLIE' class='img-circle' width='100%'  /></a>
+							<a href='#'><img src='{$img}' alt='{$full_name}' class='circle' width='100%' /></a>
 						</div>
 						<div class='teacher-image-text'>
 							<h4>{$full_name}</h4>
@@ -658,9 +655,56 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 							{$t->description}
 						</p>
 						<p><a href='#' class='teacher-back'>RETOUR</a></p>
+						<p>en savoir plus</p>
 					</div>
 				</div>";
 		return $html;
+	}
+	
+	public static function shortcode_client_review( $atts, $content = "" ) {
+		global $wpdb;
+		$prefix = $wpdb->prefix . "francais_";
+		$max = 5;
+		if (isset($atts['max'])) {
+			$max = $atts['max'];
+		}
+		$sql = "SELECT * FROM {$prefix}client_review ORDER BY id DESC LIMIT 0,{$max}";
+		$items = $wpdb->get_results($sql, ARRAY_A);
+		
+		$customer_items = "";
+		foreach ($items as $item) {
+			$customer_items .= FC_Shortcode::build_client_review_item_html($item);
+		}
+			
+		$html = "
+            <div class='col-lg-8 col-md-8 col-lg-offset-2 col-md-offset-2 col-sm-12 text-center'>
+                <div class='customer-items'>
+                    {$customer_items}
+                </div>
+            </div>
+        </div>";
+		return $html;
+	}
+	
+	public static function build_client_review_item_html($item) {
+		$percent = floor(($item['rate'] / 5) * 100) - 2;
+		$result =
+			"<div class='customer-item'>
+            	<div class='client-rate color-orange'>
+                	<p style='color: #fa5c4f'>
+                		{$item['rate']}/5
+                		<span class='stars-content'>
+                			<span class='stars-content-inner' style='width: {$percent}%;'></span>
+                		</span>
+                	</p>
+                 </div>
+                 <p>
+                 	{$item['content']}	
+                 </p>
+                 <p><strong>${item['client_name']}, ${item['client_address']}</strong></p>
+                 <p><a href='' class='btn btn-default'>VOIR TOUS LES AVIS CLIENTS</a></p>
+             </div>";
+        return $result;    			
 	}
 }
 endif;
