@@ -498,41 +498,31 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		$script = FC_Shortcode::build_script($options[0], $options[1], $AGE_GROUP, $disciplines);
 		
 		$html = "<div class='fixed-bottom'>
-				  <div class='row'>
-				   <div class='col-md-10'>
-				    <form id='researchform' method='post'>
-					<div class='row text-left' style='padding-top: 5px; padding-bottom: 5px;'>
-						<div class='col-md-3'></div>
-						<div class='col-md-9'>
-						   <span><b>TESTEZ L'UN DE NOS COURS DE DANSE OU DE NOS COURS DE THEATRE:</b></span>
+				    <div class='row text-center'>
+					    <div class='col-lg-12'>
+							<h4>Rejoignez nos cours de danse ou nos cours de théâtre</h4>
+							<form id='search' method='post' class='form-inline' name='search-form'>
+							  <div class='form-group'>
+								     <select id='city' name='city' class='form-control'>
+								        <option value=''>VOTRE VILLE</option>
+				                        {$city_options}
+								      </select>
+								  </div>
+								  <div class='form-group'>
+								      <select id='age' name='age' class='form-control'>
+								          <option value=''>VOTRE ÂGE</option>
+								      </select>
+								  </div>
+								  <div class='form-group'>
+								      <select id='dis' name='dis' class='form-control'>
+								          <option value=''>VOTRE DISCIPLINE</option>
+								      </select>
+								  </div>
+								  <input type='hidden' name='event' value='course_category' />
+								  <input type='submit' class='btn btn-default' value='RECHERCHEZ' />
+							 </form>
 						</div>
-					</div>
-					
-					<div class='row' style='margin-top: 5px'>
-				        <div class='col-md-3'></div>
-						<div class='col-md-3'>VOTRE VILLE :</div>
-						<div class='col-md-3'>VOTRE TRANCHE D'AGE :</div>
-						<div class='col-md-3'>VOTRE DISCIPLINE :</div>
-					</div>
-					<div class='row' style='margin-top: 5px'>
-				       <div class='col-md-3'></div>
-					   <div class='col-md-3'><select id = 'city' name='city' class='selectsearch'>
-					      <option value='' selected='selected'>Choisissez une ville</option>
-					      {$city_options}
-					   </select></div>
-					   <div class='col-md-3'><select id = 'age' name='age' class='selectsearch'>
-					      <option value='' selected='selected'>Choisissez votre tranche d'age</option>
-					   </select></div>
-					   <div class='col-md-3'><select id = 'dis' name='dis' class='selectsearch'>
-					      <option value='' selected='selected'>Choisissez votre discipline</option>
-					   </select></div>
-					</div>
-				   </div>
-				   <div class='col-md-2' style='margin-top: 40px'>
-		               <button type='submit' name='event' value='course_category' class='btn-danger btn-lg' style='width: 90%'>Rechercher <span class='glyphicon glyphicon-chevron-right' style='text-align: right;'></span></button>
-				   </div>
-				   </form>
-				  </div>
+				    </div>
 				</div>
 				{$script}";
 		return $html;
@@ -574,8 +564,8 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 					
 					jQuery('#age').find('option').remove().end();
 					jQuery('#dis').find('option').remove().end();
-					jQuery('#age').append(\"<option selected='selected' value=''>Choisissez votre tranche d'age</option>\");
-					jQuery('#dis').append(\"<option selected='selected' value=''>Choisissez votre discipline</option>\");
+					jQuery('#age').append(\"<option selected='selected' value=''>VOTRE ÂGE</option>\");
+					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
 					var values = data[city];
 					if (Object.keys(values).length > 0) {
 						for (i = 0; i < Object.keys(values).length; i++) {
@@ -587,7 +577,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 					var city = jQuery('#city').val();
 					var age_group = jQuery('#age').val();
 					jQuery('#dis').find('option').remove().end();
-					jQuery('#dis').append(\"<option selected='selected' value=''>Choisissez votre discipline</option>\");
+					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
 					var values = data[city][age_group];
 					if (Object.keys(values).length > 0) {
 						for (i = 0; i < Object.keys(values).length; i++) {
