@@ -60,6 +60,14 @@ class FC_Frontend {
 			wp_redirect($url);
 			die();
 		}
+		if (isset($_POST['event']) && $_POST['event']==='promo_email') {
+			$mailer = WC()->mailer();
+			$subject = "Reçu de votre commande du {$start_date_str} sur Le Club Français";
+			$mailer->send($_POST['billing_email'], $subject, $html, '', '');
+			
+			wp_redirect(home_url());
+			die();
+		}
 	}
 	
 	public static function your_custom_menu_item ( $items, $args ) {
@@ -78,7 +86,7 @@ class FC_Frontend {
 		$url = FC_Frontend::build_category_url("theatre", "", "", "");
 		$sub_citys = FC_Frontend::create_sub_menu($url, "theatre");
 		$items .= "<li class='menu-item menu-item-type-custom menu-item-object-custom'>
-					<a href='{$url}'><span>COURS DE THEATRE</span></a>
+					<a href='{$url}'><span>COURS DE THÉÂTRE</span></a>
 					{$sub_citys}
 					</li>";
 		

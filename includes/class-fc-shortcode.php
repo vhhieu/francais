@@ -24,6 +24,7 @@ class FC_Shortcode {
 		add_shortcode( 'banner-research', array('FC_Shortcode', 'shortcode_banner_research') );
 		add_shortcode( 'prof-list', array('FC_Shortcode', 'shortcode_prof_list') );
 		add_shortcode( 'essai-registration', array('FC_Shortcode', 'shortcode_essai_registration') );
+		add_shortcode( 'client-review', array('FC_Shortcode', 'shortcode_client_review') );
 	}
 	
 	public static function build_data_options() {
@@ -497,41 +498,31 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		$script = FC_Shortcode::build_script($options[0], $options[1], $AGE_GROUP, $disciplines);
 		
 		$html = "<div class='fixed-bottom'>
-				  <div class='row'>
-				   <div class='col-md-10'>
-				    <form id='researchform' method='post'>
-					<div class='row text-left' style='padding-top: 5px; padding-bottom: 5px;'>
-						<div class='col-md-3'></div>
-						<div class='col-md-9'>
-						   <span><b>TESTEZ L'UN DE NOS COURS DE DANSE OU DE NOS COURS DE THEATRE:</b></span>
+				    <div class='row text-center'>
+					    <div class='col-lg-12'>
+							<h4>Rejoignez nos cours de danse ou nos cours de théâtre</h4>
+							<form id='search' method='post' class='form-inline' name='search-form'>
+							  <div class='form-group'>
+								     <select id='city' name='city' class='form-control'>
+								        <option value=''>VOTRE VILLE</option>
+				                        {$city_options}
+								      </select>
+								  </div>
+								  <div class='form-group'>
+								      <select id='age' name='age' class='form-control'>
+								          <option value=''>VOTRE ÂGE</option>
+								      </select>
+								  </div>
+								  <div class='form-group'>
+								      <select id='dis' name='dis' class='form-control'>
+								          <option value=''>VOTRE DISCIPLINE</option>
+								      </select>
+								  </div>
+								  <input type='hidden' name='event' value='course_category' />
+								  <input type='submit' class='btn btn-default' value='RECHERCHEZ' />
+							 </form>
 						</div>
-					</div>
-					
-					<div class='row' style='margin-top: 5px'>
-				        <div class='col-md-3'></div>
-						<div class='col-md-3'>VOTRE VILLE :</div>
-						<div class='col-md-3'>VOTRE TRANCHE D'AGE :</div>
-						<div class='col-md-3'>VOTRE DISCIPLINE :</div>
-					</div>
-					<div class='row' style='margin-top: 5px'>
-				       <div class='col-md-3'></div>
-					   <div class='col-md-3'><select id = 'city' name='city' class='selectsearch'>
-					      <option value='' selected='selected'>Choisissez une ville</option>
-					      {$city_options}
-					   </select></div>
-					   <div class='col-md-3'><select id = 'age' name='age' class='selectsearch'>
-					      <option value='' selected='selected'>Choisissez votre tranche d'age</option>
-					   </select></div>
-					   <div class='col-md-3'><select id = 'dis' name='dis' class='selectsearch'>
-					      <option value='' selected='selected'>Choisissez votre discipline</option>
-					   </select></div>
-					</div>
-				   </div>
-				   <div class='col-md-2' style='margin-top: 40px'>
-		               <button type='submit' name='event' value='course_category' class='btn-danger btn-lg' style='width: 90%'>Rechercher <span class='glyphicon glyphicon-chevron-right' style='text-align: right;'></span></button>
-				   </div>
-				   </form>
-				  </div>
+				    </div>
 				</div>
 				{$script}";
 		return $html;
@@ -573,8 +564,8 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 					
 					jQuery('#age').find('option').remove().end();
 					jQuery('#dis').find('option').remove().end();
-					jQuery('#age').append(\"<option selected='selected' value=''>Choisissez votre tranche d'age</option>\");
-					jQuery('#dis').append(\"<option selected='selected' value=''>Choisissez votre discipline</option>\");
+					jQuery('#age').append(\"<option selected='selected' value=''>VOTRE ÂGE</option>\");
+					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
 					var values = data[city];
 					if (Object.keys(values).length > 0) {
 						for (i = 0; i < Object.keys(values).length; i++) {
@@ -586,7 +577,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 					var city = jQuery('#city').val();
 					var age_group = jQuery('#age').val();
 					jQuery('#dis').find('option').remove().end();
-					jQuery('#dis').append(\"<option selected='selected' value=''>Choisissez votre discipline</option>\");
+					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
 					var values = data[city][age_group];
 					if (Object.keys(values).length > 0) {
 						for (i = 0; i < Object.keys(values).length; i++) {
@@ -623,11 +614,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 			$html .= FC_Shortcode::teacher_content($obj, $cities, $micro_list);
 		}
 		
-		$html .= "</div><script type='text/javascript'>
-					function showHideTeacher() {
-						alert('SHOW');
-					}
-				</script>";
+		$html .= "</div>";
 			
 		return $html;
 	}
@@ -645,12 +632,13 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		$html = "<div class='col-lg-3 col-md-3 col-sm-6 col-xs-12 teacher-item'>
 					<div class='teacher-image'>
 						<div class='teacher-image-avatar'>
-							<a href='#' onclick='showHideTeacher();'><img src='{$img}' alt='AMÉLIE' class='img-circle' width='100%'  /></a>
+							<a href='#'><img src='{$img}' alt='{$full_name}' class='circle' width='100%' /></a>
 						</div>
 						<div class='teacher-image-text'>
 							<h4>{$full_name}</h4>
 							<h3 class='bottom-border'>{$micro_discipline}</h3>
 							<h3>{$city}</h3>
+							<h4>en savoir plus</h4>
 						</div>
 					</div>
 					<div class='teacher-description text-center hidden'>
@@ -661,6 +649,52 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 					</div>
 				</div>";
 		return $html;
+	}
+	
+	public static function shortcode_client_review( $atts, $content = "" ) {
+		global $wpdb;
+		$prefix = $wpdb->prefix . "francais_";
+		$max = 5;
+		if (isset($atts['max'])) {
+			$max = $atts['max'];
+		}
+		$sql = "SELECT * FROM {$prefix}client_review ORDER BY id DESC LIMIT 0,{$max}";
+		$items = $wpdb->get_results($sql, ARRAY_A);
+		
+		$customer_items = "";
+		foreach ($items as $item) {
+			$customer_items .= FC_Shortcode::build_client_review_item_html($item);
+		}
+			
+		$html = "
+            <div class='col-lg-8 col-md-8 col-lg-offset-2 col-md-offset-2 col-sm-12 text-center'>
+                <div class='customer-items'>
+                    {$customer_items}
+                </div>
+            </div>
+        </div>";
+		return $html;
+	}
+	
+	public static function build_client_review_item_html($item) {
+		$percent = floor(($item['rate'] / 5) * 100) - 2;
+		$result =
+			"<div class='customer-item'>
+            	<div class='client-rate color-orange'>
+                	<p style='color: #fa5c4f'>
+                		{$item['rate']}/5
+                		<span class='stars-content'>
+                			<span class='stars-content-inner' style='width: {$percent}%;'></span>
+                		</span>
+                	</p>
+                 </div>
+                 <p>
+                 	{$item['content']}	
+                 </p>
+                 <p><strong>${item['client_name']}, ${item['client_address']}</strong></p>
+                 <p><a href='' class='btn btn-default'>VOIR TOUS LES AVIS CLIENTS</a></p>
+             </div>";
+        return $result;    			
 	}
 }
 endif;
