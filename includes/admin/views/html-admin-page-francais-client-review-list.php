@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin View: Main Menu - Francias - Lieu
+ * Admin View: Main Menu - Francias - Client Review
  *
  * @var string $view
  */
@@ -12,35 +12,34 @@ if(!class_exists('WP_List_Table')){
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-class Room_List_Table extends WP_List_Table {
-	private $cities;
+class Client_Review_List_Table extends WP_List_Table {
+	private $cities, $micro_discipline;
 	/** ************************************************************************
 	 * REQUIRED. Set up a constructor that references the parent constructor. We
 	 * use the parent reference to set some default configs.
 	 ***************************************************************************/
 	function __construct(){
 		global $status, $page;
-	
 		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
 		$this->cities = FC_Util::get_cities_list();
-		
+		$this->micro_discipline = FC_Util::get_micro_discipline_list();
+	
 		//Set parent defaults
 		parent::__construct( array(
 				'singular'  => 'movie',     //singular name of the listed records
 				'plural'    => 'movies',    //plural name of the listed records
 				'ajax'      => false        //does this table support ajax?
 		) );
+	
 	}
 	
 	function get_columns() {
 		return array(
 				"cb" => "<input type=\"checkbox\" />",
-				"room_index" => "Nom concaténé",
-				"max_number" => "Nombre de pers max",
-				"area_m2" => "Nombre m2",
-				"room_manager_name" => "Nom et prénom du gestionnaire",
-				"room_manager_email" => "Mail du gestionnaire",
-				"room_manager_tel" => "Tél du gestionnaire"
+				"client_name" => "Nom",
+				"client_email" => "Email",
+				"client_address" => "Address",
+				"rate" => "Rate",
 		);
 	}
 	
@@ -91,25 +90,23 @@ class Room_List_Table extends WP_List_Table {
 	 * @param array $item A singular item (one full row's worth of data)
 	 * @return string Text to be placed inside the column <td> (movie title only)
 	 **************************************************************************/
-	function column_room_index($item){
+	function column_client_name($item){
 	
 		//Build row actions
 		$actions = array(
-				'edit'      => sprintf('<a href="?page=francais-lieu-edit&movie=%s">Edit</a>', $item['room_id']),
-				'delete'    => sprintf('<a href="?page=%s&action=%s&movie=%s">Delete</a>',$_REQUEST['page'],'delete',$item['room_id']),
+				'edit'      => sprintf('<a href="?page=francais-client-review-edit&movie=%s">Edit</a>', $item['id']),
+				'delete'    => sprintf('<a href="?page=%s&action=%s&movie=%s">Delete</a>',$_REQUEST['page'],'delete',$item['id']),
 		);
 	
-		$value = $item['country'] . " - " . $this->cities[$item['city']] . " - " 
-				. $item['zip_code'] . " - " . $item['room_name'];
+		$value = $item['client_name'];
 		//Return the title contents
 		return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s',
 				/*$1%s*/ $value,
-				/*$2%s*/ $item['room_id'],
+				/*$2%s*/ $item['id'],
 				/*$3%s*/ $this->row_actions($actions)
 				);
 	}
 	
-
 	/** ************************************************************************
 	 * REQUIRED if displaying checkboxes or using bulk actions! The 'cb' column
 	 * is given special treatment when columns are processed. It ALWAYS needs to
@@ -123,7 +120,7 @@ class Room_List_Table extends WP_List_Table {
 		return sprintf(
 				'<input type="checkbox" name="%1$s[]" value="%2$s" />',
 				/*$1%s*/ $this->_args['singular'],  //Let's simply repurpose the table's singular label ("movie")
-				/*$2%s*/ $item['room_id']                //The value of the checkbox should be the record's id
+				/*$2%s*/ $item['id']                //The value of the checkbox should be the record's id
 				);
 	}
 	
@@ -167,12 +164,12 @@ class Room_List_Table extends WP_List_Table {
 			
 			$result = "";
 			if (!empty($ids)) {
-				$result = $wpdb->query("DELETE FROM " . $wpdb->prefix . "francais_room WHERE room_id IN($ids)");
+				$result = $wpdb->query("DELETE FROM " . $wpdb->prefix . "francais_client_review WHERE id IN($ids)");
 			}
 			
 			//wp_die(var_dump( $wpdb->last_query ));
 			if ($result) {
-				wp_redirect( home_url() . "/wp-admin/admin.php?page=francais-lieu", 301);
+				wp_redirect( home_url() . "/wp-admin/admin.php?page=francais-client-review", 301);
 				exit();
 			}
 		}
@@ -243,7 +240,7 @@ class Room_List_Table extends WP_List_Table {
 		 * use sort and pagination data to build a custom query instead, as you'll
 		 * be able to use your precisely-queried data immediately.
 		 */
-		$table_name = $wpdb->prefix . 'francais_room';
+		$table_name = $wpdb->prefix . 'francais_client_review';
 		$sql = "SELECT * FROM " . $table_name;
 		$data = $wpdb->get_results ( $sql );
 		$data = json_decode(json_encode($data), true);
@@ -257,7 +254,7 @@ class Room_List_Table extends WP_List_Table {
 		 * sorting technique would be unnecessary.
 		 */
 		function usort_reorder($a,$b){
-			$orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'room_id'; //If no sort, default to title
+			$orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'id'; //If no sort, default to title
 			$order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
 			$result = strcmp('' . $a[$orderby], '' . $b[$orderby]); //Determine sort order
 			return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
@@ -308,7 +305,7 @@ class Room_List_Table extends WP_List_Table {
 }
 
 //Create an instance of our package class...
-$testListTable = new Room_List_Table();
+$testListTable = new Client_Review_List_Table();
 //Fetch, prepare, sort, and filter our data...
 $testListTable->prepare_items();
 
@@ -317,20 +314,13 @@ $testListTable->prepare_items();
 <div class="wrap">
 	<div id="icon-users" class="icon32"><br/></div>
 	<h1>
-		Lieu <a
-			href="<?php echo admin_url('admin.php?page=francais-lieu-add'); ?>"
+		Client Review <a
+			href="<?php echo admin_url('admin.php?page=francais-client-review-add'); ?>"
 			class="page-title-action">Add New</a>
 	</h1>
 
     <div style="background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:5px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
-    	<p>Lieu is the room in which the lesson will be given, defined by 4 criteria :</p> 
-      	<ul>
-       		<li>The country (example : France)</li>
-       		<li>The city (example : Paris)</li>
-       		<li>The district in the city (example : 75009)</li>
-       		<li>The name of the room (example : studio moutarde 19)</li>
-       		<li>Among the different lieu that will have been pre-defined (in the database, see chapter 2), we want to choose with a drop-down list</li>
-       	</ul>
+    	<p>Client Review List</p> 
     </div>
         
     <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
