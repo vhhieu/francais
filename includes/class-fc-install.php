@@ -575,6 +575,8 @@ class FC_Install {
  		$categoriestable = $tableprefix . 'category';
  		$sql = "CREATE TABLE " . $categoriestable . " (
             category_id bigint(20) NOT NULL AUTO_INCREMENT,
+			category_name varchar(256),
+			category_name_with_city varchar(256),
             slug varchar(32) NOT NULL,
  			macro_discipline varchar(32) NOT NULL,
 			micro_discipline varchar(32),

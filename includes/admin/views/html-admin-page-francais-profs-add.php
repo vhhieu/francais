@@ -53,11 +53,11 @@ function validate_input() {
 			$img = wp_get_image_editor( $movefile['file'] );
 			if ( ! is_wp_error( $img ) ) {
 				$size = $img->get_size();
-				if ($size['width'] < 350 || $size['height'] < 450) {
-					$result[] = "Photo image must be 350x450 format!";
+				if ($size['width'] != $size['height']) {
+					$result[] = "Photo image must be L = l";
 				}
 				
-				$img->resize( 350, 450, true );
+// 				$img->resize( 350, 350, true );
 				$img->save($movefile['file']);
 				$_POST['photo_text'] = substr($movefile['file'], strlen(ABSPATH));
 			}
@@ -170,7 +170,7 @@ $micro_discipline = FC_Util::get_micro_discipline_list();
 					<td><input type="password" name="password" value="<?= $_POST['password'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="photo">Photo <span class="description">350x450 (required)</span></label></th>
+					<th scope="row"><label for="photo">Photo <span class="description" style='color: red'>(attention la photo doit être carrée : L = l)</span></label></th>
 					<td><img id="photo_img" src="#" alt="Preview Photo" /> <input type="file" name="photo" id="photo"></td>
 				</tr>
 				<tr class="form-field">

@@ -14,6 +14,14 @@ function validate_input() {
 		$result[] = "slug is required!";
 	}
 	
+	if (empty($_POST['category_name'])) {
+		$result[] = "Category Name is required!";
+	}
+	
+	if (empty($_POST['category_name_with_city'])) {
+		$result[] = "Category Name(Ville) is required!";
+	}
+	
 	if (empty($_POST['description'])) {
 		$result[] = "Description is required!";
 	}
@@ -120,6 +128,8 @@ if(isset($_POST['updatecategorysubmit'])){
 				'micro_discipline' => $_POST['micro_discipline'],
 				'age_group' => $_POST['age_group'],
 				'slug' => stripslashes($_POST['slug']),
+				'category_name' => stripslashes($_POST['category_name']),
+				'category_name_with_city' => stripslashes($_POST['category_name_with_city']),
 				'description' => stripslashes($_POST['description']),
 				'description_with_city' => stripslashes($_POST['description_with_city']),
 				'title' => stripslashes($_POST['title']),
@@ -131,7 +141,7 @@ if(isset($_POST['updatecategorysubmit'])){
 				'photo'  => $_POST['photo_text']
 			), //data
 			array('category_id' => $_POST['category_id']),
-			array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'), //data format
+			array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'), //data format
 			array('%d')
 		);
 	}
@@ -207,6 +217,18 @@ $micro_arr = FC_Util::get_micro_discipline_array();
 					<th scope="row"><label for="slug">Slug <span class="description">(required)</span></label></th>
 					<td>
 						<span>cours-de-</span><input id="slug" name="slug" type="text" value="<?= $data['slug'] ?>" style="width: 80%"> 
+					</td>
+				</tr>
+				<tr class="form-field form-required">
+					<th scope="row"><label for="category_name">Category name <span class="description">(required)</span></label></th>
+					<td>
+						<input id="category_name" name="category_name" type="text" value="<?= $data['category_name'] ?>"> 
+					</td>
+				</tr>
+				<tr class="form-field form-required">
+					<th scope="row"><label for="category_name_with_city">Category name(Ville)<span class="description">(required)</span></label></th>
+					<td>
+						<input id="category_name_with_city" name="category_name_with_city" type="text" value="<?= $data['category_name_with_city'] ?>"> 
 					</td>
 				</tr>
 				<tr class="form-field form-required">
