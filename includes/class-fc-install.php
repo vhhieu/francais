@@ -534,6 +534,7 @@ class FC_Install {
 			micro_discipline varchar(32) NOT NULL,
 			age_group varchar(64) NOT NULL,
 			photo varchar(512),
+			photo_small varchar(512),
 	 		short_description varchar(512),
 			discipline_description text,
 	 		lesson_target text,
