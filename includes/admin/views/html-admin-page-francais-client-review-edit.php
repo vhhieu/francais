@@ -11,18 +11,16 @@ if (! defined ( 'ABSPATH' )) {
 function validate_input() {
 	$result = array();
 	if (empty($_POST['client_name'])) {
-		$result[] = "Nom is required!";
+		$result[] = "PréNom is required!";
 	}
 	
 	include_once ( FC_PLUGIN_PATH . 'lib/EmailAddressValidator.php');
-	if (empty($_POST['client_email'])) {
-		$result[] = "Mail is required!";
-	} else if (!(new EmailAddressValidator())->check_email_address($_POST['client_email'])) {
-	    $result[] = "This ({$_POST['client_email']}) email address is considered invalid.";
+	if (!empty($_POST['client_email']) && !(new EmailAddressValidator())->check_email_address($_POST['client_email'])) {
+		$result[] = "This ({$_POST['client_email']}) email address is considered invalid.";
 	}
 	
 	if (empty($_POST['client_address'])) {
-		$result[] = "Address is required!";
+		$result[] = "Villa is required!";
 	}
 	
 	if (empty($_POST['content'])) {

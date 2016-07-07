@@ -637,8 +637,8 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 						<div class='teacher-image-text'>
 							<h4>{$full_name}</h4>
 							<h3 class='bottom-border'>{$micro_discipline}</h3>
-							<h3>{$city}</h3>
-							<h4>en savoir plus</h4>
+							<h3 class='teacher-city'>{$city}</h3>
+							<h5>en savoir plus</h5>
 						</div>
 					</div>
 					<div class='teacher-description text-center hidden'>
@@ -646,7 +646,6 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 							{$t->description}
 						</p>
 						<p><a href='#' class='teacher-back'>RETOUR</a></p>
-						<p>en savoir plus</p>
 					</div>
 				</div>";
 		return $html;

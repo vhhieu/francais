@@ -11,18 +11,16 @@ if (! defined ( 'ABSPATH' )) {
 function validate_input() {
 	$result = array();
 	if (empty($_POST['client_name'])) {
-		$result[] = "Nom is required!";
+		$result[] = "PréNom is required!";
 	}
 	
 	include_once ( FC_PLUGIN_PATH . 'lib/EmailAddressValidator.php');
-	if (empty($_POST['client_email'])) {
-		$result[] = "Mail is required!";
-	} else if (!(new EmailAddressValidator())->check_email_address($_POST['client_email'])) {
+	if (!empty($_POST['client_email']) && !(new EmailAddressValidator())->check_email_address($_POST['client_email'])) {
 	    $result[] = "This ({$_POST['client_email']}) email address is considered invalid.";
 	}
 	
 	if (empty($_POST['client_address'])) {
-		$result[] = "Address is required!";
+		$result[] = "Villa is required!";
 	}
 	
 	if (empty($_POST['content'])) {
@@ -87,15 +85,15 @@ if(isset($_POST['createclientreviewsubmit']) || isset($_POST['createclientreview
 		<table class="form-table">
 			<tbody>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="client_name">Nom <span class="description">(required)</span></label></th>
+					<th scope="row"><label for="client_name">PréNom <span class="description">(required)</span></label></th>
 					<td><input type="text" name="client_name" value="<?= $_POST['client_name'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="client_email">Email <span class="description">(required)</span> (exemple : exemple@domaine.com)</label></th>
+					<th scope="row"><label for="client_email">Email (exemple : exemple@domaine.com)</label></th>
 					<td><input type="email" name="client_email" value="<?= $_POST['client_email'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="client_address">Address <span class="description">(required)</span></label></th>
+					<th scope="row"><label for="client_address">Villa <span class="description">(required)</span></label></th>
 					<td><input type="text" name="client_address" value="<?= $_POST['client_address'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
