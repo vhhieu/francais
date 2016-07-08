@@ -592,7 +592,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 	public static function shortcode_prof_list( $atts, $content = "" ) {
 		global $wpdb;
 		$prefix = $wpdb->prefix . "francais_";
-		$sql = "SELECT CONCAT(first_name, ' ', family_name) as full_name, photo, micro_discipline_1, city_1, description FROM {$prefix}profs LIMIT 0,4";
+		$sql = "SELECT CONCAT(first_name, ' ', family_name) as full_name, photo, micro_discipline_1,micro_discipline_2, city_1,city_2, description FROM {$prefix}profs";
 		$data = $wpdb->get_results($sql);
 		
 		$total = count($data);
@@ -607,7 +607,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		$cities = FC_Util::get_cities_list();
 		$micro_list = FC_Util::get_micro_discipline_list();
 		
-		$html = "<div class='row margin-left-right-20'>";
+		$html = "<div id='teacher-items' class='row margin-left-right-20'>";
 		$count = 0;
 		foreach ($data as $obj) {
 			$count++;
@@ -625,8 +625,24 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 			$img = plugins_url('../assets/images/no_image_available.png', __FILE__);
 		}
 		
-		$micro_discipline = strtoupper($micro_list[$t->micro_discipline_1]);
-		$city = strtoupper($cities[$t->city_1]);
+		$micro_discipline1 = strtoupper($micro_list[$t->micro_discipline_1]);
+		$micro_discipline2 = strtoupper($micro_list[$t->micro_discipline_2]);
+		
+		if (empty($micro_discipline2)) {
+			$micro_discipline_html = "<h3 class='bottom-border'>{$micro_discipline1}</h3>";
+		} else {
+			$micro_discipline_html = "
+				<h3>{$micro_discipline1}</h3>
+				<h3 class='bottom-border'>{$micro_discipline2}</h3>";
+		}
+		
+		$city1 = strtoupper($cities[$t->city_1]);
+		$city2 = strtoupper($cities[$t->city_2]);
+		$city_html = "<h3 class='teacher-city'>{$city1}</h3>";
+		if (!empty($city2)) {
+			$city_html .= "<h3>{$city2}</h3>";
+		}
+		
 		$full_name = strtoupper($t->full_name);
 		
 		$html = "<div class='col-lg-3 col-md-3 col-sm-6 col-xs-12 teacher-item'>
@@ -636,8 +652,8 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 						</div>
 						<div class='teacher-image-text'>
 							<h4>{$full_name}</h4>
-							<h3 class='bottom-border'>{$micro_discipline}</h3>
-							<h3 class='teacher-city'>{$city}</h3>
+							{$micro_discipline_html}
+							{$city_html}
 							<h5>en savoir plus</h5>
 						</div>
 					</div>
