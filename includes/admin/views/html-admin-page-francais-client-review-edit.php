@@ -99,7 +99,7 @@ if (isset($_POST['updateclientreviewsubmit'])){
 		<table class="form-table">
 			<tbody>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="client_name">Nom <span class="description">(required)</span></label></th>
+					<th scope="row"><label for="client_name">Prénom <span class="description">(required)</span></label></th>
 					<td><input type="text" name="client_name" value="<?= $data['client_name'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
@@ -107,7 +107,7 @@ if (isset($_POST['updateclientreviewsubmit'])){
 					<td><input type="email" name="client_email" value="<?= $data['client_email'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="client_address">Address <span class="description">(required)</span></label></th>
+					<th scope="row"><label for="client_address">Ville <span class="description">(required)</span></label></th>
 					<td><input type="text" name="client_address" value="<?= $data['client_address'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
