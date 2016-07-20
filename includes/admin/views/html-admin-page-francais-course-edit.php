@@ -49,6 +49,7 @@ function update_course_post($course_id) {
 	$post = get_post($post_id);
 
 	// Update the post into the database. woocommerce_checkout_page_id
+	$post_type = "cours-de-" . $course->macro_discipline;
 	if ($post) {
 		$new_slug = sanitize_title( $title );
 		if ( $post->post_name != $new_slug ) {
@@ -58,9 +59,11 @@ function update_course_post($course_id) {
 					'post_title'   => $title,
 					'post_content' => $title,
 					'post_name' => $new_slug,
+					'post_type'     => $post_type,
 				)
 			);
 		}
+		$wpdb->query("UPDATE {$prefix}posts SET post_type='{$post_type}' WHERE id={$post_id}");
 		
 		include_once ( FC_PLUGIN_PATH  . 'includes/class-fc-woocommerce-api.php' );
 		$client = new FC_Product_Api();

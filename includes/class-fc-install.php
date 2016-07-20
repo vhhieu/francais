@@ -72,8 +72,8 @@ class FC_Install {
 		}
 		$city_regex .= ")";
 // 		wp_die($city_regex);
-		add_rewrite_rule('cours-de-(.*)-' . $city_regex . '/?', 'index.php?course_cate=$matches[1]&city=$matches[2]', 'top');
-		add_rewrite_rule('cours-de-(.*)/?', 'index.php?course_cate=$matches[1]', 'top');
+		add_rewrite_rule('cours-de-([^/]+)-' . $city_regex . '/?$', 'index.php?course_cate=$matches[1]&city=$matches[2]', 'top');
+		add_rewrite_rule('cours-de-([^/]+)/?$', 'index.php?course_cate=$matches[1]', 'top');
 		add_filter( 'query_vars', array( __CLASS__, 'custom_query_vars' ));
 		flush_rewrite_rules ();
 	}
@@ -150,6 +150,42 @@ class FC_Install {
 		);
 		
 		register_post_type("courses", $args);
+		
+		// xxxxxxx
+		if (post_type_exists('cours-de-danse')) {
+			return;
+		}
+		
+		$labels = array(
+				"name" => "Cours De Danse",
+				"singular_name" => "Cours De Danse"
+		);
+		
+		$args = array(
+				"labels" => $labels,
+				"public" => true,
+				'rewrite' => array('slug' => 'cours-de-danse','with_front' => true),
+		);
+		
+		register_post_type("cours-de-danse", $args);
+		
+		// yyyyyyyyyyyy
+		if (post_type_exists('cours-de-theatre')) {
+			return;
+		}
+		
+		$labels = array(
+				"name" => "Cours De Theatre",
+				"singular_name" => "Cours De Theatre"
+		);
+		
+		$args = array(
+				"labels" => $labels,
+				"public" => true,
+				'rewrite' => array('slug' => 'cours-de-theatre','with_front' => true),
+		);
+		
+		register_post_type("cours-de-theatre", $args);
 		flush_rewrite_rules(true);
 	}
 	

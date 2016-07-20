@@ -44,12 +44,13 @@ function insert_course_post($course_id) {
 
 	$title = strtoupper("COURS DE {$micro_discipline} {$AGE_GROUP[$age_group]} A {$course->city} LE {$day_of_week} DE {$from_time_str} À {$to_time_str}");
 	
+	$post_type = "cours-de-" . $course->macro_discipline;
 	$my_post = array(
 			'post_title'    => $title,
 			'post_content'  => $title,
 			'post_status'   => 'publish',
 			'post_author'   => 1,
-			'post_type'     => 'courses',
+			'post_type'     => $post_type,
 	);
 	
 	// Insert the post into the database.

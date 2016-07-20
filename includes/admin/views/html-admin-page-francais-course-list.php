@@ -34,7 +34,6 @@ class FC_Course_List extends WP_List_Table {
 	 * @see $this->prepare_items()
 	 **************************************************************************/
 	function process_bulk_action() {
-	
 		//Detect when a bulk action is being triggered...
 		if( 'delete'===$this->current_action() && isset($_REQUEST['movie'])) {
 			global $wpdb;
@@ -42,7 +41,7 @@ class FC_Course_List extends WP_List_Table {
 				
 			$ids = isset($_REQUEST['movie']) ? $_REQUEST['movie'] : array();
 			if (is_array($ids)) $ids = implode(',', $ids);
-	
+			
 			$result = "";
 			if (!empty($ids)) {
 				$result = $wpdb->query("DELETE FROM " . $wpdb->prefix . "francais_course_trial WHERE course_id IN ($ids)");
@@ -145,7 +144,7 @@ class FC_Course_List extends WP_List_Table {
 				. $item->zip_code . " - " . $item->room_name;
 		
 		$actions = array(
-				'view'      => sprintf('<a href="%s">View Course</a>', $item->course_url),
+				'view'      => sprintf('<a href="%s">View Course</a>', home_url() . "/" . $item->course_url),
 				'client'    => sprintf('<a href="?page=francais-course&course_id=%s">Clients</a>', $item->course_id),
 				'edit'      => sprintf('<a href="?page=francais-course-edit&movie=%s">Edit</a>', $item->course_id),
 				'delete'    => sprintf('<a href="?page=%s&action=%s&movie=%s">Delete</a>',$_REQUEST['page'],'delete',$item->course_id),
@@ -182,7 +181,7 @@ class FC_Course_List extends WP_List_Table {
 					c.course_mode,
 					c.trial_mode,
 					d.price,
-					po.guid AS course_url
+					CONCAT(po.post_type, '/', po.post_name) AS course_url
 				FROM {$table_prefix}course c
 					LEFT JOIN {$table_prefix}discipline d USING (discipline_id)
 					LEFT JOIN {$table_prefix}room r USING (room_id)
@@ -328,10 +327,11 @@ class FC_Course_List extends WP_List_Table {
 		$start_date_str = strftime("%d %b %Y", $start_date);
 		$day_of_week = strftime("%A", $start_date);
 		
+// 		$home_url = home_url();
 		$html ="
 		<div class='row' style='background:#ECECEC;border:1px solid #CCC;padding:0 10px;margin-top:5px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;'>
 			<div class='col-md-12'>
-				<p><b><u><a href='{$course->course_url}'>{$course->course_title}</a></u></b></p>
+				<p><b><u><a href='/{$course->course_url}'>{$course->course_title}</a></u></b></p>
 				<p><b>Jour et horaire du cours</b>: Tous les {$day_of_week} de {$from_time_str} à {$to_time_str} à partir du {$start_date_str} (hors vacances scolaires)</p>
 				<p><b>Lieu</b>: {$course->room_info}</p>
 				<p><b>Professeur</b>: {$course->profs_name}</p>
@@ -355,6 +355,7 @@ endif;
 
 // Init Object
 $cl = new FC_Course_List();
+$cl->process_bulk_action();
 ?>
 <div class="wrap">
 	<div id="icon-users" class="icon32"><br/></div>
