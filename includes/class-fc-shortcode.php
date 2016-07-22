@@ -640,7 +640,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		$city2 = strtoupper($cities[$t->city_2]);
 		$city_html = "<h3 class='teacher-city'>{$city1}</h3>";
 		if (!empty($city2)) {
-			$city_html .= "<h3>{$city2}</h3>";
+			$city_html .= "<h3 class='teacher-city-2'>{$city2}</h3>";
 		}
 		
 		$full_name = strtoupper($t->full_name);
@@ -683,7 +683,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		}
 			
 		$html = "
-            <div class='col-lg-8 col-md-8 col-lg-offset-2 col-md-offset-2 col-sm-12 text-center'>
+            <div class='col-lg-12 col-md-12 col-sm-12 text-center'>
                 <div class='customer-items'>
                     {$customer_items}
                 </div>
