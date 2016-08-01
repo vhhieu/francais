@@ -203,7 +203,7 @@ class FC_Frontend {
 			$sql .= "AND c.micro_discipline = %s\n";
 			$sql = $wpdb->prepare($sql, $micro_discipline);
 		} else {
-			$sql .= "AND c.micro_discipline = ''\n";
+			$sql .= "AND (c.micro_discipline = '' OR c.micro_discipline IS NULL)\n";
 		}
 		
 		if (!empty($age_group)) {
@@ -220,6 +220,7 @@ class FC_Frontend {
 				$result .= "-" . $city;
 			}
 		} else {
+// 			wp_die($sql);
 			return "#";
 		}
 		

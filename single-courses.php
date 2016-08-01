@@ -9,7 +9,7 @@ $table_prefix = $wpdb->prefix . "francais_";
 $sql = "SELECT
 			r.country, r.city, r.zip_code, r.room_name, r.photo_1 AS room_photo, r.address as room_address, r.room_description,
 			d.course_type, d.macro_discipline, d.micro_discipline, d.age_group, d.discipline_description, d.lesson_target, d.photo,
-			d.application_fee, d.price, d.lesson_duration,
+			d.application_fee, d.price,
 			p.photo AS prof_photo, p.description AS prof_description, CONCAT(p.first_name, ' ', p.family_name) AS prof_name, 
 			c.*
 		FROM {$table_prefix}course c
