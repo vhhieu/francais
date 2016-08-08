@@ -644,6 +644,15 @@ class FC_Install {
             PRIMARY KEY  (id)
         ) ". $charset_collate .";";
  		dbDelta( $sql );
+ 		
+ 		$subscribertable = $tableprefix . 'subscriber';
+ 		$sql = "CREATE TABLE " . $subscribertable . " (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+ 			subscriber_email varchar(64) NOT NULL,
+			UNIQUE KEY subscriber_email (subscriber_email),
+            PRIMARY KEY  (id)
+        ) ". $charset_collate .";";
+ 		dbDelta( $sql );
  		//wp_die(var_dump( $wpdb->last_query ));
 	}
 

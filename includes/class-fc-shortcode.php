@@ -30,7 +30,7 @@ class FC_Shortcode {
 	public static function build_data_options() {
 		global $wpdb;
 		$prefix = "{$wpdb->prefix}francais_";
-		$sql = "SELECT r.city, d.age_group, d.micro_discipline FROM {$prefix}room r
+		$sql = "SELECT r.city, d.age_group, d.macro_discipline FROM {$prefix}room r
 					INNER JOIN {$prefix}course c USING (room_id)
 					INNER JOIN {$prefix}discipline d USING (discipline_id)
 				GROUP BY city,age_group,micro_discipline
@@ -52,8 +52,8 @@ class FC_Shortcode {
 				if (! in_array($obj->age_group, $data_age_group)) {
 					$data_age_group[] = $obj->age_group;
 				}
-				if (! in_array($obj->micro_discipline, $data_discipline)) {
-					$data_discipline[] = $obj->micro_discipline;
+				if (! in_array($obj->macro_discipline, $data_discipline)) {
+					$data_discipline[] = $obj->macro_discipline;
 				}
 			}
 		}
@@ -488,14 +488,14 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 	public static function shortcode_banner_research( $atts, $content = "" ) {
 		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
 		$cities = FC_Util::get_cities_list();
-		$disciplines = FC_Util::get_micro_discipline_list();
 		global $AGE_GROUP;
+		global $MARCO_DISCIPLINE;
 		
 		$options = FC_Shortcode::build_data_options();
 		$city_options = FC_Shortcode::build_options($options[1], $cities);
-		//$age_group_options = FC_Shortcode::build_options($options[2], $AGE_GROUP);
-		//$discipline_options = FC_Shortcode::build_options($options[3], $disciplines);
-		$script = FC_Shortcode::build_script($options[0], $options[1], $AGE_GROUP, $disciplines);
+		$age_group_options = FC_Shortcode::build_options($options[2], $AGE_GROUP);
+		$discipline_options = FC_Shortcode::build_options($options[3], $MARCO_DISCIPLINE);
+		$script = FC_Shortcode::build_script($options[0], $options[1], $options[2], $options[3]);
 		
 		$html = "<div class='fixed-bottom'>
 				    <div class='row text-center'>
@@ -511,11 +511,13 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 								  <div class='form-group'>
 								      <select id='age' name='age' class='form-control'>
 								          <option value=''>VOTRE ÂGE</option>
+								          {$age_group_options}
 								      </select>
 								  </div>
 								  <div class='form-group'>
 								      <select id='dis' name='dis' class='form-control'>
 								          <option value=''>VOTRE DISCIPLINE</option>
+								          {$discipline_options}
 								      </select>
 								  </div>
 								  <input type='hidden' name='event' value='course_category' />
@@ -551,28 +553,38 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		include_once(FC_PLUGIN_PATH . "includes/class-fc-frontend.php");
 		$data = FC_Shortcode::build_city_tree($data);
 		$json = json_encode($data);
-// 		$json_city = json_encode($city_data);
+ 		$json_city = json_encode($city_data);
 		$json_age_group = json_encode($age_group_data);
 		$json_discipline = json_encode($discipline_data);
 		$html .= "
 			<script type='text/javascript'>
 				var data = {$json};
+				var cities = {$json_city};
 				var age_groups = {$json_age_group};
 				var disciplines = {$json_discipline};
+				var city_change = false;
+				var age_group_change = false;
+				var discipline_change = false;
+				
 				jQuery('#city').on('change', function() {
+					age_group_change = true;
 					var city = jQuery('#city').val();
 					
-					jQuery('#age').find('option').remove().end();
-					jQuery('#dis').find('option').remove().end();
-					jQuery('#age').append(\"<option selected='selected' value=''>VOTRE ÂGE</option>\");
-					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
-					var values = data[city];
-					if (Object.keys(values).length > 0) {
-						for (i = 0; i < Object.keys(values).length; i++) {
-				 			jQuery('#age').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + age_groups[Object.keys(values)[i]] + \" </option>\");
-				 		}
+					if (!age_group_change) {
+						jQuery('#age').find('option').remove().end();
+						jQuery('#age').append(\"<option selected='selected' value=''>VOTRE ÂGE</option>\");
+						var values = data[city];
+						if (Object.keys(values).length > 0) {
+							for (i = 0; i < Object.keys(values).length; i++) {
+					 			jQuery('#age').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + age_groups[Object.keys(values)[i]] + \" </option>\");
+					 		}
+						}
 					}
+					
+					jQuery('#dis').find('option').remove().end();
+					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
 				});
+				
 				jQuery('#age').on('change', function() {
 					var city = jQuery('#city').val();
 					var age_group = jQuery('#age').val();

@@ -126,6 +126,10 @@ class FC_Admin {
 		
 		add_submenu_page( 'francais-course', "Edit Client Review", "Edit Client Review", 'manage_options', "francais-client-review-edit",
 				array(__CLASS__, "init_menu_francais_client_review_edit"), 8);
+	
+		// MENU 10 - Subscriber List
+		add_submenu_page( 'francais-course', "Subscriber List", "Subscriber List", 'manage_options', "francais-subscriber",
+				array(__CLASS__, "init_menu_francais_subscriber_list"), 8);
 		
 		add_action( 'admin_head', array( $this, 'remove_submenu' ));
 		add_action( 'admin_head', array( $this, 'custom_style_lieu_list' ));
@@ -381,6 +385,16 @@ class FC_Admin {
 			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}
 		include_once("views/html-admin-page-francais-client-review-edit.php");
+	}
+	
+	/**
+	 * Init Subscriber List
+	 */
+	public function init_menu_francais_subscriber_list() {
+		if ( !current_user_can( 'manage_options' ) )  {
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+		}
+		include_once("views/html-admin-page-francais-subscriber-list.php");
 	}
 }
 endif;

@@ -44,6 +44,8 @@ class FC_Frontend {
 // 	}
 	
 	public static function check_for_event_submissions () {
+		include_once ( FC_PLUGIN_PATH . 'lib/EmailAddressValidator.php');
+		
 		if (isset($_POST['event']) && $_POST['event']==='course_category') {
 			include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
 			//$cities = FC_Util::get_cities_list();
@@ -61,33 +63,51 @@ class FC_Frontend {
 			die();
 		}
 		if (isset($_POST['promo_event']) && $_POST['promo_event']==='promo_email') {
-			$mailer = WC()->mailer();
-			$subject = "20€ de réduction offerts";
-			$code = md5($_POST['client_email'] . microtime());
-			$code = substr($code, strlen($code) - 6, 6);
-			$coupon_data = array(
-				'code' => $code,
-				'discount_type' => 'fixed_cart',
-				'amount' => 20,
-				'individual_use' => true,
-				'exclude_sale_items' => true,
-				'usage_limit' => 1,
-				'email_restrictions' => array($_POST['client_email'])
-			);
-			include_once ( FC_PLUGIN_PATH  . 'includes/class-fc-woocommerce-api.php' );
-			$api = new FC_Product_Api();
-			$api->wc_client->coupons->create($coupon_data);
-			$content = "Bonjour {$_POST['client_name']},<br/>
-						<br/>
-						Ravi de vous accueillir chez nous au Club Français !<br/>
-						<br/>
-						Pour profiter des 20€ de réduction offerts sur vos cours de danse ou de théâtre, veuillez entre le code <b>{$code}</b> lors de la confirmation de votre commande. La réduction se fera automatiquement :-)<br/>
-						<br/>
-						On espère vraiment que vous allez vous amuser et faire rapidement de jolis progrès au Club Français !<br/>
-						<br/>
-						A bientôt,<br/>
-						Célestine, du service client";
-			$mailer->send($_POST['client_email'], $subject, $content, '', '');
+			if ((new EmailAddressValidator())->check_email_address($_POST['client_email'])) {
+				$mailer = WC()->mailer();
+				$subject = "20€ de réduction offerts";
+				$code = md5($_POST['client_email'] . microtime());
+				$code = substr($code, strlen($code) - 6, 6);
+				$coupon_data = array(
+						'code' => $code,
+						'discount_type' => 'fixed_cart',
+						'amount' => 20,
+						'individual_use' => true,
+						'exclude_sale_items' => true,
+						'usage_limit' => 1,
+						'email_restrictions' => array($_POST['client_email'])
+				);
+				include_once ( FC_PLUGIN_PATH  . 'includes/class-fc-woocommerce-api.php' );
+				$api = new FC_Product_Api();
+				$api->wc_client->coupons->create($coupon_data);
+				$content = "Bonjour {$_POST['client_name']},<br/>
+				<br/>
+				Ravi de vous accueillir chez nous au Club Français !<br/>
+				<br/>
+				Pour profiter des 20€ de réduction offerts sur vos cours de danse ou de théâtre, veuillez entre le code <b>{$code}</b> lors de la confirmation de votre commande. La réduction se fera automatiquement :-)<br/>
+				<br/>
+				On espère vraiment que vous allez vous amuser et faire rapidement de jolis progrès au Club Français !<br/>
+				<br/>
+				A bientôt,<br/>
+				Célestine, du service client";
+				$mailer->send($_POST['client_email'], $subject, $content, '', '');
+			}
+
+			wp_redirect(home_url());
+			die();
+		}
+		if (isset($_POST['subscriber_event']) && $_POST['subscriber_event']==='subscriber_email') {
+			if ((new EmailAddressValidator())->check_email_address($_POST['subscriber_email'])) {
+				global $wpdb;
+				$_POST      = array_map('stripslashes_deep', $_POST);
+				$result = $wpdb->insert(
+				$wpdb->prefix . 'francais_subscriber', //table
+				array(
+						'subscriber_email' => $_POST['subscriber_email']
+				), //data
+				array('%s') //data format
+				);
+			}
 			
 			wp_redirect(home_url());
 			die();
