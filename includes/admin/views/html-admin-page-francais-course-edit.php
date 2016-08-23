@@ -15,7 +15,7 @@ function update_course_post($course_id) {
 	$prefix = $wpdb->prefix;
 	$sql = "SELECT c.course_id, c.post_id, c.start_date, c.start_time, c.end_date, c.number_available, c.course_mode, c.trial_mode, c.number_available,
 	CONCAT(p.first_name, ' ', p.family_name) profs_name,
-	CONCAT(r.room_name, ', ', r.address, ', ', r.zip_code, ', ', r.city) room_info, r.city,
+	CONCAT(r.room_name, ', ', r.address, ', ', r.zip_code, ', ', r.city) room_info, r.city, r.room_name,
 	d.course_type, d.macro_discipline, d.age_group, d.micro_discipline, d.short_description, d.lesson_duration, d.photo
 	FROM {$prefix}francais_course c
 	LEFT JOIN {$prefix}francais_discipline d USING(discipline_id)
@@ -51,18 +51,18 @@ function update_course_post($course_id) {
 	// Update the post into the database. woocommerce_checkout_page_id
 	$post_type = "cours-de-" . $course->macro_discipline;
 	if ($post) {
-		$new_slug = sanitize_title( $title );
-		if ( $post->post_name != $new_slug ) {
+		$new_slug = sanitize_title( $title . " " . $course->room_name);
+// 		if ( $post->post_name != $new_slug ) {
 			wp_update_post(
 				array (
 					'ID'        => $post_id,
 					'post_title'   => $title,
 					'post_content' => $title,
-					'post_name' => $new_slug,
+					//'post_name' => $new_slug,
 					'post_type'     => $post_type,
 				)
 			);
-		}
+// 		}
 		$wpdb->query("UPDATE {$prefix}posts SET post_type='{$post_type}' WHERE id={$post_id}");
 		
 		include_once ( FC_PLUGIN_PATH  . 'includes/class-fc-woocommerce-api.php' );
