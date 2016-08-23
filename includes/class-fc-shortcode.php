@@ -523,6 +523,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 								          {$discipline_options}
 								      </select>
 								  </div>
+								  <input id = 'default_discipline' type='hidden' name='default_discipline' value='danse' />
 								  <input type='hidden' name='event' value='course_category' />
 								  <input type='submit' class='btn btn-default' value='RECHERCHEZ' />
 							 </form>
@@ -604,6 +605,9 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 						for (i = 0; i < Object.keys(values_disciplines).length; i++) {
 							jQuery('#dis').append(\"<option value='\" + Object.keys(values_disciplines)[i] + \"'>\" + disciplines[Object.keys(values_disciplines)[i]] + \" </option>\");
 						}
+						if (Object.keys(values_disciplines).length == 1) {
+							jQuery('#default_discipline').val(Object.keys(values_disciplines)[0]);
+						}
 					}
 				} else if (change1 != 'city' && (change2 == '' || change2 == 'city')) {
 					change2 = 'city';
@@ -635,6 +639,9 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 							} else {
 								jQuery('#age').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + age_groups[Object.keys(values)[i]] + \" </option>\");
 							}
+						}
+						if (Object.keys(values).length == 1) {
+							jQuery('#default_discipline').val(Object.keys(values)[0]);
 						}
 					}
 				}
@@ -682,6 +689,10 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 						for (i = 0; i < Object.keys(values_disciplines).length; i++) {
 							jQuery('#dis').append(\"<option value='\" + Object.keys(values_disciplines)[i] + \"'>\" + disciplines[Object.keys(values_disciplines)[i]] + \" </option>\");
 						}
+						
+						if (Object.keys(values_disciplines).length == 1) {
+							jQuery('#default_discipline').val(Object.keys(values_disciplines)[0]);
+						}
 					}
 				} else if (change1 != 'age_group' && (change2 == '' || change2 == 'age_group')) {
 					change2 = 'age_group';
@@ -713,6 +724,9 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 							} else {
 								jQuery('#city').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + cities[Object.keys(values)[i]] + \" </option>\");
 							}
+						}
+						if (Object.keys(values).length == 1) {
+							jQuery('#default_discipline').val(Object.keys(values)[0]);
 						}
 					}
 				}
@@ -853,7 +867,7 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 	public static function shortcode_prof_list( $atts, $content = "" ) {
 		global $wpdb;
 		$prefix = $wpdb->prefix . "francais_";
-		$sql = "SELECT CONCAT(first_name, ' ', family_name) as full_name, photo, micro_discipline_1,micro_discipline_2, city_1,city_2, description FROM {$prefix}profs";
+		$sql = "SELECT CONCAT(first_name, ' ', family_name) as full_name, photo, micro_discipline_1,micro_discipline_2, city_1,city_2, description FROM {$prefix}profs ORDER BY order_number ASC";
 		$data = $wpdb->get_results($sql);
 		
 		$total = count($data);

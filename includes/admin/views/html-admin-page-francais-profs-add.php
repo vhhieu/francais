@@ -108,9 +108,10 @@ if(isset($_POST['createprofssubmit']) || isset($_POST['createprofsandcontinue'])
 						'city_1' => $_POST['city_1'],
 						'city_2' => $_POST['city_2'],
 						'city_3' => $_POST['city_3'],
+						'order_number' => $_POST['order_number'],
 						'photo'  => $_POST['photo_text']
 				), //data
-				array('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') //data format
+				array('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s') //data format
 		);
 	}
 	//wp_die(var_dump( $wpdb->last_query ));
@@ -160,6 +161,10 @@ $micro_discipline = FC_Util::get_micro_discipline_list();
 				<tr class="form-field form-required">
 					<th scope="row"><label for="email">Email <span class="description">(required)</span> (exemple : exemple@domaine.com)</label></th>
 					<td><input type="email" name="email" value="<?= $_POST['email'] ?>"></td>
+				</tr>
+				<tr class="form-field form-required">
+					<th scope="row"><label for="order_number">Order Position</label></th>
+					<td><input type="number" name="order_number" value="<?= $_POST['order_number'] ?>"></td>
 				</tr>
 				<tr class="form-field form-required">
 					<th scope="row"><label for="login_name">Login <span class="description">(required)</span></label></th>

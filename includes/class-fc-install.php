@@ -603,6 +603,7 @@ class FC_Install {
  			room_id_1 bigint(20),
  			room_id_2 bigint(20),
  			room_id_3 bigint(20),
+			order_number int(11),
 			UNIQUE KEY login_name_unique (login_name),
  			UNIQUE KEY profs_unique (email),
             PRIMARY KEY  (profs_id)

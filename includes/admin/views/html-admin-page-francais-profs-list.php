@@ -36,6 +36,7 @@ class Profs_List_Table extends WP_List_Table {
 	function get_columns() {
 		return array(
 				"cb" => "<input type=\"checkbox\" />",
+				"order_number" => "Order",
 				"profs_index" => "Nom",
 				"login_name" => "Login",
 				"phone" => "Tel",
@@ -276,7 +277,7 @@ class Profs_List_Table extends WP_List_Table {
 		 * be able to use your precisely-queried data immediately.
 		 */
 		$table_name = $wpdb->prefix . 'francais_profs';
-		$sql = "SELECT * FROM " . $table_name;
+		$sql = "SELECT * FROM " . $table_name . " ORDER BY -order_number";
 		$data = $wpdb->get_results ( $sql );
 		$data = json_decode(json_encode($data), true);
 		
@@ -289,11 +290,28 @@ class Profs_List_Table extends WP_List_Table {
 		 * sorting technique would be unnecessary.
 		 */
 		function usort_reorder($a,$b){
-			$orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'profs_id'; //If no sort, default to title
-			$order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
-			$result = strcmp('' . $a[$orderby], '' . $b[$orderby]); //Determine sort order
-			return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
+// 			$orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'order_number'; //If no sort, default to title
+// 			$order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
+// 			$result = strcmp('' . $a[$orderby], '' . $b[$orderby]); //Determine sort order
+// 			return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
+			if ($a['order_number'] == null && $b['order_number'] == null) {
+				return 0;
+			}
+			if ($a['order_number'] == null && $b['order_number'] != null) {
+				return 1;
+			}
+			if ($a['order_number'] != null && $b['order_number'] == null) {
+				return -1;
+			}
+			
+			$left = $a['order_number'] != null ? intval($a['order_number']) : 0;
+			$right = $b['order_number'] != null ? intval($b['order_number']) : 0;
+			if ($left == $right) {
+				return 0;
+			}
+			return $left > $right ? 1 : -1;
 		}
+		
 		usort($data, 'usort_reorder');
 		//wp_die(print_r($data));
 		/**

@@ -51,6 +51,9 @@ class FC_Frontend {
 			//$cities = FC_Util::get_cities_list();
 			$city = $_POST['city'];
 			$macro_discipline = $_POST['dis'];
+			if (empty($macro_discipline)) {
+				$macro_discipline = $_POST['default_discipline'];
+			}
 // 			$macro_discipline = "danse";
 // 			if (!empty($discipline)) {
 // 				$macro_discipline = FC_Util::get_macro_discipline($discipline);
