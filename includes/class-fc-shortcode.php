@@ -30,11 +30,11 @@ class FC_Shortcode {
 	public static function build_data_options() {
 		global $wpdb;
 		$prefix = "{$wpdb->prefix}francais_";
-		$sql = "SELECT r.city, d.age_group, d.macro_discipline FROM {$prefix}room r
-					INNER JOIN {$prefix}course c USING (room_id)
-					INNER JOIN {$prefix}discipline d USING (discipline_id)
-				GROUP BY city,age_group,micro_discipline
-				ORDER BY city,age_group,micro_discipline;
+		$sql = "SELECT r.city, d.age_group, d.macro_discipline discipline FROM {$prefix}course c
+					LEFT JOIN {$prefix}room r USING (room_id)
+					LEFT JOIN {$prefix}discipline d USING (discipline_id)
+				GROUP BY city,age_group,d.macro_discipline
+				ORDER BY city,age_group,d.macro_discipline;
 		";
 		
 		$data = $wpdb->get_results($sql);
@@ -52,8 +52,8 @@ class FC_Shortcode {
 				if (! in_array($obj->age_group, $data_age_group)) {
 					$data_age_group[] = $obj->age_group;
 				}
-				if (! in_array($obj->macro_discipline, $data_discipline)) {
-					$data_discipline[] = $obj->macro_discipline;
+				if (! in_array($obj->discipline, $data_discipline)) {
+					$data_discipline[] = $obj->discipline;
 				}
 			}
 		}
@@ -489,13 +489,16 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
 		$cities = FC_Util::get_cities_list();
 		global $AGE_GROUP;
-		global $MARCO_DISCIPLINE;
+		$macros = array(
+				"danse" => "Danse",
+				"theatre" => "Théâtre",
+		);
 		
 		$options = FC_Shortcode::build_data_options();
 		$city_options = FC_Shortcode::build_options($options[1], $cities);
 		$age_group_options = FC_Shortcode::build_options($options[2], $AGE_GROUP);
-		$discipline_options = FC_Shortcode::build_options($options[3], $MARCO_DISCIPLINE);
-		$script = FC_Shortcode::build_script($options[0], $options[1], $options[2], $options[3]);
+		$discipline_options = FC_Shortcode::build_options($options[3], $macros);
+		$script = FC_Shortcode::build_script($options[0], $options[1], $AGE_GROUP, $macros);
 		
 		$html = "<div class='fixed-bottom'>
 				    <div class='row text-center'>
@@ -549,57 +552,303 @@ Ravi de vous accueillir chez nous au Club Français ! Une séance d'essai est sa
 		}
 		return $result;
 	}
+	
 	public static function build_script($data, $city_data, $age_group_data, $discipline_data) {
 		include_once(FC_PLUGIN_PATH . "includes/class-fc-frontend.php");
-		$data = FC_Shortcode::build_city_tree($data);
+		//$data = FC_Shortcode::build_city_tree($data);
 		$json = json_encode($data);
- 		$json_city = json_encode($city_data);
+		$json_city = json_encode(FC_Util::get_cities_list());
 		$json_age_group = json_encode($age_group_data);
 		$json_discipline = json_encode($discipline_data);
 		$html .= "
-			<script type='text/javascript'>
-				var data = {$json};
-				var cities = {$json_city};
-				var age_groups = {$json_age_group};
-				var disciplines = {$json_discipline};
-				var city_change = false;
-				var age_group_change = false;
-				var discipline_change = false;
+		<script type='text/javascript'>
+			var data = {$json};
+			var cities = {$json_city};
+			var age_groups = {$json_age_group};
+			var disciplines = {$json_discipline};
+			var change1 = '';
+			var change1_value = '';
+			var change2 = '';
+			var change2_value = '';
+		
+			// CITY change
+			jQuery('#city').on('change', function() {
+				var city = jQuery('#city').val();
 				
-				jQuery('#city').on('change', function() {
-					age_group_change = true;
-					var city = jQuery('#city').val();
+				if (change1 == '' || change1 == 'city') {
+					change1 = 'city';
+					change1_value = city;
 					
-					if (!age_group_change) {
-						jQuery('#age').find('option').remove().end();
-						jQuery('#age').append(\"<option selected='selected' value=''>VOTRE ÂGE</option>\");
-						var values = data[city];
-						if (Object.keys(values).length > 0) {
-							for (i = 0; i < Object.keys(values).length; i++) {
-					 			jQuery('#age').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + age_groups[Object.keys(values)[i]] + \" </option>\");
-					 		}
+					jQuery('#age').find('option').remove().end();
+					jQuery('#age').append(\"<option selected='selected' value=''>VOTRE ÂGE</option>\");
+					
+					jQuery('#dis').find('option').remove().end();
+					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
+					
+					var values = [];
+					var values_disciplines = [];
+					for (i = 0; i < data.length; i++) {
+						if (data[i]['city'] == city || city == '') {
+							values[data[i]['age_group']] = age_groups[data[i]['age_group']];
+							values_disciplines[data[i]['discipline']] = disciplines[data[i]['discipline']];
 						}
 					}
 					
-					jQuery('#dis').find('option').remove().end();
-					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
-				});
-				
-				jQuery('#age').on('change', function() {
-					var city = jQuery('#city').val();
-					var age_group = jQuery('#age').val();
-					jQuery('#dis').find('option').remove().end();
-					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
-					var values = data[city][age_group];
 					if (Object.keys(values).length > 0) {
 						for (i = 0; i < Object.keys(values).length; i++) {
-				 			jQuery('#dis').append(\"<option value='\" + values[Object.keys(values)[i]] + \"'>\" + disciplines[values[Object.keys(values)[i]]] + \" </option>\");
-				 		}
-			 		}
-				});
-			</script>";
+							jQuery('#age').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + age_groups[Object.keys(values)[i]] + \" </option>\");
+						}
+					}
+					
+					if (Object.keys(values_disciplines).length > 0) {
+						for (i = 0; i < Object.keys(values_disciplines).length; i++) {
+							jQuery('#dis').append(\"<option value='\" + Object.keys(values_disciplines)[i] + \"'>\" + disciplines[Object.keys(values_disciplines)[i]] + \" </option>\");
+						}
+					}
+				} else if (change1 != 'city' && (change2 == '' || change2 == 'city')) {
+					change2 = 'city';
+					change2_value = city;
+					
+					if (change1 == 'age_group') {
+						jQuery('#dis').find('option').remove().end();
+						jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
+					} else {
+						jQuery('#age').find('option').remove().end();
+						jQuery('#age').append(\"<option selected='selected' value=''>VOTRE ÂGE</option>\");
+					}
+					
+					var values = [];
+					for (i = 0; i < data.length; i++) {
+						if (data[i][change1] == change1_value && (data[i]['city'] == city || city == '')) {
+							if (change1 == 'age_group') {
+								values[data[i]['discipline']] = disciplines[data[i]['discipline']];
+							} else {
+								values[data[i]['age_group']] = age_groups[data[i]['age_group']];
+							}
+						}
+					}
+					
+					if (Object.keys(values).length > 0) {
+						for (i = 0; i < Object.keys(values).length; i++) {
+							if (change1 == 'age_group') {
+								jQuery('#dis').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + disciplines[Object.keys(values)[i]] + \" </option>\");
+							} else {
+								jQuery('#age').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + age_groups[Object.keys(values)[i]] + \" </option>\");
+							}
+						}
+					}
+				}
+				
+				if (change1 == 'city' && city == '') {
+					change1 = '';
+					change1_value = '';
+					change2 = '';
+					change2_value = '';
+				} else if (change2 == 'city' && city == '') {
+					change2 = '';
+					change2_value = '';
+				}
+			});
+			
+			// AGE change
+			jQuery('#age').on('change', function() {
+				var age_group = jQuery('#age').val();
+				if (change1 == '' || change1 == 'age_group') {
+					change1 = 'age_group';
+					change1_value = age_group;
+					
+					jQuery('#city').find('option').remove().end();
+					jQuery('#city').append(\"<option selected='selected' value=''>VOTRE VILLE</option>\");
+					
+					jQuery('#dis').find('option').remove().end();
+					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
+					
+					var values = [];
+					var values_disciplines = [];
+					for (i = 0; i < data.length; i++) {
+						if (data[i]['age_group'] == age_group || age_group == '') {
+							values[data[i]['city']] = cities[data[i]['city']];
+							values_disciplines[data[i]['discipline']] = disciplines[data[i]['discipline']];
+						}
+					}
+					
+					if (Object.keys(values).length > 0) {
+						for (i = 0; i < Object.keys(values).length; i++) {
+							jQuery('#city').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + cities[Object.keys(values)[i]] + \" </option>\");
+						}
+					}
+					
+					if (Object.keys(values_disciplines).length > 0) {
+						for (i = 0; i < Object.keys(values_disciplines).length; i++) {
+							jQuery('#dis').append(\"<option value='\" + Object.keys(values_disciplines)[i] + \"'>\" + disciplines[Object.keys(values_disciplines)[i]] + \" </option>\");
+						}
+					}
+				} else if (change1 != 'age_group' && (change2 == '' || change2 == 'age_group')) {
+					change2 = 'age_group';
+					change2_value = age_group;
+					
+					if (change1 == 'city') {
+						jQuery('#dis').find('option').remove().end();
+						jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
+					} else {
+						jQuery('#city').find('option').remove().end();
+						jQuery('#city').append(\"<option selected='selected' value=''>VOTRE VILLE</option>\");
+					}
+					
+					var values = [];
+					for (i = 0; i < data.length; i++) {
+						if (data[i][change1] == change1_value && (data[i]['age_group'] == age_group || age_group == '')) {
+							if (change1 == 'city') {
+								values[data[i]['discipline']] = disciplines[data[i]['discipline']];
+							} else {
+								values[data[i]['city']] = cities[data[i]['city']];
+							}
+						}
+					}
+					
+					if (Object.keys(values).length > 0) {
+						for (i = 0; i < Object.keys(values).length; i++) {
+							if (change1 == 'city') {
+								jQuery('#dis').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + disciplines[Object.keys(values)[i]] + \" </option>\");
+							} else {
+								jQuery('#city').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + cities[Object.keys(values)[i]] + \" </option>\");
+							}
+						}
+					}
+				}
+				
+				if (change1 == 'age_group' && age_group == '') {
+					change1 = '';
+					change1_value = '';
+					change2 = '';
+					change2_value = '';
+				} else if (change2 == 'age_group' && age_group == '') {
+					change2 = '';
+					change2_value = '';
+				}
+			});
+			
+			// DIS change
+			jQuery('#dis').on('change', function() {
+				var discipline = jQuery('#dis').val();
+				if (change1 == '' || change1 == 'discipline') {
+					change1 = 'discipline';
+					change1_value = discipline;
+					
+					jQuery('#city').find('option').remove().end();
+					jQuery('#city').append(\"<option selected='selected' value=''>VOTRE VILLE</option>\");
+					
+					jQuery('#age').find('option').remove().end();
+					jQuery('#age').append(\"<option selected='selected' value=''>VOTRE ÂGE</option>\");
+					
+					var values = [];
+					var values_ages = [];
+					for (i = 0; i < data.length; i++) {
+						if (data[i]['discipline'] == discipline || discipline == '') {
+							values[data[i]['city']] = cities[data[i]['city']];
+							values_ages[data[i]['age_group']] = age_groups[data[i]['age_group']];
+						}
+					}
+					
+					if (Object.keys(values).length > 0) {
+						for (i = 0; i < Object.keys(values).length; i++) {
+							jQuery('#city').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + cities[Object.keys(values)[i]] + \" </option>\");
+						}
+					}
+					
+					if (Object.keys(values_ages).length > 0) {
+						for (i = 0; i < Object.keys(values_ages).length; i++) {
+							jQuery('#age').append(\"<option value='\" + Object.keys(values_ages)[i] + \"'>\" + age_groups[Object.keys(values_ages)[i]] + \" </option>\");
+						}
+					}
+				} else if (change1 != 'discipline' && (change2 == '' || change2 == 'discipline')) {
+					change2 = 'discipline';
+					change2_value = discipline;
+					
+					if (change1 == 'city') {
+						jQuery('#age').find('option').remove().end();
+						jQuery('#age').append(\"<option selected='selected' value=''>VOTRE ÂGE</option>\");
+					} else {
+						jQuery('#city').find('option').remove().end();
+						jQuery('#city').append(\"<option selected='selected' value=''>VOTRE VILLE</option>\");
+					}
+					
+					var values = [];
+					for (i = 0; i < data.length; i++) {
+						if (data[i][change1] == change1_value && (data[i]['discipline'] == discipline || discipline == '')) {
+							if (change1 == 'city') {
+								values[data[i]['age_group']] = age_groups[data[i]['age_group']];
+							} else {
+								values[data[i]['city']] = cities[data[i]['city']];
+							}
+						}
+					}
+					
+					if (Object.keys(values).length > 0) {
+						for (i = 0; i < Object.keys(values).length; i++) {
+							if (change1 == 'city') {
+								jQuery('#age').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + age_groups[Object.keys(values)[i]] + \" </option>\");
+							} else {
+								jQuery('#city').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + cities[Object.keys(values)[i]] + \" </option>\");
+							}
+						}
+					}
+				}
+				if (change1 == 'discipline' && discipline == '') {
+					change1 = '';
+					change1_value = '';
+					change2 = '';
+					change2_value = '';
+				} else if (change2 == 'discipline' && discipline == '') {
+					change2 = '';
+					change2_value = '';
+				}
+			});
+		</script>";
 		return $html;
 	}
+	
+// 	public static function build_script($data, $city_data, $age_group_data, $discipline_data) {
+// 		include_once(FC_PLUGIN_PATH . "includes/class-fc-frontend.php");
+// 		$data = FC_Shortcode::build_city_tree($data);
+// 		$json = json_encode($data);
+// // 		$json_city = json_encode($city_data);
+// 		$json_age_group = json_encode($age_group_data);
+// 		$json_discipline = json_encode($discipline_data);
+// 		$html .= "
+// 			<script type='text/javascript'>
+// 				var data = {$json};
+// 				var age_groups = {$json_age_group};
+// 				var disciplines = {$json_discipline};
+// 				jQuery('#city').on('change', function() {
+// 					var city = jQuery('#city').val();
+					
+// 					jQuery('#age').find('option').remove().end();
+// 					jQuery('#dis').find('option').remove().end();
+// 					jQuery('#age').append(\"<option selected='selected' value=''>VOTRE ÂGE</option>\");
+// 					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
+// 					var values = data[city];
+// 					if (Object.keys(values).length > 0) {
+// 						for (i = 0; i < Object.keys(values).length; i++) {
+// 				 			jQuery('#age').append(\"<option value='\" + Object.keys(values)[i] + \"'>\" + age_groups[Object.keys(values)[i]] + \" </option>\");
+// 				 		}
+// 					}
+// 				});
+// 				jQuery('#age').on('change', function() {
+// 					var city = jQuery('#city').val();
+// 					var age_group = jQuery('#age').val();
+// 					jQuery('#dis').find('option').remove().end();
+// 					jQuery('#dis').append(\"<option selected='selected' value=''>VOTRE DISCIPLINE</option>\");
+// 					var values = data[city][age_group];
+// 					if (Object.keys(values).length > 0) {
+// 						for (i = 0; i < Object.keys(values).length; i++) {
+// 				 			jQuery('#dis').append(\"<option value='\" + values[Object.keys(values)[i]] + \"'>\" + disciplines[values[Object.keys(values)[i]]] + \" </option>\");
+// 				 		}
+// 			 		}
+// 				});
+// 			</script>";
+// 		return $html;
+// 	}
 	
 	public static function shortcode_prof_list( $atts, $content = "" ) {
 		global $wpdb;

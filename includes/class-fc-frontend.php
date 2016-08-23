@@ -50,14 +50,14 @@ class FC_Frontend {
 			include_once(FC_PLUGIN_PATH . "includes/admin/class-fc-util.php");
 			//$cities = FC_Util::get_cities_list();
 			$city = $_POST['city'];
-			$discipline = $_POST['dis'];
-			$macro_discipline = "danse";
-			if (!empty($discipline)) {
-				$macro_discipline = FC_Util::get_macro_discipline($discipline);
-			}
+			$macro_discipline = $_POST['dis'];
+// 			$macro_discipline = "danse";
+// 			if (!empty($discipline)) {
+// 				$macro_discipline = FC_Util::get_macro_discipline($discipline);
+// 			}
 			$age_group = $_POST['age'];
 			
-			$url = FC_Frontend::build_category_url($macro_discipline, $age_group, $discipline, $city);
+			$url = FC_Frontend::build_category_url($macro_discipline, $age_group, '', $city);
 			
 			wp_redirect($url);
 			die();
@@ -223,7 +223,11 @@ class FC_Frontend {
 			$sql .= "AND c.micro_discipline = %s\n";
 			$sql = $wpdb->prepare($sql, $micro_discipline);
 		} else {
-			$sql .= "AND (c.micro_discipline = '' OR c.micro_discipline IS NULL)\n";
+			$theatre_clause = "";
+			if ($macro_discipline == "theatre") {
+				$theatre_clause = "OR c.micro_discipline = 'theatre'";
+			}
+			$sql .= "AND (c.micro_discipline = '' OR c.micro_discipline IS NULL {$theatre_clause})\n";
 		}
 		
 		if (!empty($age_group)) {
