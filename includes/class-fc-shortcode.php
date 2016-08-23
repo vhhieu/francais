@@ -285,6 +285,20 @@ class FC_Shortcode {
 					                </tr>
 					              </tbody>
 					            </table>
+					            <!-- Debut tag Full Performance -->
+								<script>
+									prfroi.roi = {
+									page : 'seance-dessai-registration',
+									roiRef : 'reservation_cours_'+ new Date().getTime(),
+									prixHT : '0',
+									prixTTC : '0',
+									fdp : '0',
+									typeV : '2',
+									sqNumber: '1'
+									};
+									if(typeof(perf)!='undefined')perf.roi(prfroi);
+								</script>
+								<!-- Fin tag Full Performance -->
 					            <header>
 					              <h2>Détails client</h2>
 					            </header>
