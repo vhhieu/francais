@@ -37,13 +37,14 @@ class Seance_Essai_List_Table extends WP_List_Table {
 		return array(
 				"cb" => "<input type=\"checkbox\" />",
 				"course_title" => "Course",
+				"trial_mode" => "Seance essai Status",
 				"start_date" => "Essai Start Time",
 				"first_name" => "Prénom",
 				"last_name" => "Nom",
 				"email" => "Adresse e-mail",
 				"phone" => "Téléphone",
-				"zipcode" => "Code postal",
-				"city" => "Ville",
+				"prof_name" => "Prof",
+				"room_name" => "Room",
 		);
 	}
 	
@@ -113,6 +114,11 @@ class Seance_Essai_List_Table extends WP_List_Table {
 	function column_start_date($item){
 		return $item['START_DATE'] . " " . $item['START_TIME'] ;
 	}
+	
+	function column_trial_mode($item){
+		global $COURSE_TRIAL;
+		return $COURSE_TRIAL[$item['trial_mode']];
+	}
 
 	/** ************************************************************************
 	 * REQUIRED if displaying checkboxes or using bulk actions! The 'cb' column
@@ -176,7 +182,6 @@ class Seance_Essai_List_Table extends WP_List_Table {
 				$arr = explode("_", $id);
 				$sql = "DELETE FROM {$wpdb->prefix}francais_course_trial_registration
 				WHERE course_id={$arr[0]} AND trial_no={$arr[1]} AND register_no={$arr[2]}";
-					
 				$result = $wpdb->query($sql);
 			}
 			
@@ -185,12 +190,7 @@ class Seance_Essai_List_Table extends WP_List_Table {
 				exit();
 			}
 		}
-			
-			
-			
 	}
-	
-	
 	
 	/** ************************************************************************
 	 * REQUIRED! This is where you prepare your data for display. This method will
@@ -255,12 +255,18 @@ class Seance_Essai_List_Table extends WP_List_Table {
 		 * be able to use your precisely-queried data immediately.
 		 */
 		$prefix = $wpdb->prefix;
-		$sql = "SELECT ctr.*, ct.START_DATE, ct.START_TIME, p.POST_TITLE AS COURSE_TITLE
+		$sql = "SELECT ctr.*, ct.START_DATE, ct.START_TIME, p.POST_TITLE AS COURSE_TITLE,
+					c.trial_mode,
+		            CONCAT(prof.first_name, ' ', prof.family_name) AS prof_name,
+		            CONCAT(r.country, '-', r.city, '-', r.zip_code, '-', r.room_name) AS room_name,
+					(CASE WHEN ctr.register_time IS NULL THEN 1 ELSE 0 END) AS POSITION
 				FROM  `{$prefix}francais_course_trial_registration` ctr
 					LEFT JOIN `{$prefix}francais_course_trial` ct USING (COURSE_ID, TRIAL_NO)
-					LEFT JOIN `{$prefix}francais_course` c USING (COURSE_ID)
+					INNER JOIN `{$prefix}francais_course` c USING (COURSE_ID)
+					LEFT JOIN `{$prefix}francais_profs` prof USING (PROFS_ID)
+					LEFT JOIN `{$prefix}francais_room` r USING (ROOM_ID)
 					LEFT JOIN `{$prefix}posts` p ON c.POST_ID = p.ID
-					ORDER BY ctr.register_time DESC";
+					ORDER BY POSITION ASC, ctr.register_time DESC";
 		$data = $wpdb->get_results ( $sql );
 		$data = json_decode(json_encode($data), true);
 		
@@ -272,13 +278,13 @@ class Seance_Essai_List_Table extends WP_List_Table {
 		 * to a custom query. The returned data will be pre-sorted, and this array
 		 * sorting technique would be unnecessary.
 		 */
-		function usort_reorder($a,$b){
-			$orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'profs_id'; //If no sort, default to title
-			$order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
-			$result = strcmp('' . $a[$orderby], '' . $b[$orderby]); //Determine sort order
-			return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
-		}
-		usort($data, 'usort_reorder');
+// 		function usort_reorder($a,$b){
+// 			$orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'profs_id'; //If no sort, default to title
+// 			$order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
+// 			$result = strcmp('' . $a[$orderby], '' . $b[$orderby]); //Determine sort order
+// 			return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
+// 		}
+// 		usort($data, 'usort_reorder');
 		//wp_die(print_r($data));
 		/**
 		 * REQUIRED for pagination. Let's figure out what page the user is currently
@@ -342,6 +348,11 @@ $testListTable->prepare_items();
         
     <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
     <form id="movies-filter" method="get">
+    	<p>
+    	<button name="manual_action" type="submit" value="export_essai" style="vertical-align: middle;">
+			<img src="<?= FC_PLUGIN_URL . "/assets/images/picto-excel.png"?>">
+		</button>
+		</p>			
     	<!-- For plugins, we also need to ensure that the form posts back to our current page -->
         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
         <!-- Now we can render the completed list table -->

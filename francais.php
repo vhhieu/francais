@@ -193,6 +193,7 @@ final class Francais {
 		if(!session_id()) {
 			session_start();
 		}
+		require_once (FC_PLUGIN_PATH . "includes/admin/class-fc-exporter.php");
 	}
 	
 	public function tracking_woocommerce_payment_complete() {
