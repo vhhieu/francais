@@ -519,6 +519,7 @@ class FC_Install {
 			address2 text,
 			zipcode varchar(8),
 			city varchar(128),
+			register_time date,
 	 		PRIMARY KEY  (course_id, trial_no, register_no),
 	 		KEY course_id (course_id),
 	 		KEY trial_no (trial_no),

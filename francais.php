@@ -171,6 +171,8 @@ final class Francais {
 		register_activation_hook( __FILE__, array( 'FC_Install', 'install' ) );
 		register_deactivation_hook(__FILE__, array( 'FC_UnInstall', 'uninstall' ) );
 		add_action( 'init', array( $this, 'init' ), 0 );
+		add_action( 'woocommerce_payment_complete', array( $this, 'tracking_woocommerce_payment_complete' ), 0);
+		
 // 		add_filter( 'woocommerce_email_classes', array($this, "add_payment_complete_email") );
 	}
 	
@@ -188,6 +190,13 @@ final class Francais {
 	 */
 	public function init() {
 		ob_start();
+		if(!session_id()) {
+			session_start();
+		}
+	}
+	
+	public function tracking_woocommerce_payment_complete() {
+		$_SESSION['FACEBOOK_TRACKING_CODE'] = "fbq('track', 'Purchase');";
 	}
 	
 	/**

@@ -259,7 +259,8 @@ class Seance_Essai_List_Table extends WP_List_Table {
 				FROM  `{$prefix}francais_course_trial_registration` ctr
 					LEFT JOIN `{$prefix}francais_course_trial` ct USING (COURSE_ID, TRIAL_NO)
 					LEFT JOIN `{$prefix}francais_course` c USING (COURSE_ID)
-					LEFT JOIN `{$prefix}posts` p ON c.POST_ID = p.ID";
+					LEFT JOIN `{$prefix}posts` p ON c.POST_ID = p.ID
+					ORDER BY ctr.register_time DESC";
 		$data = $wpdb->get_results ( $sql );
 		$data = json_decode(json_encode($data), true);
 		

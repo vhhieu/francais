@@ -132,12 +132,15 @@ class FC_Shortcode {
 					'address2' => $_POST['billing_address_2'],
 					'zipcode' => $_POST['billing_postcode'],
 					'city' => $_POST['billing_city'],
+					'register_time' => date('Y-m-d H:i:s')
 				), //data
-				array('%d','%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') //data format
+				array('%d','%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') //data format
 			);
 			
 			if ($result !== null) {
 				$result = "";
+				// tracking facebook event - LEAD
+				$_SESSION['FACEBOOK_TRACKING_CODE'] = "fbq('track', 'Lead');";
 				// send mail
 			} else {
 				$result = "Course essai registration fail, please try again";

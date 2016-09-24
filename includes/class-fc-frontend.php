@@ -94,6 +94,7 @@ class FC_Frontend {
 				A bientôt,<br/>
 				Célestine, du service client";
 				$mailer->send($_POST['client_email'], $subject, $content, '', '');
+				$_SESSION['FACEBOOK_TRACKING_CODE'] = "fbq('track', 'CompleteRegistration');";
 			}
 
 			wp_redirect(home_url());
@@ -112,6 +113,7 @@ class FC_Frontend {
 				);
 			}
 			
+			$_SESSION['FACEBOOK_TRACKING_CODE'] = "fbq('track', 'CompleteRegistration');";
 			wp_redirect(home_url());
 			die();
 		}

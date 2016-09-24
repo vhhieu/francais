@@ -36,16 +36,16 @@ class FC_Product_Api {
 		);
 		
 		// local nha
-		$consumer_key = 'ck_970edc23e76c2a83cd0c359ecea0f203ba8fe8f9';
-		$consumer_secret = 'cs_62eed9eacb484623edecf17bfcf754d9c523b9e1';
+// 		$consumer_key = 'ck_970edc23e76c2a83cd0c359ecea0f203ba8fe8f9';
+// 		$consumer_secret = 'cs_62eed9eacb484623edecf17bfcf754d9c523b9e1';
 		
 		// local cty
 // 		$consumer_key = 'ck_74c91fc15f3800c3e759ea7585da63bdb7e27ee8';
 // 		$consumer_secret = 'cs_e624b0bf4fa28fbc6643ac47f6289b0a585ff331';
 		
 // 		// product
-//  		$consumer_key = 'ck_c094b06f63b257484e55371affe86e89931cd3f0';
-//  		$consumer_secret = 'cs_5947968a4c901cc66fe18c4638c04118c4c132b2';
+ 		$consumer_key = 'ck_c094b06f63b257484e55371affe86e89931cd3f0';
+ 		$consumer_secret = 'cs_5947968a4c901cc66fe18c4638c04118c4c132b2';
 		
  		$url = home_url();
  		//$url = "http://leclubfrancais.fr/";

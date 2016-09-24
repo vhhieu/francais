@@ -119,7 +119,7 @@ if(isset($_POST['createcategorysubmit']) || isset($_POST['createcategoryandconti
 	//wp_die(var_dump( $wpdb->last_query ));
 	if ($result !== FALSE) {
 		if (!term_exists($_POST['slug'], 'course_cate')) {
-			wp_insert_term($_POST['slug'], 'course_cate', array('description' => $_POST['slug'], 'slug' => $_POST['slug']));
+			wp_insert_term($_POST['slug'], 'course_cate', array('description' => $_POST['title'], 'slug' => $_POST['slug']));
 		}
 		
 		if ($_POST['createcategorysubmit']) {
